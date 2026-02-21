@@ -36,7 +36,6 @@
   const maxBtn = document.getElementById('win-max-btn');
 
   let isMaximized = false;
-  let titlebarPointerDown = null;
 
   function setMaxButtonState(maximized) {
     if (!maxBtn) return;
@@ -67,33 +66,11 @@
   }
 
   if (titlebar) {
-    titlebar.addEventListener('pointerdown', e => {
-      if (e.button !== 0) return;
+    titlebar.addEventListener('dblclick', e => {
       if (e.target.closest('.window-buttons')) return;
-      titlebarPointerDown = {
-        x: e.clientX,
-        y: e.clientY,
-        t: Date.now()
-      };
-    });
-
-    titlebar.addEventListener('pointerup', e => {
-      if (!titlebarPointerDown) return;
-      if (e.target.closest('.window-buttons')) {
-        titlebarPointerDown = null;
-        return;
-      }
-      const dx = Math.abs(e.clientX - titlebarPointerDown.x);
-      const dy = Math.abs(e.clientY - titlebarPointerDown.y);
-      const dt = Date.now() - titlebarPointerDown.t;
-      titlebarPointerDown = null;
-      if (dx <= 4 && dy <= 4 && dt <= 280) {
-        void toggleWindowMaximize();
-      }
-    });
-
-    titlebar.addEventListener('pointercancel', () => {
-      titlebarPointerDown = null;
+      e.preventDefault();
+      e.stopPropagation();
+      void toggleWindowMaximize();
     });
   }
 

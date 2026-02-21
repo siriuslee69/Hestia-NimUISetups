@@ -5,7 +5,7 @@ The parser reads the first `jsonc` fenced block.
 ```jsonc
 {
   // Hide native title bar in custom-titlebar example.
-  "disable_titlebar": true,
+  "disable_titlebar": false,
 
   // If true, app-level stylesheet is loaded.
   "use_theme_stylesheet": true,

@@ -15,6 +15,18 @@ proc runWithOwlNixShell(cmd: string) =
   else:
     exec cmd
 
+proc runCmd(srcPath, outStem: string): string =
+  when defined(windows):
+    var
+      idx = 0
+      outPath = ".nimcache/" & outStem & "_0.exe"
+    while fileExists(outPath):
+      idx.inc
+      outPath = ".nimcache/" & outStem & "_" & $idx & ".exe"
+    result = "nim c --out:" & outPath & " -r " & srcPath
+  else:
+    result = "nim c -r " & srcPath
+
 task test, "Run smoke tests":
   exec "nim c -r tests/test_smoke.nim"
 
@@ -36,19 +48,22 @@ task autopush, "Add, commit, and push with message from progress.md":
   exec "git push"
 
 task runWebDefault, "Run web UI (default titlebar variant)":
-  exec "nim c -r examples/webuiEnhanced/defaultTitlebar/app.nim"
+  exec runCmd("examples/webuiEnhanced/defaultTitlebar/app.nim", "runWebDefault")
 
 task runWebCustom, "Run web UI (custom titlebar variant)":
-  exec "nim c -r examples/webuiEnhanced/customTitlebar/app.nim"
+  exec runCmd("examples/webuiEnhanced/customTitlebar/app.nim", "runWebCustom")
 
 task runOwlDefault, "Run owlkettle UI (default titlebar variant)":
-  runWithOwlNixShell("nim c -r examples/owlkettleEnhanced/defaultTitlebar/app.nim")
+  runWithOwlNixShell(runCmd("examples/owlkettleEnhanced/defaultTitlebar/app.nim", "runOwlDefault"))
 
 task runOwlCustom, "Run owlkettle UI (custom titlebar variant)":
-  runWithOwlNixShell("nim c -r examples/owlkettleEnhanced/customTitlebar/app.nim")
+  runWithOwlNixShell(runCmd("examples/owlkettleEnhanced/customTitlebar/app.nim", "runOwlCustom"))
+
+task runOwlCustomDebugBar, "Run owlkettle UI (custom titlebar debug bar only)":
+  runWithOwlNixShell(runCmd("examples/owlkettleEnhanced/customTitlebar/app_debug_bar_only.nim", "runOwlCustomDebugBar"))
 
 task runIllwill, "Run illwill UI":
-  exec "nim c -r examples/illwillEnhanced/app.nim"
+  exec runCmd("examples/illwillEnhanced/app.nim", "runIllwill")
 
 task setupGtkWin, "Install GTK dependencies via MSYS2 (inside an MSYS2 shell)":
   exec "nim c -r tools/windows/gtk_builder_msys2.nim install"

@@ -1,0 +1,79 @@
+/* Debug layout overlay: transparent per-widget colors for hitbox inspection. */
+
+window,
+.background {
+  background-color: rgba(255, 0, 0, 0.05);
+}
+
+headerbar,
+.titlebar {
+  background-color: rgba(255, 70, 0, 0.20);
+  border: 1px solid rgba(255, 90, 30, 0.55);
+}
+
+windowhandle {
+  background-color: rgba(255, 0, 255, 0.20);
+  border: 1px solid rgba(255, 0, 255, 0.55);
+}
+
+grid {
+  background-color: rgba(255, 220, 0, 0.08);
+  border: 1px dashed rgba(255, 220, 0, 0.45);
+}
+
+.debug-header {
+  background-color: rgba(255, 0, 255, 0.20);
+  border: 1px solid rgba(255, 0, 255, 0.55);
+}
+
+.debug-content {
+  background-color: rgba(0, 180, 255, 0.08);
+  border: 1px dashed rgba(0, 200, 255, 0.35);
+}
+
+frame {
+  background-color: rgba(0, 255, 90, 0.10);
+  border: 1px solid rgba(0, 220, 70, 0.55);
+}
+
+scrolledwindow {
+  background-color: rgba(150, 0, 255, 0.10);
+  border: 1px solid rgba(170, 60, 255, 0.55);
+}
+
+button {
+  background-color: rgba(255, 130, 0, 0.20);
+  border: 1px solid rgba(255, 150, 40, 0.75);
+}
+
+headerbar button,
+headerbar button.titlebutton {
+  background-color: rgba(255, 255, 0, 0.25);
+  border: 1px solid rgba(255, 255, 120, 0.85);
+}
+
+entry,
+spinbutton,
+dropdown,
+combobox {
+  background-color: rgba(0, 255, 255, 0.16);
+  border: 1px solid rgba(0, 230, 230, 0.75);
+}
+
+label {
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px dotted rgba(220, 220, 220, 0.45);
+}
+
+progressbar,
+progressbar trough,
+scale,
+scale trough {
+  background-color: rgba(0, 255, 150, 0.14);
+  border: 1px solid rgba(0, 230, 130, 0.55);
+}
+
+scale slider {
+  background-color: rgba(255, 0, 120, 0.24);
+  border: 1px solid rgba(255, 60, 150, 0.70);
+}

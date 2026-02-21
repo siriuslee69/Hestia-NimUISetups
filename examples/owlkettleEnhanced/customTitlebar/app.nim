@@ -8,6 +8,7 @@ import std/os
 import owlkettle
 import lib/level0/auth
 import owlkettleEnhanced/shared/ui_helpers
+import owlkettleEnhanced/shared/window_titlebar
 import owlkettleEnhanced
 
 const
@@ -16,6 +17,7 @@ const
   CardMinHeight = 110
   CardLargeMinHeight = 180
   LoginCardWidth = 460
+  UseWindowHandle = defined(windows)
 
 var
   WindowTitleText = AppName
@@ -39,13 +41,27 @@ viewable OwlCustomApp:
 
 proc buildTitlebar(): Widget =
   ## builds custom native-draggable titlebar.
+  var
+    titleWidget: Widget
+  titleWidget = gui:
+    Box:
+      orient = OrientY
+
+      Label:
+        text = WindowTitleText
+        xAlign = 0
+
+      Label:
+        text = "Custom-titlebar dashboard with Atlas-like grid."
+        xAlign = 0
+
   result = gui:
     HeaderBar:
       showTitleButtons = true
-
-      Label {.addTitle, expand: true.}:
-        text = WindowTitleText
-        xAlign = 0.5
+      if UseWindowHandle:
+        insert(wrapWindowHandle(titleWidget)) {.addTitle.}
+      else:
+        insert(titleWidget) {.addTitle.}
 
 proc buildStatCard(t, v: string): Widget =
   ## t: card title.
@@ -371,10 +387,19 @@ proc resolveConfigPath(): string =
   ## resolves local path to markdown config for this example variant.
   result = joinPath(currentSourcePath().splitFile.dir, "config.md")
 
+proc resolveDebugStylesheetPath(): string =
+  ## resolves local path to debug overlay stylesheet for hitbox inspection.
+  result = joinPath(currentSourcePath().splitFile.dir, "debug_layout.css")
+
 when isMainModule:
   let cfg = enhance(resolveConfigPath())
   let p = resolveStylesheetPath()
-  let ss = if cfg.useThemeStylesheet and p.len > 0: @[loadStylesheet(p)] else: @[]
+  let dp = resolveDebugStylesheetPath()
+  var ss: seq[Stylesheet] = @[]
+  if cfg.useThemeStylesheet and p.len > 0:
+    ss.add(loadStylesheet(p))
+  if fileExists(dp):
+    ss.add(loadStylesheet(dp))
   EnableStretchLayout = not cfg.disableStretchingBoxes
   WindowTitleText = AppName
   UseCustomTitlebar = not cfg.disableTitlebar
