@@ -1,0 +1,3 @@
+# This will contain configuration data for the valkyrie tooling library
+# It features its own package manager as an alternative to nimble and advanced, local repo management
+# Create this folder but dont put anything in yet

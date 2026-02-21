@@ -1,0 +1,390 @@
+:root {
+  --maya-white-bg: rgba(252, 253, 255, 1.0);
+  --maya-white-bg-soft: rgba(244, 248, 252, 1.0);
+  --maya-white-panel: rgba(255, 255, 255, 0.98);
+  --maya-white-panel-strong: rgba(246, 249, 252, 0.98);
+  --maya-white-border: rgba(150, 175, 200, 0.35);
+  --maya-white-border-soft: rgba(150, 175, 200, 0.22);
+  --maya-white-blue: rgba(130, 190, 255, 0.9);
+  --maya-white-blue-soft: rgba(165, 210, 255, 0.75);
+  --maya-white-text: rgba(32, 40, 54, 0.92);
+  --maya-white-muted: rgba(90, 105, 120, 0.75);
+  --maya-white-shadow: rgba(20, 28, 40, 0.12);
+  --maya-white-amber: rgba(240, 170, 80, 0.85);
+  --maya-white-amber-soft: rgba(250, 205, 130, 0.7);
+  --maya-white-warm-shadow: rgba(240, 170, 80, 0.28);
+}
+
+* {
+  border-radius: 0;
+  outline-style: none;
+  color: var(--maya-white-text);
+  font-family: "SpaceAndAstronomy", "Cantarell", "Fira Sans", sans-serif;
+}
+
+windowcontrols{
+  border-spacing: 0 0;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  margin: 0;
+  min-height: 48px;
+}
+
+headerbar{
+  padding-left: 0;
+  padding-right: 0;
+}
+
+box{
+  border-spacing: 0 0;
+}
+
+window,
+.background {
+  background-image: linear-gradient(180deg, var(--maya-white-bg), var(--maya-white-bg-soft));
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+popover,
+dialog {
+  background-color: var(--maya-white-panel);
+  box-shadow: none;
+}
+
+headerbar,
+.titlebar,
+window.background > headerbar,
+window.background > .titlebar,
+window.background.ssd headerbar,
+window.background.ssd .titlebar,
+headerbar.default-decoration,
+.default-decoration .titlebar,
+.sidebar,
+scrolledwindow,
+frame,
+.card {
+  background-color: var(--maya-white-panel);
+  background-image: none;
+  border-bottom: 1px solid var(--maya-white-border-soft);
+  color: var(--maya-white-text);
+}
+
+headerbar:backdrop,
+.titlebar:backdrop,
+window.background:backdrop > headerbar,
+window.background:backdrop > .titlebar {
+  background-color: var(--maya-white-panel-strong);
+  background-image: none;
+  color: var(--maya-white-text);
+}
+
+headerbar *,
+.titlebar * {
+  background-color: transparent;
+  background-image: none;
+}
+
+label.dim-label,
+label.subtitle,
+label.caption {
+  color: var(--maya-white-muted);
+}
+
+button,
+.button,
+togglebutton,
+spinbutton,
+headerbar button {
+  background-color: var(--maya-white-panel);
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 252, 0.98)),
+    linear-gradient(90deg, rgba(130, 190, 255, 0.0), rgba(130, 190, 255, 0.8), rgba(130, 190, 255, 0.0));
+  background-size: 100% 100%, 100% 2px;
+  background-position: 0 0, 0 100%;
+  background-repeat: no-repeat;
+  border-spacing: 0px;
+  border-color: var(--maya-white-border-soft);
+  border-width: 1px;
+  border-style: solid;
+  min-height: 28px;
+  color: var(--maya-white-text);
+  box-shadow: 0 1px 2px var(--maya-white-shadow);
+  transition: background-color 260ms ease, border-color 260ms ease,
+              box-shadow 260ms ease, color 260ms ease;
+}
+
+headerbar button {
+  min-width: 80px;
+  margin: 0px;
+  padding: 0px;
+  border-radius: 0;
+  min-height: 48px;
+  outline-offset: 0px;
+}
+
+headerbar .linked > button {
+  border-radius: 0;
+  margin: 0;
+  padding: 0;
+}
+
+headerbar > box,
+headerbar > box.horizontal,
+.titlebar > box {
+  border-spacing: 0;
+  margin: 0;
+  padding: 0;
+}
+
+headerbar button.titlebutton,
+.titlebar button.titlebutton {
+  min-height: 42px;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  border: none;
+  min-width: 48px;
+  box-shadow: none;
+}
+
+button.suggested-action,
+.button.suggested-action,
+togglebutton.suggested-action {
+  background-image:
+    linear-gradient(180deg, rgba(235, 246, 255, 0.98), rgba(220, 235, 250, 0.98)),
+    linear-gradient(90deg, rgba(130, 190, 255, 0.05), rgba(130, 190, 255, 0.9), rgba(130, 190, 255, 0.05));
+  border-color: rgba(130, 190, 255, 0.45);
+}
+
+button.destructive-action,
+.button.destructive-action,
+togglebutton.destructive-action {
+  background-image:
+    linear-gradient(180deg, rgba(255, 242, 240, 0.98), rgba(250, 232, 230, 0.98)),
+    linear-gradient(90deg, rgba(255, 140, 140, 0.05), rgba(255, 140, 140, 0.75), rgba(255, 140, 140, 0.05));
+  border-color: rgba(255, 150, 150, 0.55);
+}
+
+button:hover,
+.button:hover,
+togglebutton:hover,
+headerbar button:hover,
+button.suggested-action:hover,
+.button.suggested-action:hover,
+button.destructive-action:hover,
+.button.destructive-action:hover,
+togglebutton.suggested-action:hover,
+togglebutton.destructive-action:hover {
+  background-color: rgba(255, 248, 235, 0.98);
+  background-image:
+    linear-gradient(180deg, rgba(255, 252, 246, 0.98), rgba(248, 238, 222, 0.98)),
+    linear-gradient(90deg, rgba(130, 190, 255, 0.1), rgba(130, 190, 255, 0.85), rgba(130, 190, 255, 0.1));
+  border-color: rgba(235, 180, 110, 0.65);
+  box-shadow: 0 2px 6px var(--maya-white-warm-shadow);
+}
+
+button:active,
+.button:active,
+togglebutton:active {
+  background-color: rgba(230, 242, 255, 0.98);
+  border-color: rgba(150, 200, 255, 0.75);
+  box-shadow: inset 0 1px 2px rgba(120, 170, 220, 0.25);
+}
+
+button:checked,
+togglebutton:checked {
+  background-color: rgba(225, 238, 255, 0.98);
+  border-color: rgba(130, 190, 255, 0.65);
+}
+
+button.flat,
+.button.flat {
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+
+button.flat:hover,
+.button.flat:hover {
+  background-color: rgba(255, 246, 230, 0.95);
+  border-color: rgba(235, 180, 110, 0.45);
+}
+
+button:focus-within,
+entry:focus-within,
+spinbutton:focus-within {
+  box-shadow: inset 0 0 0 1px rgba(130, 190, 255, 0.5);
+}
+
+entry,
+.entry,
+spinbutton,
+combobox,
+dropdown,
+.dropdown {
+  background-color: var(--maya-white-panel);
+  border: 1px solid var(--maya-white-border-soft);
+  color: var(--maya-white-text);
+  border-radius: 0;
+  transition: background-color 220ms ease, border-color 220ms ease;
+}
+
+entry:hover,
+.entry:hover,
+spinbutton:hover,
+combobox:hover,
+dropdown:hover,
+.dropdown:hover {
+  background-color: rgba(255, 248, 235, 0.9);
+  border-color: rgba(235, 180, 110, 0.55);
+}
+
+scale,
+slider,
+progressbar,
+levelbar {
+  background-color: rgba(240, 244, 250, 0.9);
+  border: 1px solid rgba(150, 175, 200, 0.2);
+  transition: background-color 240ms ease, border-color 240ms ease;
+}
+
+scale slider,
+slider slider {
+  background-color: rgba(130, 190, 255, 0.75);
+  transition: background-color 240ms ease;
+}
+
+scale slider:hover,
+slider slider:hover {
+  background-color: rgba(255, 185, 110, 0.85);
+}
+
+scale trough,
+progressbar trough {
+  background-color: rgba(245, 248, 252, 0.95);
+}
+
+scale highlight,
+progressbar progress {
+  background-color: rgba(130, 190, 255, 0.65);
+  border-left: 1px solid rgba(130, 190, 255, 0.85);
+}
+
+listview,
+row,
+list,
+treeview {
+  background-color: transparent;
+}
+
+listbox,
+.listbox,
+.list,
+.list-view {
+  background-color: rgba(248, 250, 252, 0.95);
+}
+
+listbox row,
+.listbox row,
+row,
+.row {
+  background-color: transparent;
+  transition: background-color 200ms ease;
+}
+
+listbox row:hover,
+.listbox row:hover,
+row:hover,
+.row:hover,
+.list row:hover,
+listview row:hover {
+  background-color: rgba(255, 244, 225, 0.75);
+}
+
+calendar {
+  background-color: var(--maya-white-panel);
+  color: var(--maya-white-text);
+  border: 1px solid var(--maya-white-border-soft);
+  border-radius: 1px;
+}
+
+button.maya-white-chip,
+togglebutton.maya-white-chip {
+  padding: 2px 10px;
+  min-height: 22px;
+  font-size: 0.85em;
+}
+
+button.maya-white-outline,
+togglebutton.maya-white-outline {
+  background-color: transparent;
+  background-image:
+    linear-gradient(90deg, rgba(130, 190, 255, 0.0), rgba(130, 190, 255, 0.85), rgba(130, 190, 255, 0.0));
+  background-size: 100% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  border-color: rgba(130, 190, 255, 0.45);
+  box-shadow: none;
+}
+
+button.maya-white-soft,
+togglebutton.maya-white-soft {
+  background-image:
+    linear-gradient(180deg, rgba(244, 248, 252, 0.98), rgba(235, 242, 252, 0.98)),
+    linear-gradient(90deg, rgba(130, 190, 255, 0.1), rgba(130, 190, 255, 0.75), rgba(130, 190, 255, 0.1));
+  border-color: rgba(150, 190, 220, 0.35);
+}
+
+button.maya-white-pill,
+togglebutton.maya-white-pill {
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 252, 0.98)),
+    linear-gradient(90deg, rgba(130, 190, 255, 0.1), rgba(130, 190, 255, 0.9), rgba(130, 190, 255, 0.1));
+  border-color: rgba(130, 190, 255, 0.4);
+}
+
+button.maya-white-cta,
+togglebutton.maya-white-cta {
+  background-image:
+    linear-gradient(180deg, rgba(232, 246, 255, 0.98), rgba(215, 234, 252, 0.98)),
+    linear-gradient(90deg, rgba(130, 190, 255, 0.1), rgba(130, 190, 255, 0.95), rgba(130, 190, 255, 0.1));
+  border-color: rgba(130, 190, 255, 0.55);
+}
+
+box.maya-white-card,
+frame.maya-white-card,
+scrolledwindow.maya-white-card {
+  background-color: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--maya-white-border-soft);
+  border-radius: 1px;
+  padding: 12px;
+  box-shadow: 0 6px 16px rgba(20, 28, 40, 0.08);
+}
+
+box.maya-white-card-inset,
+frame.maya-white-card-inset {
+  background-color: rgba(245, 248, 252, 0.96);
+  border: 1px solid rgba(150, 175, 200, 0.18);
+  border-radius: 1px;
+  padding: 12px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
+box.maya-white-card-sky,
+frame.maya-white-card-sky {
+  background-color: rgba(238, 246, 255, 0.92);
+  border: 1px solid rgba(130, 190, 255, 0.3);
+  border-radius: 1px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(130, 190, 255, 0.2);
+}
+
+separator.maya-white-divider {
+  background-color: rgba(130, 190, 255, 0.35);
+  min-height: 1px;
+  min-width: 1px;
+  margin: 6px 0;
+}
