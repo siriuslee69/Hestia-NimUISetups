@@ -1,4 +1,4 @@
-import std/[os]
+import std/[os, strutils]
 
 version       = "0.1.0"
 author        = "siriuslee69"
@@ -8,8 +8,32 @@ srcDir        = "src"
 
 requires "nim >= 1.6.0", "owlkettle >= 3.0.0", "illwill >= 0.4.0", "webui >= 2.4.0"
 
+proc runWithOwlNixShell(cmd: string) =
+  let shellFile = "nix/owlkettle-shell.nix"
+  if fileExists(shellFile) and findExe("nix-shell").len > 0:
+    exec "nix-shell " & shellFile & " --run \"" & cmd & "\""
+  else:
+    exec cmd
+
 task test, "Run smoke tests":
   exec "nim c -r tests/test_smoke.nim"
+
+task autopush, "Add, commit, and push with message from progress.md":
+  let path = "progress.md"
+  var msg = ""
+  if fileExists(path):
+    let content = readFile(path)
+    for line in content.splitLines:
+      if line.startsWith("Commit Message:"):
+        msg = line["Commit Message:".len .. ^1].strip()
+        break
+  if msg.len == 0:
+    msg = "No specific commit message given."
+
+  let safeMsg = msg.replace("\"", "\\\"")
+  exec "git add -A ."
+  exec "git commit -m \"" & safeMsg & "\""
+  exec "git push"
 
 task runWebDefault, "Run web UI (default titlebar variant)":
   exec "nim c -r src/webuiUI/defaultTitlebar/app.nim"
@@ -18,10 +42,10 @@ task runWebCustom, "Run web UI (custom titlebar variant)":
   exec "nim c -r src/webuiUI/customTitlebar/app.nim"
 
 task runOwlDefault, "Run owlkettle UI (default titlebar variant)":
-  exec "nim c -r src/owlkettleUI/defaultTitlebar/app.nim"
+  runWithOwlNixShell("nim c -r src/owlkettleUI/defaultTitlebar/app.nim")
 
 task runOwlCustom, "Run owlkettle UI (custom titlebar variant)":
-  exec "nim c -r src/owlkettleUI/customTitlebar/app.nim"
+  runWithOwlNixShell("nim c -r src/owlkettleUI/customTitlebar/app.nim")
 
 task runIllwill, "Run illwill UI":
   exec "nim c -r src/illwillUI/app.nim"

@@ -1,4 +1,6 @@
-{ pkgs ? import <nixpkgs> {} }:
+{
+  pkgs ? import <nixpkgs> {}
+}:
 pkgs.mkShell {
   buildInputs = with pkgs; [
     nim
@@ -10,10 +12,11 @@ pkgs.mkShell {
     cairo
     graphene
     gdk-pixbuf
+    openssl
   ];
 
   shellHook = ''
-    echo "Nix shell ready for owlkettle development"
-    echo "Run: nimble runOwlDefault or nimble runOwlCustom"
+    echo "Nix shell ready for GTK/OwlKettle development"
+    echo "Run: nimble build"
   '';
 }

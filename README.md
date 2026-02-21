@@ -26,7 +26,10 @@ src/
 - `webuiUI`: uses the **nim-webui** library (embedded window UI, not a self-hosted app server).
 - `owlkettleUI`: GTK4 desktop app variants (default titlebar + custom `HeaderBar` titlebar).
 - `illwillUI`: terminal UI variant.
-- White theme assets copied from `Maya-Themes` (`assets/themes/theme_white.css`) and adapted web CSS.
+- White theme assets copied from `Maya-Themes` (`assets/themes/theme_white.css`) for GTK/Owlkettle.
+- WebUI uses per-variant local frontend files:
+  - `src/webuiUI/defaultTitlebar/web/index.html`, `app.js`, `style.css`
+  - `src/webuiUI/customTitlebar/web/index.html`, `app.js`, `style.css`
 - Windows GTK setup helper for MSYS2 + DLL copier (`tools/windows/gtk_builder_msys2.nim`).
 - Nix shell for Owlkettle (`nix/owlkettle-shell.nix`).
 - Directory bundler tool (`tools/bundler/directory_bundler.nim`).

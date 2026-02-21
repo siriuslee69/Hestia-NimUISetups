@@ -1,7 +1,7 @@
-Commit Message: scaffold proto viable nim uis with webui/owlkettle/illwill demos, windows gtk builder, nix shell, and directory bundler
+Commit Message: copy webui dashboard layout 1:1 into owlkettle default and custom apps
 
 0. Current commit message
-- scaffold proto viable nim uis with webui/owlkettle/illwill demos, windows gtk builder, nix shell, and directory bundler
+- copy webui dashboard layout 1:1 into owlkettle default and custom apps
 
 1. Features to implement (total)
 - [x] repository skeleton and nimble tasks
@@ -18,10 +18,10 @@ Commit Message: scaffold proto viable nim uis with webui/owlkettle/illwill demos
 - copied white theme assets from Maya-Themes
 
 3. Features in progress
-- compile and smoke verification
+- verify owlkettle dashboard parity and compile checks
 
 Last big change or problem encountered
-- webui implementation originally used an internal HTTP server, but requirement was nim-webui library usage.
+- user requested a 1:1 owlkettle copy of the large grid/page-routed web dashboard layout.
 
 Fix attempt and outcome
-- replaced web server implementation with nim-webui embedded window and inlined UI assets.
+- rewrote both owlkettle variants with matching login/sidebar/header and 12-column card pages; kept custom titlebar variant using HeaderBar while preserving layout parity.
