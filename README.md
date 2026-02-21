@@ -9,27 +9,38 @@ The requested source split is implemented as:
 
 ```text
 src/
-  webuiUI/
-    defaultTitlebar/
-    customTitlebar/
+  webuiEnhanced/
+    enhance.nim
     shared/
-  owlkettleUI/
-    defaultTitlebar/
-    customTitlebar/
+  owlkettleEnhanced/
+    enhance.nim
     shared/
-  illwillUI/
+  illwillEnhanced/
+    enhance.nim
   lib/level0/
+
+examples/
+  webuiEnhanced/
+    defaultTitlebar/
+    customTitlebar/
+  owlkettleEnhanced/
+    defaultTitlebar/
+    customTitlebar/
+  illwillEnhanced/
 ```
 
 ## What Is Included
 
-- `webuiUI`: uses the **nim-webui** library (embedded window UI, not a self-hosted app server).
-- `owlkettleUI`: GTK4 desktop app variants (default titlebar + custom `HeaderBar` titlebar).
-- `illwillUI`: terminal UI variant.
+- `webuiEnhanced`: WebUI enhancement kit with its own `enhance(pathOfConfig)` entrypoint.
+- `owlkettleEnhanced`: Owlkettle enhancement kit with its own `enhance(pathOfConfig)` entrypoint.
+- `illwillEnhanced`: Illwill enhancement kit with its own `enhance(pathOfConfig)` entrypoint.
+- Kit imports are available as `import webuiEnhanced`, `import owlkettleEnhanced`, and `import illwillEnhanced`.
+- `examples/*Enhanced/*`: runnable app variants that call the relevant enhancer.
 - White theme assets copied from `Maya-Themes` (`assets/themes/theme_white.css`) for GTK/Owlkettle.
-- WebUI uses per-variant local frontend files:
-  - `src/webuiUI/defaultTitlebar/web/index.html`, `app.js`, `style.css`
-  - `src/webuiUI/customTitlebar/web/index.html`, `app.js`, `style.css`
+- Every example folder contains both `config.md` (parsed first) and `config.json` (fallback option).
+- WebUI frontend files are in:
+  - `examples/webuiEnhanced/defaultTitlebar/web/index.html`, `app.js`, `style.css`
+  - `examples/webuiEnhanced/customTitlebar/web/index.html`, `app.js`, `style.css`
 - Windows GTK setup helper for MSYS2 + DLL copier (`tools/windows/gtk_builder_msys2.nim`).
 - Nix shell for Owlkettle (`nix/owlkettle-shell.nix`).
 - Directory bundler tool (`tools/bundler/directory_bundler.nim`).

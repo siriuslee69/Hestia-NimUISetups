@@ -5,9 +5,9 @@ Commit Message: copy webui dashboard layout 1:1 into owlkettle default and custo
 
 1. Features to implement (total)
 - [x] repository skeleton and nimble tasks
-- [x] webuiUI demo (default/custom titlebar)
-- [x] owlkettleUI demo (default/custom titlebar)
-- [x] illwillUI demo
+- [x] webuiEnhanced demo (default/custom titlebar)
+- [x] owlkettleEnhanced demo (default/custom titlebar)
+- [x] illwillEnhanced demo
 - [x] windows gtk builder + dll helper
 - [x] nix env for owlkettle
 - [x] directory bundler tool + smoke tests

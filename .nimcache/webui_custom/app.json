@@ -1,0 +1,215 @@
+{
+  "cacheVersion": "D20240927T193831",
+  "outputFile": "f:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar\\app.exe",
+  "outputLastModificationTime": "",
+  "compile": [
+    [
+      "C:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\src\\civetweb\\civetweb.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui@swebui@ssrc@scivetweb@scivetweb.c.o C:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\src\\civetweb\\civetweb.c"
+    ],
+    [
+      "C:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\src\\webui.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui@swebui@ssrc@swebui.c.o C:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\src\\webui.c"
+    ],
+    [
+      "C:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\src\\webview\\win32_wv2.cpp",
+      "C:\\msys64\\mingw64\\bin\\g++.exe -c -std=gnu++17 -funsigned-char  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui@swebui@ssrc@swebview@swin32_wv2.cpp.o C:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\src\\webview\\win32_wv2.cpp"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem@sexceptions.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem@sexceptions.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem@sexceptions.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sdigitsutils.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sdigitsutils.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sdigitsutils.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sassertions.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sassertions.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sassertions.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem@sdollars.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem@sdollars.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem@sdollars.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@swidestrs.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@swidestrs.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@swidestrs.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sexitprocs.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sexitprocs.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sexitprocs.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@ssyncio.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@ssyncio.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@ssyncio.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pparseutils.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pparseutils.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pparseutils.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pmath.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pmath.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pmath.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@punicode.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@punicode.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@punicode.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstrutils.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstrutils.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstrutils.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sntpath.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sntpath.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sntpath.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ppathnorm.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ppathnorm.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ppathnorm.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pdynlib.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pdynlib.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pdynlib.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwinlean.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwinlean.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwinlean.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ptimes.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ptimes.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ptimes.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@soscommon.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@soscommon.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@soscommon.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sospaths2.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sospaths2.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sospaths2.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@swin_setenv.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@swin_setenv.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@swin_setenv.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@senvvars.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@senvvars.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@senvvars.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@scmdline.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@scmdline.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@scmdline.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pos.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pos.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pos.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui@sbindings.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui@sbindings.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui@sbindings.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@phashes.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@phashes.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@phashes.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ptables.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ptables.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ptables.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstreams.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstreams.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstreams.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@plexbase.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@plexbase.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@plexbase.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pparsejson.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pparsejson.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pparsejson.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pjson.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pjson.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pjson.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwebuiEnhanced@sshared@swebui_shell.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwebuiEnhanced@sshared@swebui_shell.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwebuiEnhanced@sshared@swebui_shell.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@plib@slevel0@sconfig_source_parser.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@plib@slevel0@sconfig_source_parser.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@plib@slevel0@sconfig_source_parser.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwebuiEnhanced@senhance.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwebuiEnhanced@senhance.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwebuiEnhanced@senhance.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@mapp.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN -DNO_SSL -IC:\\Users\\n1ght\\.nimble\\pkgs2\\webui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741\\webui\\webui\\include -DNDEBUG -DNO_CACHING -DNO_CGI -DUSE_WEBSOCKET   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@mapp.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@mapp.nim.c"
+    ]
+  ],
+  "link": [
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui@swebui@ssrc@scivetweb@scivetweb.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui@swebui@ssrc@swebui.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui@swebui@ssrc@swebview@swin32_wv2.cpp.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem@sexceptions.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sdigitsutils.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sassertions.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem@sdollars.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@swidestrs.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sexitprocs.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@ssyncio.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pparseutils.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pmath.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@punicode.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstrutils.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sntpath.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ppathnorm.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pdynlib.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwinlean.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ptimes.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@soscommon.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sospaths2.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@swin_setenv.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@senvvars.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@scmdline.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pos.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui@sbindings.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@phashes.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ptables.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstreams.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@plexbase.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pparsejson.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pjson.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwebuiEnhanced@sshared@swebui_shell.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@plib@slevel0@sconfig_source_parser.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwebuiEnhanced@senhance.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@mapp.nim.c.o"
+  ],
+  "linkcmd": "C:\\msys64\\mingw64\\bin\\g++.exe   -o f:\\CodingMain\\proto-ViableNimUIs\\examples\\webuiEnhanced\\customTitlebar\\app.exe f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui@swebui@ssrc@scivetweb@scivetweb.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui@swebui@ssrc@swebui.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui@swebui@ssrc@swebview@swin32_wv2.cpp.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem@sexceptions.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sdigitsutils.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sassertions.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem@sdollars.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@swidestrs.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sexitprocs.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@ssyncio.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@psystem.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pparseutils.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pmath.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@punicode.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstrutils.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sntpath.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ppathnorm.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pdynlib.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwinlean.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ptimes.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@soscommon.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@sospaths2.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@sprivate@swin_setenv.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@senvvars.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstd@scmdline.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pos.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui@sbindings.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@phashes.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@ptables.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pstreams.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@plexbase.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pparsejson.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pjson.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@nwebui-2.5.0.2-0eb2646495c3c942e0ea7aefac42b63c0d8f1741@swebui.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwebuiEnhanced@sshared@swebui_shell.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@plib@slevel0@sconfig_source_parser.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@pwebuiEnhanced@senhance.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\webui_custom\\@mapp.nim.c.o  -lole32 -lws2_32 -luser32 -lAdvapi32 -lole32 -luuid   -Wl,-Bstatic -lpthread",
+  "extraCmds": [],
+  "configFiles": [
+    "K:\\Progz\\nim-2.2.6\\config\\nim.cfg",
+    "K:\\Progz\\nim-2.2.6\\config\\config.nims",
+    "C:\\Users\\n1ght\\AppData\\Roaming\\nim\\nim.cfg",
+    "f:\\CodingMain\\config.nims",
+    "f:\\CodingMain\\proto-ViableNimUIs\\config.nims"
+  ],
+  "stdinInput": false,
+  "projectIsCmd": false,
+  "cmdInput": "",
+  "currentDir": "F:\\CodingMain",
+  "cmdline": "",
+  "depfiles": [],
+  "nimexe": ""
+}

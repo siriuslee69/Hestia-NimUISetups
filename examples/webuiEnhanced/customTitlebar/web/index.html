@@ -1,0 +1,163 @@
+﻿<!doctype html>
+<html lang="en" translate="no" class="notranslate">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Language" content="en" />
+  <meta name="google" content="notranslate" />
+  <title>Hestia-NimUISetups - WebUI (Custom Titlebar)</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="/webui.js"></script>
+  <script src="app.js" defer></script>
+</head>
+<body translate="no" class="notranslate">
+  <div class="shell">
+    <header id="custom-titlebar" class="topbar custom">
+      <div class="top-left">
+        <strong>Hestia-NimUISetups - WebUI (Custom Titlebar)</strong>
+        <small>Custom in-page titlebar variant</small>
+      </div>
+      <div class="window-buttons">
+        <button id="win-min" type="button" class="win-btn" aria-label="Minimize">_</button>
+        <button id="win-max-btn" type="button" class="win-btn" aria-label="Maximize">[]</button>
+        <button id="win-close" type="button" class="win-btn close" aria-label="Close">X</button>
+      </div>
+    </header>
+
+    <main class="login-wrap" id="login-wrap" autocomplete="off">
+      <h1>Login</h1>
+      <p>Use <code>test</code> / <code>test</code>.</p>
+      <input
+        tabindex="-1"
+        aria-hidden="true"
+        type="text"
+        name="vnim_fake_user"
+        autocomplete="username"
+        style="position:absolute;left:-9999px;opacity:0;"
+      />
+      <input
+        tabindex="-1"
+        aria-hidden="true"
+        type="password"
+        name="vnim_fake_pass"
+        autocomplete="current-password"
+        style="position:absolute;left:-9999px;opacity:0;"
+      />
+      <label for="name">Name</label>
+      <input
+        id="name"
+        name="vnim_login_name"
+        autocomplete="off"
+        readonly
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
+        data-lpignore="true"
+        data-1p-ignore="true"
+      />
+      <label for="password">Password</label>
+      <input
+        id="password"
+        name="vnim_login_secret"
+        type="password"
+        autocomplete="new-password"
+        readonly
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
+        data-lpignore="true"
+        data-1p-ignore="true"
+      />
+      <button id="login-btn" type="button">Sign in</button>
+      <div id="login-error" class="error"></div>
+    </main>
+
+    <div class="app-grid" id="app-grid" style="display:none;">
+      <aside class="sidebar">
+        <a class="nav-link" href="#overview" data-page="overview">Overview</a>
+        <a class="nav-link" href="#workspace" data-page="workspace">Workspace</a>
+        <a class="nav-link" href="#metrics" data-page="metrics">Metrics</a>
+        <a class="nav-link" href="#docs" data-page="docs">Docs / Notes</a>
+        <button id="logout-btn">Logout</button>
+      </aside>
+
+      <section class="main-panel">
+        <header class="main-header">
+          <div>
+            <h2 class="page-h" id="page-title">Overview</h2>
+            <div class="tagline" id="page-tagline">Custom-titlebar dashboard with Atlas-like grid.</div>
+          </div>
+          <div>
+            <strong>Active user:</strong> <span id="active-user">test</span>
+          </div>
+        </header>
+
+        <div class="content">
+          <div class="page active" id="page-overview">
+            <div class="card span-3"><h3>Shards</h3><strong>32</strong></div>
+            <div class="card span-3"><h3>Replicas</h3><strong>64</strong></div>
+            <div class="card span-3"><h3>Incidents</h3><strong>1</strong></div>
+            <div class="card span-3"><h3>SLA</h3><strong>99.4%</strong></div>
+
+            <div class="card span-8">
+              <h3>Flow Map</h3>
+              <p>Big center area placeholder for graph/canvas.</p>
+            </div>
+            <div class="card span-4">
+              <h3>Quick Ops</h3>
+              <div class="data-grid">
+                <div class="data-row">Drain</div>
+                <div class="data-row">Shift</div>
+                <div class="data-row">Repair</div>
+              </div>
+            </div>
+
+            <div class="card span-12">
+              <h3>Notifications</h3>
+              <div class="data-grid">
+                <div class="data-row">11:01 - maintenance window set</div>
+                <div class="data-row">10:54 - routing recalculated</div>
+                <div class="data-row">10:43 - cluster policy updated</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="page" id="page-workspace">
+            <div class="card span-9"><h3>Workspace Board</h3><p>Main board area.</p></div>
+            <div class="card span-3"><h3>Properties</h3><p>Selected object properties.</p></div>
+            <div class="card span-6"><h3>Left Queue</h3><div class="data-grid"><div class="data-row">L-100</div><div class="data-row">L-101</div><div class="data-row">L-102</div></div></div>
+            <div class="card span-6"><h3>Right Queue</h3><div class="data-grid"><div class="data-row">R-201</div><div class="data-row">R-202</div><div class="data-row">R-203</div></div></div>
+          </div>
+
+          <div class="page" id="page-metrics">
+            <div class="card span-8"><h3>Performance Matrix</h3><p>Large metric matrix area.</p></div>
+            <div class="card span-4"><h3>Error Budget</h3><div class="data-grid"><div class="data-row">Used: 37%</div><div class="data-row">Burn: 4/h</div><div class="data-row">Remaining: 63%</div></div></div>
+            <div class="card span-12">
+              <h3>Controls (Slider)</h3>
+              <div class="slider-line">
+                <input id="app-slider" type="range" min="0" max="100" value="42" />
+                <output id="app-slider-out">42</output>
+              </div>
+            </div>
+          </div>
+
+          <div class="page" id="page-docs">
+            <div class="card span-12">
+              <h3>How This Was Written</h3>
+              <pre>
+- Files are external and local to this UI variant:
+  - examples/webuiEnhanced/customTitlebar/web/index.html
+  - examples/webuiEnhanced/customTitlebar/web/app.js
+  - examples/webuiEnhanced/customTitlebar/web/style.css
+- Navigation is hash-link based
+- Login check: test / test
+              </pre>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
+

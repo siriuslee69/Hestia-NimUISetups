@@ -53,4 +53,4 @@ nimble runOwlCustom
 nimble runIllwill
 ```
 
-Note: `webuiUI` uses the `webui` library and does not run a user-authored self-hosted HTTP server.
+Note: `webuiEnhanced` uses the `webui` library and does not run a user-authored self-hosted HTTP server.

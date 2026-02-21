@@ -1,0 +1,245 @@
+{
+  "cacheVersion": "D20240927T193831",
+  "outputFile": "f:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar\\app.exe",
+  "outputLastModificationTime": "",
+  "compile": [
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem@sexceptions.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem@sexceptions.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem@sexceptions.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sdigitsutils.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sdigitsutils.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sdigitsutils.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sassertions.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sassertions.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sassertions.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sdragonbox.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sdragonbox.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sdragonbox.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sformatfloat.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sformatfloat.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sformatfloat.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem@sdollars.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem@sdollars.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem@sdollars.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@swidestrs.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@swidestrs.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@swidestrs.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sexitprocs.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sexitprocs.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sexitprocs.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@ssyncio.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@ssyncio.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@ssyncio.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pparseutils.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pparseutils.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pparseutils.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pmath.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pmath.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pmath.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@punicode.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@punicode.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@punicode.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstrutils.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstrutils.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstrutils.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sntpath.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sntpath.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sntpath.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ppathnorm.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ppathnorm.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ppathnorm.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pdynlib.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pdynlib.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pdynlib.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pwinlean.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pwinlean.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pwinlean.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@poptions.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@poptions.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@poptions.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ptimes.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ptimes.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ptimes.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@soscommon.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@soscommon.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@soscommon.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sospaths2.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sospaths2.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sospaths2.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@swin_setenv.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@swin_setenv.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@swin_setenv.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@scmdline.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@scmdline.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@scmdline.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pos.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pos.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pos.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@phashes.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@phashes.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@phashes.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psets.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psets.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psets.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ptables.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ptables.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ptables.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@sbindings@sgtk.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@sbindings@sgtk.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@sbindings@sgtk.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgetdef.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgetdef.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgetdef.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgetutils.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgetutils.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgetutils.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pasyncfutures.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pasyncfutures.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pasyncfutures.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgets.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgets.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgets.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@smainloop.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@smainloop.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@smainloop.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plib@slevel0@sauth.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plib@slevel0@sauth.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plib@slevel0@sauth.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@powlkettleEnhanced@sshared@sui_helpers.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@powlkettleEnhanced@sshared@sui_helpers.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@powlkettleEnhanced@sshared@sui_helpers.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstreams.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstreams.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstreams.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plexbase.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plexbase.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plexbase.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pparsejson.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pparsejson.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pparsejson.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pjson.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pjson.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pjson.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plib@slevel0@sconfig_source_parser.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plib@slevel0@sconfig_source_parser.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plib@slevel0@sconfig_source_parser.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@powlkettleEnhanced@senhance.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@powlkettleEnhanced@senhance.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@powlkettleEnhanced@senhance.nim.c"
+    ],
+    [
+      "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@mapp.nim.c",
+      "C:\\msys64\\mingw64\\bin\\gcc.exe -c  -w -fmax-errors=3 -mno-ms-bitfields -fno-strict-aliasing -DWIN32_LEAN_AND_MEAN   -IK:\\Progz\\nim-2.2.6\\lib -If:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar -o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@mapp.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@mapp.nim.c"
+    ]
+  ],
+  "link": [
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem@sexceptions.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sdigitsutils.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sassertions.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sdragonbox.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sformatfloat.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem@sdollars.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@swidestrs.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sexitprocs.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@ssyncio.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pparseutils.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pmath.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@punicode.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstrutils.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sntpath.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ppathnorm.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pdynlib.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pwinlean.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@poptions.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ptimes.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@soscommon.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sospaths2.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@swin_setenv.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@scmdline.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pos.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@phashes.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psets.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ptables.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@sbindings@sgtk.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgetdef.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgetutils.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pasyncfutures.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgets.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@smainloop.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plib@slevel0@sauth.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@powlkettleEnhanced@sshared@sui_helpers.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstreams.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plexbase.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pparsejson.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pjson.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plib@slevel0@sconfig_source_parser.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@powlkettleEnhanced@senhance.nim.c.o",
+    "f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@mapp.nim.c.o"
+  ],
+  "linkcmd": "C:\\msys64\\mingw64\\bin\\gcc.exe   -o f:\\CodingMain\\proto-ViableNimUIs\\examples\\owlkettleEnhanced\\customTitlebar\\app.exe f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem@sexceptions.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sdigitsutils.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sassertions.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sdragonbox.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sformatfloat.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem@sdollars.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@swidestrs.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sexitprocs.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@ssyncio.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psystem.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pparseutils.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pmath.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@punicode.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstrutils.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sntpath.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ppathnorm.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pdynlib.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pwinlean.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@poptions.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ptimes.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@soscommon.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@sospaths2.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@sprivate@swin_setenv.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstd@scmdline.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pos.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@phashes.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@psets.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@ptables.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@sbindings@sgtk.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgetdef.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgetutils.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pasyncfutures.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@swidgets.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle@smainloop.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@nowlkettle-3.0.0-2319432a190a50ade29f85b1451099b08e71ab38@sowlkettle.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plib@slevel0@sauth.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@powlkettleEnhanced@sshared@sui_helpers.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pstreams.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plexbase.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pparsejson.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@pjson.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@plib@slevel0@sconfig_source_parser.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@powlkettleEnhanced@senhance.nim.c.o f:\\CodingMain\\proto-ViableNimUIs\\.nimcache\\owl_custom\\@mapp.nim.c.o  -LC:/msys64/mingw64/bin/../lib -lgtk-4 -lpangocairo-1.0 -lpangowin32-1.0 -lpango-1.0 -lgdk_pixbuf-2.0 -lcairo-gobject -lcairo -lharfbuzz -lvulkan-1 -lgraphene-1.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lintl -LC:/msys64/mingw64/bin/../lib -lcairo   -Wl,-Bstatic -lpthread",
+  "extraCmds": [],
+  "configFiles": [
+    "K:\\Progz\\nim-2.2.6\\config\\nim.cfg",
+    "K:\\Progz\\nim-2.2.6\\config\\config.nims",
+    "C:\\Users\\n1ght\\AppData\\Roaming\\nim\\nim.cfg",
+    "f:\\CodingMain\\config.nims",
+    "f:\\CodingMain\\proto-ViableNimUIs\\config.nims"
+  ],
+  "stdinInput": false,
+  "projectIsCmd": false,
+  "cmdInput": "",
+  "currentDir": "F:\\CodingMain",
+  "cmdline": "",
+  "depfiles": [],
+  "nimexe": ""
+}
