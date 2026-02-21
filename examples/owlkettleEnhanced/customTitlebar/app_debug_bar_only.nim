@@ -80,15 +80,29 @@ when defined(windows):
     HTBOTTOMLEFT = 16
     HTBOTTOMRIGHT = 17
     GWLP_WNDPROC = -4
+    GWL_STYLE = -16
+    WS_THICKFRAME = 0x00040000
+    WS_MAXIMIZEBOX = 0x00010000
+    WS_MINIMIZEBOX = 0x00020000
+    WS_SYSMENU = 0x00080000
     SW_SHOWMAXIMIZED = 3'u32
     SW_RESTORE = 9'i32
+    SWP_NOSIZE = 0x0001'u32
+    SWP_NOMOVE = 0x0002'u32
+    SWP_NOZORDER = 0x0004'u32
+    SWP_NOACTIVATE = 0x0010'u32
+    SWP_FRAMECHANGED = 0x0020'u32
 
   proc gdk_win32_surface_get_impl_hwnd(surface: GdkSurface): Hwnd {.cdecl, importc.}
   proc gdk_win32_surface_get_handle(surface: GdkSurface): Hwnd {.cdecl, importc.}
   proc ScreenToClient(wnd: Hwnd; p: ptr WinPoint): int32 {.stdcall, dynlib: "user32", importc.}
   proc GetClientRect(wnd: Hwnd; rect: ptr WinRect): int32 {.stdcall, dynlib: "user32", importc.}
   proc GetWindowPlacement(wnd: Hwnd; placement: ptr WinWindowPlacement): int32 {.stdcall, dynlib: "user32", importc.}
+  proc GetWindowLongPtrW(wnd: Hwnd; index: cint): int {.stdcall, dynlib: "user32", importc.}
   proc ShowWindow(wnd: Hwnd; showCmd: cint): int32 {.stdcall, dynlib: "user32", importc.}
+  proc SetWindowPos(wnd, insertAfter: Hwnd;
+                    x, y, cx, cy: cint;
+                    flags: uint32): int32 {.stdcall, dynlib: "user32", importc.}
   proc DefWindowProcW(wnd: Hwnd; msg: uint32; wParam: uint; lParam: int): int {.stdcall, dynlib: "user32", importc.}
   proc SetWindowLongPtrW(wnd: Hwnd; index: cint; newLong: int): int {.stdcall, dynlib: "user32", importc.}
   proc CallWindowProcW(prev: pointer; wnd: Hwnd; msg: uint32; wParam: uint; lParam: int): int {.stdcall, dynlib: "user32", importc.}
@@ -134,10 +148,30 @@ when defined(windows):
       discard ShowWindow(hwnd, SW_SHOWMAXIMIZED.cint)
     result = true
 
+  proc ensureNativeSnapStyles(hwnd: Hwnd): bool =
+    ## Ensures Win32 style flags required for native snap/tiling affordances.
+    var
+      style: int
+      desired: int
+      changed: bool = false
+    if hwnd == nil:
+      return false
+    style = GetWindowLongPtrW(hwnd, GWL_STYLE)
+    desired = style or WS_THICKFRAME or WS_MAXIMIZEBOX or WS_MINIMIZEBOX or WS_SYSMENU
+    if desired != style:
+      discard SetWindowLongPtrW(hwnd, GWL_STYLE, desired)
+      discard SetWindowPos(hwnd, nil, 0, 0, 0, 0,
+        SWP_NOMOVE or SWP_NOSIZE or SWP_NOZORDER or SWP_NOACTIVATE or SWP_FRAMECHANGED)
+      changed = true
+    if changed:
+      barDebugLog("snapStyles applied")
+    result = true
+
   proc installNativeCaptionHook(hwnd: Hwnd; titleHeightPx: cint): bool =
     ## Installs or updates Win32 WNDPROC hook that maps top strip hit-tests to HTCAPTION.
     if hwnd == nil:
       return false
+    discard ensureNativeSnapStyles(hwnd)
     let key = hwndKey(hwnd)
     if key in nativeCaptionHooks:
       nativeCaptionHooks[key].titleHeight = max(1, titleHeightPx)
