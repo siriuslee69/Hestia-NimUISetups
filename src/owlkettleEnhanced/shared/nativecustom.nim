@@ -62,12 +62,17 @@ when defined(windows):
   const
     WM_NCCALCSIZE* = 0x0083'u32
     WM_NCHITTEST* = 0x0084'u32
+    WM_NCMOUSEMOVE* = 0x00A0'u32
+    WM_NCLBUTTONDOWN* = 0x00A1'u32
+    WM_NCLBUTTONUP* = 0x00A2'u32
+    WM_NCLBUTTONDBLCLK* = 0x00A3'u32
+    WM_NCUAHDRAWCAPTION* = 0x00AE'u32
+    WM_NCUAHDRAWFRAME* = 0x00AF'u32
+    WM_SYSCOMMAND* = 0x0112'u32
     WM_NCPAINT* = 0x0085'u32
     WM_NCACTIVATE* = 0x0086'u32
     WM_NCDESTROY* = 0x0082'u32
-    DWMWA_NCRENDERING_POLICY* = 2'u32
     DWMWA_CAPTION_BUTTON_BOUNDS* = 5'u32
-    DWMNCRP_DISABLED = 1'i32
     HTNOWHERE* = 0
     HTCLIENT* = 1
     HTCAPTION* = 2
@@ -82,6 +87,10 @@ when defined(windows):
     HTBOTTOM* = 15
     HTBOTTOMLEFT* = 16
     HTBOTTOMRIGHT* = 17
+    SC_MINIMIZE = 0xF020'u
+    SC_MAXIMIZE = 0xF030'u
+    SC_CLOSE = 0xF060'u
+    SC_RESTORE = 0xF120'u
 
     GWLP_WNDPROC = -4
     GWL_STYLE* = -16
@@ -102,6 +111,7 @@ when defined(windows):
   proc GetClientRect(wnd: Hwnd; rect: ptr WinRect): int32 {.stdcall, dynlib: "user32", importc.}
   proc ScreenToClient(wnd: Hwnd; p: ptr WinPoint): int32 {.stdcall, dynlib: "user32", importc.}
   proc DefWindowProcW(wnd: Hwnd; msg: uint32; wParam: uint; lParam: int): int {.stdcall, dynlib: "user32", importc.}
+  proc SendMessageW(wnd: Hwnd; msg: uint32; wParam: uint; lParam: int): int {.stdcall, dynlib: "user32", importc.}
   proc SetWindowLongPtrW(wnd: Hwnd; index: cint; newLong: int): int {.stdcall, dynlib: "user32", importc.}
   proc CallWindowProcW(prev: pointer; wnd: Hwnd; msg: uint32; wParam: uint; lParam: int): int {.stdcall, dynlib: "user32", importc.}
   proc SetWindowPos(wnd, insertAfter: Hwnd;
@@ -109,7 +119,6 @@ when defined(windows):
                     flags: uint32): int32 {.stdcall, dynlib: "user32", importc.}
   proc IsZoomed(wnd: Hwnd): int32 {.stdcall, dynlib: "user32", importc.}
   proc DwmGetWindowAttribute(hwnd: Hwnd; dwAttribute: uint32; pvAttribute: pointer; cbAttribute: uint32): int32 {.stdcall, dynlib: "dwmapi", importc.}
-  proc DwmSetWindowAttribute(hwnd: Hwnd; dwAttribute: uint32; pvAttribute: pointer; cbAttribute: uint32): int32 {.stdcall, dynlib: "dwmapi", importc.}
 
   var nativeCustomHooks: Table[uint, NativeCustomHookState]
 
@@ -151,6 +160,10 @@ when defined(windows):
   proc rectValid(r: WinRect): bool =
     ## Returns true when rectangle has positive area.
     result = r.right > r.left and r.bottom > r.top
+
+  proc ncHitFromWparam(wParam: uint): cint =
+    ## Returns non-client hit code from wParam low word.
+    result = cast[cint](wParam and 0xFFFF'u)
 
   proc getDwmCaptionButtons(hwnd: Hwnd; titleHeight, minButtonWidth: cint;
                            hasMin, hasMax, isMaximized: bool): tuple[ok: bool, buttons: NativeCaptionButtons] =
@@ -321,17 +334,11 @@ when defined(windows):
     let key = hwndKey(hwnd)
     if key in nativeCustomHooks:
       nativeCustomHooks[key].cfg = cfg
-      if cfg.removeNcArea:
-        var ncPolicy = DWMNCRP_DISABLED
-        discard DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, ncPolicy.addr, sizeof(ncPolicy).uint32)
       return true
     let oldLong = SetWindowLongPtrW(hwnd, GWLP_WNDPROC, cast[int](cast[pointer](nativeCustomWndProc)))
     if oldLong == 0:
       return false
     nativeCustomHooks[key] = NativeCustomHookState(oldProc: cast[pointer](oldLong), cfg: cfg)
-    if cfg.removeNcArea:
-      var ncPolicy = DWMNCRP_DISABLED
-      discard DwmSetWindowAttribute(hwnd, DWMWA_NCRENDERING_POLICY, ncPolicy.addr, sizeof(ncPolicy).uint32)
     result = true
 
   proc removeNativeCustomHook*(hwnd: Hwnd): bool =
@@ -363,6 +370,10 @@ when defined(windows):
       if st.cfg.removeNcArea:
         return 0
       return CallWindowProcW(st.oldProc, hwnd, msg, wParam, lParam)
+    of WM_NCUAHDRAWCAPTION, WM_NCUAHDRAWFRAME:
+      if st.cfg.removeNcArea:
+        return 0
+      return CallWindowProcW(st.oldProc, hwnd, msg, wParam, lParam)
     of WM_NCHITTEST:
       var
         p: WinPoint
@@ -371,6 +382,46 @@ when defined(windows):
       p.y = signedHighWord(lParam)
       if ScreenToClient(hwnd, p.addr) != 0'i32 and GetClientRect(hwnd, cr.addr) != 0'i32:
         return delegatedNonClientHitTest(hwnd, p, cr, st.cfg).int
+      return CallWindowProcW(st.oldProc, hwnd, msg, wParam, lParam)
+    of WM_NCMOUSEMOVE:
+      if st.cfg.overlayEnabled:
+        return DefWindowProcW(hwnd, msg, wParam, lParam)
+      return CallWindowProcW(st.oldProc, hwnd, msg, wParam, lParam)
+    of WM_NCLBUTTONDOWN:
+      if st.cfg.overlayEnabled:
+        let hit = ncHitFromWparam(wParam)
+        case hit
+        of HTMINBUTTON:
+          discard SendMessageW(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0)
+          return 0
+        of HTMAXBUTTON:
+          if IsZoomed(hwnd) != 0'i32:
+            discard SendMessageW(hwnd, WM_SYSCOMMAND, SC_RESTORE, 0)
+          else:
+            discard SendMessageW(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0)
+          return 0
+        of HTCLOSE:
+          discard SendMessageW(hwnd, WM_SYSCOMMAND, SC_CLOSE, 0)
+          return 0
+        of HTCAPTION:
+          return DefWindowProcW(hwnd, msg, wParam, lParam)
+        else:
+          return DefWindowProcW(hwnd, msg, wParam, lParam)
+      return CallWindowProcW(st.oldProc, hwnd, msg, wParam, lParam)
+    of WM_NCLBUTTONDBLCLK:
+      if st.cfg.overlayEnabled:
+        let hit = ncHitFromWparam(wParam)
+        if hit == HTCAPTION or hit == HTMAXBUTTON:
+          if IsZoomed(hwnd) != 0'i32:
+            discard SendMessageW(hwnd, WM_SYSCOMMAND, SC_RESTORE, 0)
+          else:
+            discard SendMessageW(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0)
+          return 0
+        return DefWindowProcW(hwnd, msg, wParam, lParam)
+      return CallWindowProcW(st.oldProc, hwnd, msg, wParam, lParam)
+    of WM_NCLBUTTONUP:
+      if st.cfg.overlayEnabled:
+        return DefWindowProcW(hwnd, msg, wParam, lParam)
       return CallWindowProcW(st.oldProc, hwnd, msg, wParam, lParam)
     of WM_NCDESTROY:
       let oldProc = st.oldProc

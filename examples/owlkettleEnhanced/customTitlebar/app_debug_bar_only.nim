@@ -16,6 +16,7 @@ proc gtk_window_set_decorated(window: GtkWidget; setting: cbool) {.cdecl, import
 const
   AppName = ""
   DebugBarHeight = 40
+  DebugButtonWidth = 46
 
 proc installNativeCustomForWindow(window: GtkWidget) =
   ## Installs Electron-like native custom-titlebar behavior on Windows.
@@ -24,14 +25,16 @@ proc installNativeCustomForWindow(window: GtkWidget) =
     cfg.overlayEnabled = true
     cfg.removeNcArea = true
     cfg.titleHeight = DebugBarHeight
-    cfg.resizeBorder = 8
-    cfg.buttonWidth = 46
+    cfg.resizeBorder = 5
+    cfg.buttonWidth = DebugButtonWidth
     cfg.buttonSpacing = 0
-    cfg.buttonRightPadding = 8
-    cfg.leftCaptionInset = 8
+    cfg.buttonRightPadding = 0
+    cfg.leftCaptionInset = 0
+    cfg.preferDwmCaptionBounds = true
     cfg.canResize = true
     cfg.minimizable = true
     cfg.maximizable = true
+    cfg.includeSystemMenu = true
     discard installNativeCustomHookForGtkWindow(window, cfg)
   else:
     discard window
@@ -93,6 +96,25 @@ proc buildDebugTitlebar(): Widget =
       Label {.expand: true.}:
         text = "Minimal custom titlebar (nativecustom hook active)"
         xAlign = 0
+
+      Box {.expand: false.}:
+        orient = OrientX
+        spacing = 0
+
+        Label {.expand: false.}:
+          text = "_"
+          xAlign = 0.5
+          sizeRequest = (DebugButtonWidth, -1)
+
+        Label {.expand: false.}:
+          text = "[ ]"
+          xAlign = 0.5
+          sizeRequest = (DebugButtonWidth, -1)
+
+        Label {.expand: false.}:
+          text = "X"
+          xAlign = 0.5
+          sizeRequest = (DebugButtonWidth, -1)
 
 proc buildDebugContent(): Widget =
   ## Minimal body content.
