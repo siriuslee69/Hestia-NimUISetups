@@ -88,7 +88,7 @@ proc buildDebugTitlebar(): Widget =
     Box:
       orient = OrientX
       sizeRequest = (-1, DebugBarHeight)
-      margin = Margin(top: 0, bottom: 0, left: 8, right: 8)
+      margin = Margin(top: 0, bottom: 0, left: 8, right: 0)
 
       Label {.expand: true.}:
         text = "Minimal custom titlebar (nativecustom hook active)"
