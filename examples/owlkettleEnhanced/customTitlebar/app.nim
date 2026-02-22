@@ -4,12 +4,12 @@
 # | Atlas-like dashboard copy with custom HeaderBar and 1:1 page/card composition |
 # =================================================================================
 
-import std/os
+import std/[os, strutils]
 import owlkettle
+import owlkettle/bindings/gtk
 import lib/level0/auth
 import owlkettleEnhanced/shared/ui_helpers
 import owlkettleEnhanced/shared/window_titlebar
-import owlkettleEnhanced
 
 const
   AppName = "Hestia-NimUISetups - Owlkettle (Custom Titlebar)"
@@ -18,11 +18,122 @@ const
   CardLargeMinHeight = 180
   LoginCardWidth = 460
   UseWindowHandle = defined(windows)
+  WindowsPrefersNativeFrame = defined(windows)
+  UseThemeStylesheet = true
+  UseExperimentalCustomTitlebarOnWindows = false
+  NativeTitlebarColorDefault = ""
+  NativeTitlebarTextColorDefault = ""
 
 var
   WindowTitleText = AppName
   UseCustomTitlebar = true
   EnableStretchLayout = false
+  NativeTitlebarColorHex = ""
+  NativeTitlebarTextColorHex = ""
+
+when defined(windows):
+  type
+    GdkSurface = distinct pointer
+    Hwnd = pointer
+
+  const
+    DWMWA_CAPTION_COLOR = 35'u32
+    DWMWA_TEXT_COLOR = 36'u32
+
+  proc isNil(obj: GdkSurface): bool {.borrow.}
+  proc gtk_native_get_surface(native: GtkWidget): GdkSurface {.cdecl, importc.}
+  proc gtk_widget_get_root(widget: GtkWidget): GtkWidget {.cdecl, importc.}
+  proc gdk_win32_surface_get_impl_hwnd(surface: GdkSurface): Hwnd {.cdecl, importc.}
+  proc gdk_win32_surface_get_handle(surface: GdkSurface): Hwnd {.cdecl, importc.}
+  proc DwmSetWindowAttribute(hwnd: Hwnd;
+                             attr: uint32;
+                             val: pointer;
+                             cb: uint32): int32 {.stdcall, dynlib: "dwmapi", importc.}
+
+  proc parseRgbHexColor(hex: string; r, g, b: var uint32): bool =
+    ## hex: color string in RRGGBB, #RRGGBB or 0xRRGGBB form.
+    var t0 = hex.strip()
+    if t0.len == 0:
+      return false
+    if t0.startsWith("#"):
+      t0 = t0[1 .. ^1]
+    elif t0.len > 2 and (t0.startsWith("0x") or t0.startsWith("0X")):
+      t0 = t0[2 .. ^1]
+    if t0.len != 6:
+      return false
+    try:
+      let v = parseHexInt(t0)
+      r = uint32((v shr 16) and 0xFF)
+      g = uint32((v shr 8) and 0xFF)
+      b = uint32(v and 0xFF)
+      result = true
+    except ValueError:
+      result = false
+
+  proc toColorRef(r, g, b: uint32): uint32 =
+    ## Converts RGB to Win32 COLORREF (0x00bbggrr).
+    result = (b shl 16) or (g shl 8) or r
+
+  proc autoTextColorRef(r, g, b: uint32): uint32 =
+    ## Chooses black/white text for best contrast against caption color.
+    let lum = (299'u32 * r + 587'u32 * g + 114'u32 * b) div 1000'u32
+    if lum < 140'u32:
+      result = 0x00FFFFFF'u32
+    else:
+      result = 0x00000000'u32
+
+  proc applyWindowsNativeCaptionThemeFromWidget(widget: GtkWidget): bool =
+    ## Applies optional DWM caption/text colors to the top-level native window.
+    var
+      root: GtkWidget
+      surface: GdkSurface
+      hwnd: Hwnd
+      r: uint32
+      g: uint32
+      b: uint32
+      captionRef: uint32
+      textRef: uint32
+    if UseCustomTitlebar:
+      return false
+    if NativeTitlebarColorHex.strip().len == 0:
+      return false
+    root = gtk_widget_get_root(widget)
+    if root.isNil:
+      return false
+    surface = gtk_native_get_surface(root)
+    if surface.isNil:
+      return false
+    hwnd = gdk_win32_surface_get_impl_hwnd(surface)
+    if hwnd == nil:
+      hwnd = gdk_win32_surface_get_handle(surface)
+    if hwnd == nil:
+      return false
+    if not parseRgbHexColor(NativeTitlebarColorHex, r, g, b):
+      return false
+    captionRef = toColorRef(r, g, b)
+    discard DwmSetWindowAttribute(hwnd, DWMWA_CAPTION_COLOR, captionRef.addr, uint32(sizeof(captionRef)))
+    if parseRgbHexColor(NativeTitlebarTextColorHex, r, g, b):
+      textRef = toColorRef(r, g, b)
+    else:
+      textRef = autoTextColorRef(uint32((captionRef and 0xFF)), uint32((captionRef shr 8) and 0xFF), uint32((captionRef shr 16) and 0xFF))
+    discard DwmSetWindowAttribute(hwnd, DWMWA_TEXT_COLOR, textRef.addr, uint32(sizeof(textRef)))
+    result = true
+
+proc onNativeTitleThemeRealize(widget: GtkWidget; data: pointer) {.cdecl.} =
+  ## Applies native titlebar DWM colors when probe widget is realized/mapped.
+  discard data
+  when defined(windows):
+    discard applyWindowsNativeCaptionThemeFromWidget(widget)
+
+renderable NativeTitlebarThemeProbe of BaseWidget:
+  ## Zero-size probe used to apply DWM native titlebar colors on Windows.
+  hooks:
+    beforeBuild:
+      state.internalWidget = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0)
+      gtk_widget_set_size_request(state.internalWidget, 0, 0)
+      when defined(windows):
+        discard g_signal_connect(state.internalWidget, "realize", onNativeTitleThemeRealize, nil)
+        discard g_signal_connect(state.internalWidget, "map", onNativeTitleThemeRealize, nil)
 
 viewable OwlCustomApp:
   loginName: string = ""
@@ -62,6 +173,12 @@ proc buildTitlebar(): Widget =
         insert(wrapWindowHandle(titleWidget)) {.addTitle.}
       else:
         insert(titleWidget) {.addTitle.}
+
+proc resolveUseCustomTitlebar(): bool =
+  ## Returns whether app should use custom titlebar for this platform.
+  if WindowsPrefersNativeFrame:
+    return UseExperimentalCustomTitlebarOnWindows
+  result = true
 
 proc buildStatCard(t, v: string): Widget =
   ## t: card title.
@@ -257,7 +374,7 @@ proc renderMainHeader(s: OwlCustomAppState): Widget =
         columnSpacing = 12
         margin = 12
 
-        Box {.x: 0, y: 0, hExpand: true.}:
+        Box {.x: 0, y: 0, hExpand: EnableStretchLayout.}:
           orient = OrientY
           spacing = 4
 
@@ -306,9 +423,9 @@ proc renderMain(s: OwlCustomAppState): Widget =
       rowSpacing = 0
       margin = 14
 
-      insert(renderSidebar(s)) {.x: 0, y: 0, vExpand: true.}
+      insert(renderSidebar(s)) {.x: 0, y: 0, vExpand: EnableStretchLayout.}
 
-      Box {.x: 1, y: 0, hExpand: true, vExpand: true.}:
+      Box {.x: 1, y: 0, hExpand: EnableStretchLayout, vExpand: EnableStretchLayout.}:
         orient = OrientY
         spacing = 12
         insert(renderMainHeader(s)) {.expand: false, hAlign: AlignFill, vAlign: AlignStart.}
@@ -378,30 +495,31 @@ method view(s: OwlCustomAppState): Widget =
       defaultSize = (1360, 900)
       if UseCustomTitlebar:
         titlebar = buildTitlebar()
-      if s.loggedIn:
-        insert(renderMain(s))
-      else:
-        insert(renderLogin(s))
-
-proc resolveConfigPath(): string =
-  ## resolves local path to markdown config for this example variant.
-  result = joinPath(currentSourcePath().splitFile.dir, "config.md")
+      Box:
+        orient = OrientY
+        if WindowsPrefersNativeFrame and not UseCustomTitlebar:
+          NativeTitlebarThemeProbe {.expand: false.}
+        if s.loggedIn:
+          insert(renderMain(s))
+        else:
+          insert(renderLogin(s))
 
 proc resolveDebugStylesheetPath(): string =
   ## resolves local path to debug overlay stylesheet for hitbox inspection.
   result = joinPath(currentSourcePath().splitFile.dir, "debug_layout.css")
 
 when isMainModule:
-  let cfg = enhance(resolveConfigPath())
   let p = resolveStylesheetPath()
   let dp = resolveDebugStylesheetPath()
   var ss: seq[Stylesheet] = @[]
-  if cfg.useThemeStylesheet and p.len > 0:
+  if UseThemeStylesheet and p.len > 0:
     ss.add(loadStylesheet(p))
   if fileExists(dp):
     ss.add(loadStylesheet(dp))
-  EnableStretchLayout = not cfg.disableStretchingBoxes
+  EnableStretchLayout = false
   WindowTitleText = AppName
-  UseCustomTitlebar = not cfg.disableTitlebar
+  UseCustomTitlebar = resolveUseCustomTitlebar()
+  NativeTitlebarColorHex = NativeTitlebarColorDefault
+  NativeTitlebarTextColorHex = NativeTitlebarTextColorDefault
   brew(gui(OwlCustomApp()), stylesheets = ss)
 

@@ -230,7 +230,7 @@ proc renderMainHeader(s: OwlDefaultAppState): Widget =
         columnSpacing = 12
         margin = 12
 
-        Box {.x: 0, y: 0, hExpand: true.}:
+        Box {.x: 0, y: 0, hExpand: EnableStretchLayout.}:
           orient = OrientY
           spacing = 4
 
@@ -279,9 +279,9 @@ proc renderMain(s: OwlDefaultAppState): Widget =
       rowSpacing = 0
       margin = 14
 
-      insert(renderSidebar(s)) {.x: 0, y: 0, vExpand: true.}
+      insert(renderSidebar(s)) {.x: 0, y: 0, vExpand: EnableStretchLayout.}
 
-      Box {.x: 1, y: 0, hExpand: true, vExpand: true.}:
+      Box {.x: 1, y: 0, hExpand: EnableStretchLayout, vExpand: EnableStretchLayout.}:
         orient = OrientY
         spacing = 12
         insert(renderMainHeader(s)) {.expand: false, hAlign: AlignFill, vAlign: AlignStart.}

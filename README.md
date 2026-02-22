@@ -181,9 +181,30 @@ Rule: when a new recurring issue is found and fixed, add it here with the file p
 - Fix:
   - keep native-only `WM_NCHITTEST` + non-client dblclick handling as the current known-good baseline.
   - preserve edge hit-tests for resize and top-strip `HTCAPTION` hit-tests for drag.
+  - enforce snap-eligible Win32 window styles on frameless windows:
+    - clear `WS_POPUP`/`WS_CHILD` and `WS_EX_TOOLWINDOW`.
+    - set `WS_CAPTION`/`WS_THICKFRAME`/`WS_MAXIMIZEBOX`/`WS_MINIMIZEBOX`/`WS_SYSMENU` and `WS_EX_APPWINDOW`.
+    - apply `SetWindowPos(..., SWP_FRAMECHANGED)` after style updates.
+  - in native hook mode, consume left-button drag events in `WindowHandle` so GTK `gtk_window_handle` drag logic does not override Win32 move behavior.
+  - start move-loop via native system move (`WM_SYSCOMMAND` + `SC_MOVE|HTCAPTION`) for better snap integration.
+  - debug app additionally routes `WM_NCLBUTTONDOWN(HTCAPTION)` into the same native system-move path.
   - file: `examples/owlkettleEnhanced/customTitlebar/app_debug_bar_only.nim`.
+  - file: `src/owlkettleEnhanced/shared/window_titlebar.nim`.
   - status: maximize + drag-down currently behaves correctly.
   - TODO: implement native Windows snap affordances (top-edge snap/maximize + Win11 snap layouts preview).
+  - deep-dive + strategy doc: `docs/windows_custom_titlebar_snap_rethink.md`.
+
+11. Owlkettle Windows custom titlebar reliability/snap regressions
+- Symptom: custom-titlebar Windows path regresses with flicker, sticky snap menu, or inconsistent maximize behavior.
+- Cause: frameless + runtime style reconstruction is fragile under GTK + Win32 interaction.
+- Fix:
+  - default Windows behavior to native frame in custom example.
+  - keep full custom Windows titlebar as explicit experimental opt-in.
+  - config key: `windows_use_experimental_custom_titlebar` (default `false`).
+  - files:
+    - `src/owlkettleEnhanced/enhance.nim`
+    - `examples/owlkettleEnhanced/customTitlebar/app.nim`
+    - `examples/owlkettleEnhanced/customTitlebar/config.md`
 
 ## Upstream Backlog (GTK/Owlkettle/WebUI)
 

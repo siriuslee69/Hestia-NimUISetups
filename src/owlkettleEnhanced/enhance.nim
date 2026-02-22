@@ -11,12 +11,22 @@ type
     disableTitlebar*: bool
     useThemeStylesheet*: bool
     disableStretchingBoxes*: bool
+    windowsUseExperimentalCustomTitlebar*: bool
+    windowsSnapPreviewExperimental*: bool
+    windowsUseHybridTopBar*: bool
+    windowsNativeTitlebarColor*: string
+    windowsNativeTitlebarTextColor*: string
 
 proc defaultOwlkettleEnhanceConfig*(): OwlkettleEnhanceConfig =
   ## Returns framework defaults used when config file is missing or incomplete.
   result.disableTitlebar = false
   result.useThemeStylesheet = true
   result.disableStretchingBoxes = true
+  result.windowsUseExperimentalCustomTitlebar = false
+  result.windowsSnapPreviewExperimental = false
+  result.windowsUseHybridTopBar = true
+  result.windowsNativeTitlebarColor = ""
+  result.windowsNativeTitlebarTextColor = ""
 
 proc enhance*(pathOfConfig: string): OwlkettleEnhanceConfig =
   ## pathOfConfig: path to config.md (or config.json fallback) for owlkettle examples.
@@ -52,6 +62,57 @@ proc enhance*(pathOfConfig: string): OwlkettleEnhanceConfig =
       "disableStretchLayout"
     ]),
     cfg.disableStretchingBoxes
+  )
+
+  cfg.windowsUseExperimentalCustomTitlebar = asBoolOr(
+    pickNode(n, [
+      "windows_use_experimental_custom_titlebar",
+      "windowsUseExperimentalCustomTitlebar",
+      "windows experimental custom titlebar",
+      "experimental_custom_titlebar_windows",
+      "experimentalCustomTitlebarWindows"
+    ]),
+    cfg.windowsUseExperimentalCustomTitlebar
+  )
+
+  cfg.windowsSnapPreviewExperimental = asBoolOr(
+    pickNode(n, [
+      "windows_snap_preview_experimental",
+      "windowsSnapPreviewExperimental",
+      "windows snap preview experimental",
+      "windows_enable_snap_preview_experimental",
+      "windowsEnableSnapPreviewExperimental"
+    ]),
+    cfg.windowsSnapPreviewExperimental
+  )
+
+  cfg.windowsUseHybridTopBar = asBoolOr(
+    pickNode(n, [
+      "windows_use_hybrid_top_bar",
+      "windowsUseHybridTopBar",
+      "windows hybrid top bar",
+      "windows_native_overlay_topbar",
+      "windowsNativeOverlayTopbar"
+    ]),
+    cfg.windowsUseHybridTopBar
+  )
+
+  cfg.windowsNativeTitlebarColor = asStringOr(
+    pickNode(n, [
+      "windows_native_titlebar_color",
+      "windowsNativeTitlebarColor",
+      "windows titlebar color"
+    ]),
+    cfg.windowsNativeTitlebarColor
+  )
+
+  cfg.windowsNativeTitlebarTextColor = asStringOr(
+    pickNode(n, [
+      "windows_native_titlebar_text_color",
+      "windowsNativeTitlebarTextColor",
+      "windows titlebar text color"
+    ]),
+    cfg.windowsNativeTitlebarTextColor
   )
 
   result = cfg

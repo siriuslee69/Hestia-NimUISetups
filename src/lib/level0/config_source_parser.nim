@@ -182,3 +182,18 @@ proc asStringSeqOr*(n: JsonNode; d: seq[string]): seq[string] =
 
   if result.len == 0:
     result = d
+
+proc asStringOr*(n: JsonNode; d: string): string =
+  ## n: JSON node to read as string.
+  ## d: default value.
+  if n.isNil:
+    return d
+  case n.kind
+  of JString:
+    let t0 = n.getStr().strip()
+    if t0.len > 0:
+      result = t0
+    else:
+      result = d
+  else:
+    result = d

@@ -105,17 +105,38 @@ when defined(windows):
       rcNormalPosition: WinRect
 
   const
+    WM_NCCALCSIZE = 0x0083'u32
     WM_NCHITTEST = 0x0084'u32
     WM_NCDESTROY = 0x0082'u32
     WM_NCLBUTTONDOWN = 0x00A1'u32
+    WM_SYSCOMMAND = 0x0112'u32
     HTCLIENT = 1
     HTCAPTION = 2'u
+    SC_MOVE = 0xF010'u
     GWLP_WNDPROC = -4
+    GWL_STYLE = -16
+    GWL_EXSTYLE = -20
+    WS_POPUP = 0x80000000'i32
+    WS_CHILD = 0x40000000
+    WS_CAPTION = 0x00C00000
+    WS_THICKFRAME = 0x00040000
+    WS_MAXIMIZEBOX = 0x00010000
+    WS_MINIMIZEBOX = 0x00020000
+    WS_SYSMENU = 0x00080000
+    WS_EX_TOOLWINDOW = 0x00000080
+    WS_EX_APPWINDOW = 0x00040000
+    DWMWA_WINDOW_CORNER_PREFERENCE = 33'u32
+    DWMWA_BORDER_COLOR = 34'u32
+    DWMWA_COLOR_NONE = 0xFFFFFFFE'u32
+    DWMWCP_DONOTROUND = 1'u32
     NativeTitleButtonsReservePx = DefaultRightNoDragPx
     NativeTitleMinHeightPx = 52
     NativeTopBorderGuardPx = 16
+    SWP_NOSIZE = 0x0001'u32
+    SWP_NOMOVE = 0x0002'u32
     SWP_NOZORDER = 0x0004'u32
     SWP_NOACTIVATE = 0x0010'u32
+    SWP_FRAMECHANGED = 0x0020'u32
     MONITOR_DEFAULTTONEAREST = 0x00000002'u32
     SW_SHOWMAXIMIZED = 3'u32
     SW_RESTORE = 9'i32
@@ -128,6 +149,7 @@ when defined(windows):
   proc GetWindowRect(wnd: Hwnd; rect: ptr WinRect): int32 {.stdcall, dynlib: "user32", importc.}
   proc GetWindowPlacement(wnd: Hwnd; placement: ptr WinWindowPlacement): int32 {.stdcall, dynlib: "user32", importc.}
   proc DefWindowProcW(wnd: Hwnd; msg: uint32; wParam: uint; lParam: int): int {.stdcall, dynlib: "user32", importc.}
+  proc GetWindowLongPtrW(wnd: Hwnd; index: cint): int {.stdcall, dynlib: "user32", importc.}
   proc SetWindowLongPtrW(wnd: Hwnd; index: cint; newLong: int): int {.stdcall, dynlib: "user32", importc.}
   proc CallWindowProcW(prev: pointer; wnd: Hwnd; msg: uint32; wParam: uint; lParam: int): int {.stdcall, dynlib: "user32", importc.}
   proc ShowWindow(wnd: Hwnd; showCmd: cint): int32 {.stdcall, dynlib: "user32", importc.}
@@ -139,6 +161,10 @@ when defined(windows):
                     x, y, cx, cy: cint;
                     flags: uint32): int32 {.stdcall, dynlib: "user32", importc.}
   proc ReleaseCapture(): int32 {.stdcall, dynlib: "user32", importc.}
+  proc DwmSetWindowAttribute(hwnd: Hwnd;
+                             attr: uint32;
+                             val: pointer;
+                             cb: uint32): int32 {.stdcall, dynlib: "dwmapi", importc.}
 
   type
     NativeCaptionHookState = ref object
@@ -162,10 +188,42 @@ when defined(windows):
 
   proc nativeCaptionWndProc(hwnd: Hwnd; msg: uint32; wParam: uint; lParam: int): int {.stdcall.}
 
+  proc ensureNativeSnapStyles(hwnd: Hwnd): bool =
+    ## Ensures Win32 style flags needed for native snap/tiling affordances.
+    var
+      style: int
+      desired: int
+      exStyle: int
+      desiredEx: int
+      changed: bool = false
+    if hwnd == nil:
+      return false
+    style = GetWindowLongPtrW(hwnd, GWL_STYLE)
+    desired = (style and (not WS_POPUP) and (not WS_CHILD)) or
+      WS_CAPTION or WS_THICKFRAME or WS_MAXIMIZEBOX or WS_MINIMIZEBOX or WS_SYSMENU
+    if desired != style:
+      discard SetWindowLongPtrW(hwnd, GWL_STYLE, desired)
+      changed = true
+    exStyle = GetWindowLongPtrW(hwnd, GWL_EXSTYLE)
+    desiredEx = (exStyle and (not WS_EX_TOOLWINDOW)) or WS_EX_APPWINDOW
+    if desiredEx != exStyle:
+      discard SetWindowLongPtrW(hwnd, GWL_EXSTYLE, desiredEx)
+      changed = true
+    if changed:
+      discard SetWindowPos(hwnd, nil, 0, 0, 0, 0,
+        SWP_NOMOVE or SWP_NOSIZE or SWP_NOZORDER or SWP_NOACTIVATE or SWP_FRAMECHANGED)
+    # Keep thickframe semantics for snap while suppressing visible frame paint.
+    var noBorder: uint32 = DWMWA_COLOR_NONE
+    discard DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, noBorder.addr, uint32(sizeof(noBorder)))
+    var noRound: uint32 = DWMWCP_DONOTROUND
+    discard DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, noRound.addr, uint32(sizeof(noRound)))
+    result = true
+
   proc installNativeCaptionHook(hwnd: Hwnd; titleHeightPx, rightNoDragPx: cint): bool =
     ## Installs (or updates) a Win32 WNDPROC hook that returns HTCAPTION for top-strip hit tests.
     if hwnd == nil:
       return false
+    discard ensureNativeSnapStyles(hwnd)
     let key = hwndKey(hwnd)
     if key in nativeCaptionHooks:
       let st = nativeCaptionHooks[key]
@@ -192,6 +250,11 @@ when defined(windows):
 
     let st = nativeCaptionHooks[key]
     case msg
+    of WM_NCCALCSIZE:
+      # Remove non-client frame area while still exposing snap-capable hit tests.
+      if wParam != 0'u:
+        return 0
+      return CallWindowProcW(st.oldProc, hwnd, msg, wParam, lParam)
     of WM_NCHITTEST:
       var
         p: WinPoint
@@ -279,6 +342,15 @@ when defined(windows):
       lx: uint32 = cast[uint32](x) and 0xFFFF'u32
       ly: uint32 = cast[uint32](y) and 0xFFFF'u32
     result = int(lx or (ly shl 16))
+
+  proc beginNativeSystemMove(hwnd: Hwnd; x, y: cint): bool =
+    ## Starts native Win32 move-loop for snap/tiling affordances.
+    if hwnd == nil:
+      return false
+    let lp = makeMouseLParam(x, y)
+    discard ReleaseCapture()
+    discard SendMessageW(hwnd, WM_SYSCOMMAND, uint(SC_MOVE or HTCAPTION), lp)
+    result = true
 
   proc clampInt(v, lo, hi: cint): cint =
     ## Clamps v to inclusive [lo..hi].
@@ -524,8 +596,6 @@ proc beginCenteredRestoreDrag(cont: GtkEventController; ev: GdkEvent; st: Window
       hwnd: Hwnd = gdk_win32_surface_get_impl_hwnd(s0)
       cx: cint = 0
       cy: cint = 0
-      dragLp: int = 0
-      d0: GdkDevice
       maxRect: WinRect
       wa: WinRect
       maxW: cint = 0
@@ -535,8 +605,6 @@ proc beginCenteredRestoreDrag(cont: GtkEventController; ev: GdkEvent; st: Window
       tx: cint
       ty: cint
       isMaxNative: bool = false
-      lx: cint
-      ly: cint
     if hwnd == nil:
       hwnd = gdk_win32_surface_get_handle(s0)
       if hwnd == nil:
@@ -550,7 +618,6 @@ proc beginCenteredRestoreDrag(cont: GtkEventController; ev: GdkEvent; st: Window
       maxW = max(1, gdk_surface_get_width(s0))
       maxH = max(1, gtk_widget_get_allocated_height(w1))
     isMaxNative = windowIsMaximized(hwnd)
-    dragLp = makeMouseLParam(cx, cy)
     if isMaxNative:
       chooseRestoreSize(st, hwnd, w1, maxW, maxH, restoreW, restoreH)
       anchorLeft = maxRect.left
@@ -571,18 +638,10 @@ proc beginCenteredRestoreDrag(cont: GtkEventController; ev: GdkEvent; st: Window
         $restoreW & "," & $restoreH & ") final=(" & $tx & "," & $ty & ")")
       discard ShowWindow(hwnd, SW_RESTORE.cint)
       discard SetWindowPos(hwnd, nil, tx, ty, restoreW, restoreH, SWP_NOZORDER or SWP_NOACTIVATE)
-      d0 = gdk_event_get_device(ev)
-      if not d0.isNil:
-        lx = clampInt(cx - tx, 0, max(restoreW - 1, 0))
-        ly = clampInt(cy - ty, 0, max(restoreH - 1, 0))
-        gdk_toplevel_begin_move(cast[GdkToplevel](s0), d0, cint(st.pressButton),
-          cdouble(lx), cdouble(ly), gdk_event_get_time(ev))
-      else:
-        discard ReleaseCapture()
-        discard SendMessageW(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, dragLp)
+      # Use pure native caption drag after restore so Win11 snap/tiling heuristics stay active.
+      discard beginNativeSystemMove(hwnd, cx, cy)
     else:
-      discard ReleaseCapture()
-      discard SendMessageW(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, dragLp)
+      discard beginNativeSystemMove(hwnd, cx, cy)
     # Reset local GTK drag/controller state so hover transitions recover immediately.
     st.pressed = false
     st.dragStarted = false
@@ -614,6 +673,7 @@ proc handleWindowHandleEvent(cont: GtkEventController; ev: GdkEvent; data: point
     x0: cdouble = 0.0
     y0: cdouble = 0.0
     handled: bool = false
+    consumeNative: bool = false
     w0: GtkWidget
     w1: GtkWidget
     s0: GdkSurface
@@ -626,7 +686,6 @@ proc handleWindowHandleEvent(cont: GtkEventController; ev: GdkEvent; data: point
       if t0 == GDK_BUTTON_PRESS and gdk_button_event_get_button(ev) == LeftMouseButton:
         if maybeHandleTitlebarDoubleClick(cont, ev, st):
           return 1
-      return 0
   case t0
   of GDK_BUTTON_PRESS:
     st.pressButton = gdk_button_event_get_button(ev)
@@ -723,12 +782,20 @@ proc handleWindowHandleEvent(cont: GtkEventController; ev: GdkEvent; data: point
       if gdk_event_get_position(ev, x0.addr, y0.addr) != 0:
         st.pressX = x0
         st.pressY = y0
+      when defined(windows):
+        if st.nativeHookEnabled:
+          consumeNative = true
   of GDK_BUTTON_RELEASE:
     when defined(windows):
       discard ReleaseCapture()
+      if st.nativeHookEnabled and st.pressButton == LeftMouseButton:
+        consumeNative = true
     st.pressed = false
     st.dragStarted = false
   of GDK_MOTION_NOTIFY:
+    when defined(windows):
+      if st.nativeHookEnabled and st.pressed and st.pressButton == LeftMouseButton:
+        consumeNative = true
     if st.pressed and st.pressButton == LeftMouseButton and not st.dragStarted:
       if gdk_event_get_position(ev, x0.addr, y0.addr) != 0:
         if absDiff(x0, st.pressX) >= DragThreshold or absDiff(y0, st.pressY) >= DragThreshold:
@@ -736,7 +803,7 @@ proc handleWindowHandleEvent(cont: GtkEventController; ev: GdkEvent; data: point
           st.dragStarted = handled
   else:
     discard
-  result = cbool(ord(handled))
+  result = cbool(ord(handled or consumeNative))
 
 renderable WindowHandle of BaseWidget:
   child: Widget
