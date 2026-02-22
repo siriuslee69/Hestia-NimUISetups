@@ -63,6 +63,8 @@ when defined(windows):
     WM_NCCALCSIZE* = 0x0083'u32
     WM_NCHITTEST* = 0x0084'u32
     WM_NCMOUSEMOVE* = 0x00A0'u32
+    WM_NCMOUSEHOVER* = 0x02A0'u32
+    WM_NCMOUSELEAVE* = 0x02A2'u32
     WM_NCLBUTTONDOWN* = 0x00A1'u32
     WM_NCLBUTTONUP* = 0x00A2'u32
     WM_NCLBUTTONDBLCLK* = 0x00A3'u32
@@ -255,21 +257,23 @@ when defined(windows):
       return HTCLOSE
     result = HTCAPTION
 
-  proc fallbackFramelessHitTest*(point: WinPoint; clientRect: WinRect; cfg: NativeCustomConfig): cint =
+  proc fallbackFramelessHitTest*(point: WinPoint; clientRect: WinRect; cfg: NativeCustomConfig;
+                                 isMaximized: bool): cint =
     ## Fallback hit-testing (resize + caption + client).
     let
       cw = max(0, clientRect.right - clientRect.left)
       ch = max(0, clientRect.bottom - clientRect.top)
       b = max(0, cfg.resizeBorder)
       corner = max(b, cfg.resizeCornerWidth)
-      nearLeft = cfg.canResize and point.x < b
-      nearRight = cfg.canResize and point.x >= cw - b
-      nearTop = cfg.canResize and point.y < b
-      nearBottom = cfg.canResize and point.y >= ch - b
-      topLeftCorner = cfg.canResize and point.x < corner and point.y < corner
-      topRightCorner = cfg.canResize and point.x >= cw - corner and point.y < corner
-      bottomLeftCorner = cfg.canResize and point.x < corner and point.y >= ch - corner
-      bottomRightCorner = cfg.canResize and point.x >= cw - corner and point.y >= ch - corner
+      allowResize = cfg.canResize and (not isMaximized)
+      nearLeft = allowResize and point.x < b
+      nearRight = allowResize and point.x >= cw - b
+      nearTop = allowResize and point.y < b
+      nearBottom = allowResize and point.y >= ch - b
+      topLeftCorner = allowResize and point.x < corner and point.y < corner
+      topRightCorner = allowResize and point.x >= cw - corner and point.y < corner
+      bottomLeftCorner = allowResize and point.x < corner and point.y >= ch - corner
+      bottomRightCorner = allowResize and point.x >= cw - corner and point.y >= ch - corner
     if topLeftCorner:
       return HTTOPLEFT
     if topRightCorner:
@@ -322,7 +326,7 @@ when defined(windows):
          point.x < buttons.container.right and
          point.y >= buttons.container.top and point.y < buttons.container.bottom:
         return HTNOWHERE
-    result = fallbackFramelessHitTest(point, clientRect, cfg)
+    result = fallbackFramelessHitTest(point, clientRect, cfg, isMaximized)
 
   proc nativeCustomWndProc(hwnd: Hwnd; msg: uint32; wParam: uint; lParam: int): int {.stdcall.}
 
@@ -359,7 +363,7 @@ when defined(windows):
     let st = nativeCustomHooks[key]
     case msg
     of WM_NCCALCSIZE:
-      if st.cfg.removeNcArea:
+      if st.cfg.removeNcArea and wParam != 0'u:
         return 0
       return CallWindowProcW(st.oldProc, hwnd, msg, wParam, lParam)
     of WM_NCACTIVATE:
@@ -383,7 +387,7 @@ when defined(windows):
       if ScreenToClient(hwnd, p.addr) != 0'i32 and GetClientRect(hwnd, cr.addr) != 0'i32:
         return delegatedNonClientHitTest(hwnd, p, cr, st.cfg).int
       return CallWindowProcW(st.oldProc, hwnd, msg, wParam, lParam)
-    of WM_NCMOUSEMOVE:
+    of WM_NCMOUSEMOVE, WM_NCMOUSEHOVER, WM_NCMOUSELEAVE:
       if st.cfg.overlayEnabled:
         return DefWindowProcW(hwnd, msg, wParam, lParam)
       return CallWindowProcW(st.oldProc, hwnd, msg, wParam, lParam)
@@ -499,11 +503,13 @@ else:
     discard point
     result = HTNOWHERE
 
-  proc fallbackFramelessHitTest*(point: WinPoint; clientRect: WinRect; cfg: NativeCustomConfig): cint =
+  proc fallbackFramelessHitTest*(point: WinPoint; clientRect: WinRect; cfg: NativeCustomConfig;
+                                 isMaximized: bool): cint =
     ## Non-Windows stub.
     discard point
     discard clientRect
     discard cfg
+    discard isMaximized
     result = HTCLIENT
 
   proc delegatedNonClientHitTest*(hwnd: Hwnd; point: WinPoint; clientRect: WinRect; cfg: NativeCustomConfig): cint =
