@@ -193,8 +193,19 @@ input {
 }
 
 .mod-data-list {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
+}
+
+.mod-data-list[data-orientation="horizontal"] {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.mod-data-list[data-orientation="horizontal"]>* {
+  flex: 1 1 240px;
 }
 
 .mod-data-card {
@@ -239,8 +250,19 @@ input {
 }
 
 .mod-settings-grid {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
+}
+
+.mod-settings-grid[data-orientation="horizontal"] {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.mod-settings-grid[data-orientation="horizontal"]>* {
+  flex: 1 1 200px;
 }
 
 .mod-settings-card {
@@ -634,6 +656,7 @@ body.mod-edit-ui-off .mod-mode-toggle {
   from {
     left: 0;
   }
+
   to {
     left: calc(-1 * var(--mod-scroll-distance, 0px));
   }
