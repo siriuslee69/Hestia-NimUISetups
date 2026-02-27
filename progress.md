@@ -1,7 +1,7 @@
-Commit Message: copy webui dashboard layout 1:1 into owlkettle default and custom apps
+Commit Message: add modular adaptive menu demos and shared button system
 
 0. Current commit message
-- copy webui dashboard layout 1:1 into owlkettle default and custom apps
+- add modular adaptive menu demos and shared button system
 
 1. Features to implement (total)
 - [x] repository skeleton and nimble tasks
@@ -12,16 +12,20 @@ Commit Message: copy webui dashboard layout 1:1 into owlkettle default and custo
 - [x] nix env for owlkettle
 - [x] directory bundler tool + smoke tests
 - [x] docs for framework differences and setup
+- [x] standalone layout gallery separate from enhancer code
+- [x] modular adaptive menu demos separate from layouts and src
 
 2. Features already implemented
 - complete scaffold and UI demos
 - copied white theme assets from Maya-Themes
+- added shared widget helpers plus 8 standalone HTML layout examples in `layouts/`
+- added shared modular adaptive menu helpers plus vertical and horizontal demos in `modular/`
 
 3. Features in progress
-- verify owlkettle dashboard parity and compile checks
+- verify modular button auto-collapse behavior and demo ergonomics
 
 Last big change or problem encountered
-- user requested a 1:1 owlkettle copy of the large grid/page-routed web dashboard layout.
+- user requested a separate modular widget area with rearrangeable adaptive buttons.
 
 Fix attempt and outcome
-- rewrote both owlkettle variants with matching login/sidebar/header and 12-column card pages; kept custom titlebar variant using HeaderBar while preserving layout parity.
+- added a new top-level `modular/` folder with shared adaptive menu CSS/JS plus vertical and horizontal demos using Art Of Creation symbols and drag-reordering.

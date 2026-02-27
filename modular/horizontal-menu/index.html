@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hestia Modular - Horizontal Menu</title>
+  <link rel="stylesheet" href="../shared/modular-menu.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="../shared/modular-menu.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="mod-grid-bg">
+  <div class="demo-shell">
+    <div
+      class="mod-search-frame"
+      id="horizontal-search-frame"
+      data-grid-box
+      data-grid-col="13"
+      data-grid-row="1"
+      data-grid-width="14"
+      data-grid-height="1"
+    >
+      <button
+        class="mod-floating-handle"
+        data-grid-drag-handle
+        data-drag-target="#horizontal-search-frame"
+        aria-label="Drag handle"
+        type="button"
+      ></button>
+      <button
+        class="mod-resize-handle"
+        data-grid-resize-handle
+        data-resize-target="#horizontal-search-frame"
+        aria-label="Resize handle"
+        type="button"
+      >⤡</button>
+      <div class="mod-search-clip">
+        <input class="mod-search-input" type="search" placeholder="Search modules, labels, actions" />
+      </div>
+    </div>
+
+    <div
+      class="mod-menu-frame"
+      id="horizontal-frame"
+      data-grid-box
+      data-grid-col="1"
+      data-grid-row="3"
+      data-grid-width="16"
+      data-grid-height="4"
+    >
+      <button
+        class="mod-floating-handle"
+        data-grid-drag-handle
+        data-drag-target="#horizontal-frame"
+        aria-label="Drag handle"
+        type="button"
+      ></button>
+      <button
+        class="mod-orientation-handle"
+        data-orientation-toggle-handle
+        data-orientation-target="#horizontal-frame-menu"
+        type="button"
+      ></button>
+      <button
+        class="mod-resize-handle"
+        data-grid-resize-handle
+        data-resize-target="#horizontal-frame"
+        aria-label="Resize handle"
+        type="button"
+      >⤡</button>
+      <div class="mod-menu-clip">
+        <div
+          id="horizontal-frame-menu"
+          class="mod-menu"
+          data-modular-menu
+          data-orientation="horizontal"
+        >
+          <button class="mod-button" data-button-mode="extended">
+            <span class="mod-symbol">G</span>
+            <span class="mod-label">Grid</span>
+          </button>
+          <button class="mod-button" data-button-mode="auto">
+            <span class="mod-symbol">H</span>
+            <span class="mod-label">Home</span>
+          </button>
+          <button class="mod-button" data-button-mode="auto">
+            <span class="mod-symbol">I</span>
+            <span class="mod-label">Inbox</span>
+          </button>
+          <button class="mod-button" data-button-mode="auto">
+            <span class="mod-symbol">J</span>
+            <span class="mod-label">Jobs</span>
+          </button>
+          <button class="mod-button" data-button-mode="collapsed">
+            <span class="mod-symbol">K</span>
+            <span class="mod-label">Keys</span>
+          </button>
+          <button class="mod-button" data-button-mode="auto">
+            <span class="mod-symbol">L</span>
+            <span class="mod-label">Logs</span>
+          </button>
+          <button class="mod-button" data-button-mode="auto">
+            <span class="mod-symbol">M</span>
+            <span class="mod-label">Metrics</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

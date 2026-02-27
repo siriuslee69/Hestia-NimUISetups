@@ -1,0 +1,79 @@
+StartFontMetrics 2.0
+Comment UniqueID 4595501
+Comment Panose 2 0 6 4 2 0 0 2 0 4
+FullName CropBats AOE
+FontName CropBatsAOE
+FamilyName CropBats AOE
+Weight Regular
+Notice Copyright (c) Astigmatic (AOETI), 2006. All rights reserved.
+Version 001.000
+IsFixedPitch false
+ItalicAngle 0.00
+FontBBox 0 0 2480 782
+Ascender 705
+Descender -200
+XHeight 705
+CapHeight 696
+UnderlinePosition -133
+UnderlineThickness 20
+StdHW 20
+StdVW 26
+EncodingScheme FontSpecific
+StartCharMetrics 55
+C 32 ; WX 199 ; N space ; B 0 0 0 0 ;
+C 65 ; WX 796 ; N A ; B 50 0 746 696 ;
+C 66 ; WX 441 ; N B ; B 50 0 391 696 ;
+C 67 ; WX 423 ; N C ; B 50 0 373 696 ;
+C 68 ; WX 998 ; N D ; B 50 0 948 696 ;
+C 69 ; WX 2530 ; N E ; B 50 0 2480 696 ;
+C 70 ; WX 1389 ; N F ; B 50 0 1339 696 ;
+C 71 ; WX 729 ; N G ; B 50 0 679 696 ;
+C 72 ; WX 796 ; N H ; B 50 0 746 696 ;
+C 73 ; WX 931 ; N I ; B 50 0 881 696 ;
+C 74 ; WX 615 ; N J ; B 50 0 565 696 ;
+C 75 ; WX 718 ; N K ; B 50 0 668 696 ;
+C 76 ; WX 796 ; N L ; B 50 0 746 696 ;
+C 77 ; WX 818 ; N M ; B 50 0 768 696 ;
+C 78 ; WX 843 ; N N ; B 50 0 793 696 ;
+C 79 ; WX 438 ; N O ; B 50 0 388 696 ;
+C 80 ; WX 1157 ; N P ; B 50 0 1107 696 ;
+C 81 ; WX 631 ; N Q ; B 50 0 581 696 ;
+C 82 ; WX 565 ; N R ; B 50 0 515 696 ;
+C 83 ; WX 657 ; N S ; B 50 0 607 696 ;
+C 84 ; WX 1354 ; N T ; B 50 0 1304 696 ;
+C 85 ; WX 497 ; N U ; B 50 0 447 696 ;
+C 86 ; WX 810 ; N V ; B 50 0 760 696 ;
+C 87 ; WX 471 ; N W ; B 50 0 421 696 ;
+C 88 ; WX 843 ; N X ; B 50 0 793 696 ;
+C 89 ; WX 454 ; N Y ; B 50 0 405 696 ;
+C 90 ; WX 755 ; N Z ; B 50 0 705 696 ;
+C 97 ; WX 1466 ; N a ; B 50 0 1416 705 ;
+C 98 ; WX 1160 ; N b ; B 50 0 1110 705 ;
+C 99 ; WX 805 ; N c ; B 50 0 755 705 ;
+C 100 ; WX 402 ; N d ; B 50 0 352 705 ;
+C 101 ; WX 1760 ; N e ; B 50 0 1710 705 ;
+C 102 ; WX 936 ; N f ; B 50 0 886 705 ;
+C 103 ; WX 768 ; N g ; B 50 0 718 705 ;
+C 104 ; WX 805 ; N h ; B 50 0 755 705 ;
+C 105 ; WX 805 ; N i ; B 50 0 755 705 ;
+C 106 ; WX 1404 ; N j ; B 50 0 1354 705 ;
+C 107 ; WX 805 ; N k ; B 50 0 755 705 ;
+C 108 ; WX 1328 ; N l ; B 50 0 1278 705 ;
+C 109 ; WX 805 ; N m ; B 50 0 755 705 ;
+C 110 ; WX 583 ; N n ; B 50 0 533 705 ;
+C 111 ; WX 1046 ; N o ; B 50 0 996 705 ;
+C 112 ; WX 1028 ; N p ; B 50 0 978 705 ;
+C 113 ; WX 805 ; N q ; B 50 0 755 705 ;
+C 114 ; WX 765 ; N r ; B 50 0 715 705 ;
+C 115 ; WX 352 ; N s ; B 50 0 302 705 ;
+C 116 ; WX 805 ; N t ; B 50 0 755 705 ;
+C 117 ; WX 805 ; N u ; B 50 0 755 705 ;
+C 118 ; WX 716 ; N v ; B 50 0 666 705 ;
+C 119 ; WX 452 ; N w ; B 50 0 402 705 ;
+C 120 ; WX 805 ; N x ; B 50 0 755 705 ;
+C 121 ; WX 1770 ; N y ; B 50 0 1720 705 ;
+C 122 ; WX 349 ; N z ; B 50 0 299 705 ;
+C 198 ; WX 1656 ; N Delta ; B 50 0 1606 782 ;
+C 202 ; WX 199 ; N nbspace ; B 0 0 0 0 ;
+EndCharMetrics
+EndFontMetrics

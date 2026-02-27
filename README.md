@@ -27,6 +27,20 @@ examples/
     defaultTitlebar/
     customTitlebar/
   illwillEnhanced/
+layouts/
+  shared/
+  atlas-control-hub/
+  dual-workbench/
+  mail-triage/
+  chat-mission-control/
+  kanban-flight-deck/
+  media-review-studio/
+  analyst-cockpit/
+  android-ops-tablet/
+modular/
+  shared/
+  vertical-menu/
+  horizontal-menu/
 ```
 
 ## What Is Included
@@ -41,6 +55,8 @@ examples/
 - WebUI frontend files are in:
   - `examples/webuiEnhanced/defaultTitlebar/web/index.html`, `app.js`, `style.css`
   - `examples/webuiEnhanced/customTitlebar/web/index.html`, `app.js`, `style.css`
+- Standalone HTML layout studies are in `layouts/` and intentionally separate from enhancer code in `src/`.
+- Rearrangeable adaptive menu widgets are in `modular/`.
 - Windows GTK setup helper for MSYS2 + DLL copier (`tools/windows/gtk_builder_msys2.nim`).
 - Nix shell for Owlkettle (`nix/owlkettle-shell.nix`).
 - Directory bundler tool (`tools/bundler/directory_bundler.nim`).

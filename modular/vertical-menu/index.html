@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hestia Modular - Vertical Menu</title>
+  <link rel="stylesheet" href="../shared/modular-menu.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="../shared/modular-menu.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="mod-grid-bg">
+  <div class="demo-shell">
+    <div
+      class="mod-search-frame"
+      id="vertical-search-frame"
+      data-grid-box
+      data-grid-col="14"
+      data-grid-row="1"
+      data-grid-width="12"
+      data-grid-height="1"
+    >
+      <button
+        class="mod-floating-handle"
+        data-grid-drag-handle
+        data-drag-target="#vertical-search-frame"
+        aria-label="Drag handle"
+        type="button"
+      ></button>
+      <button
+        class="mod-resize-handle"
+        data-grid-resize-handle
+        data-resize-target="#vertical-search-frame"
+        aria-label="Resize handle"
+        type="button"
+      >⤡</button>
+      <div class="mod-search-clip">
+        <input class="mod-search-input" type="search" placeholder="Search modules, labels, actions" />
+      </div>
+    </div>
+
+    <div
+      class="mod-menu-frame"
+      id="vertical-frame"
+      data-grid-box
+      data-grid-col="1"
+      data-grid-row="3"
+      data-grid-width="8"
+      data-grid-height="6"
+    >
+      <button
+        class="mod-floating-handle"
+        data-grid-drag-handle
+        data-drag-target="#vertical-frame"
+        aria-label="Drag handle"
+        type="button"
+      ></button>
+      <button
+        class="mod-orientation-handle"
+        data-orientation-toggle-handle
+        data-orientation-target="#vertical-frame-menu"
+        type="button"
+      ></button>
+      <button
+        class="mod-resize-handle"
+        data-grid-resize-handle
+        data-resize-target="#vertical-frame"
+        aria-label="Resize handle"
+        type="button"
+      >⤡</button>
+      <div class="mod-menu-clip">
+        <div
+          id="vertical-frame-menu"
+          class="mod-menu"
+          data-modular-menu
+          data-orientation="vertical"
+          data-collapse-width="168"
+        >
+          <button class="mod-button" data-button-mode="extended">
+            <span class="mod-symbol">A</span>
+            <span class="mod-label">Archive</span>
+          </button>
+          <button class="mod-button" data-button-mode="auto">
+            <span class="mod-symbol">B</span>
+            <span class="mod-label">Build</span>
+          </button>
+          <button class="mod-button" data-button-mode="auto">
+            <span class="mod-symbol">C</span>
+            <span class="mod-label">Compose</span>
+          </button>
+          <button class="mod-button" data-button-mode="collapsed">
+            <span class="mod-symbol">D</span>
+            <span class="mod-label">Docs</span>
+          </button>
+          <button class="mod-button" data-button-mode="auto">
+            <span class="mod-symbol">E</span>
+            <span class="mod-label">Events</span>
+          </button>
+          <button class="mod-button" data-button-mode="auto">
+            <span class="mod-symbol">F</span>
+            <span class="mod-label">Flow</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

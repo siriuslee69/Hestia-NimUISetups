@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hestia Layouts - Kanban Flight Deck</title>
+  <link rel="stylesheet" href="../shared/widgets.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="../shared/widgets.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="kanban-layout">
+  <div class="board-shell">
+    <header class="topbar surface-card">
+      <div>
+        <p class="eyebrow">Project planning pattern</p>
+        <h1>Kanban Flight Deck</h1>
+      </div>
+      <div class="widget-toolbar">
+        <button class="widget-button sprint-button is-active" data-sprint="Sprint 14">Sprint 14</button>
+        <button class="widget-button sprint-button" data-sprint="Sprint 15">Sprint 15</button>
+        <button class="widget-button" data-toggle-panel="#kanban-summary">Summary</button>
+      </div>
+    </header>
+
+    <aside class="project-rail surface-card">
+      <div class="widget-pill">Debug zone: project rail</div>
+      <div class="widget-list">
+        <button class="project-button is-active">Platform</button>
+        <button class="project-button">Messaging</button>
+        <button class="project-button">Desktop UI</button>
+        <button class="project-button">Android UI</button>
+      </div>
+    </aside>
+
+    <main class="kanban-board surface-card">
+      <div class="board-head">
+        <h2 id="board-sprint-label">Sprint 14 board</h2>
+        <span class="widget-pill">Four-column grid</span>
+      </div>
+      <div class="columns">
+        <section class="column">
+          <h3>Backlog</h3>
+          <button class="task-card" data-task="Research desktop shell variants">Research desktop shell variants</button>
+          <button class="task-card" data-task="Review Android nav density">Review Android nav density</button>
+        </section>
+        <section class="column">
+          <h3>Ready</h3>
+          <button class="task-card" data-task="Extract shared widget layer">Extract shared widget layer</button>
+          <button class="task-card" data-task="Add retractable side rails">Add retractable side rails</button>
+        </section>
+        <section class="column">
+          <h3>Doing</h3>
+          <button class="task-card" data-task="Build 8 standalone layouts">Build 8 standalone layouts</button>
+          <button class="task-card" data-task="Tune debug color zoning">Tune debug color zoning</button>
+        </section>
+        <section class="column">
+          <h3>Done</h3>
+          <button class="task-card" data-task="Keep layouts separate from src">Keep layouts separate from src</button>
+        </section>
+      </div>
+    </main>
+
+    <aside id="kanban-summary" class="summary surface-card" data-panel-name="kanban summary">
+      <div class="widget-pill">Debug zone: sprint summary</div>
+      <h3>Selected task</h3>
+      <div class="widget-empty" id="task-focus">Select a task card to preview it here.</div>
+      <div class="widget-list">
+        <button class="widget-button" data-demo-toast="Sprint review export generated.">Export sprint view</button>
+        <button class="widget-button" data-demo-toast="Dependency note attached.">Attach note</button>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

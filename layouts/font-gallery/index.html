@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hestia Layouts - Font Gallery</title>
+  <link rel="stylesheet" href="../shared/widgets.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="../shared/widgets.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="font-gallery-layout">
+  <div class="gallery-shell">
+    <header class="gallery-topbar surface-card">
+      <div>
+        <p class="eyebrow">Assets font preview</p>
+        <h1>Font Gallery</h1>
+      </div>
+      <div class="widget-pill" id="font-count">0 fonts</div>
+    </header>
+
+    <section class="input-panel surface-card">
+      <label class="input-label" for="sample-input">Preview text</label>
+      <input id="sample-input" type="text" value="Hestia Proto UI 0123456789" />
+    </section>
+
+    <main class="font-list" id="font-list"></main>
+  </div>
+</body>
+</html>

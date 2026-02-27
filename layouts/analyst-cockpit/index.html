@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hestia Layouts - Analyst Cockpit</title>
+  <link rel="stylesheet" href="../shared/widgets.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="../shared/widgets.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="analyst-layout">
+  <div class="cockpit-shell">
+    <header class="topbar surface-card">
+      <div>
+        <p class="eyebrow">Analytics and monitoring pattern</p>
+        <h1>Analyst Cockpit</h1>
+      </div>
+      <div class="widget-toolbar">
+        <button class="widget-button scenario-button is-active" data-scenario="Live">Live</button>
+        <button class="widget-button scenario-button" data-scenario="Forecast">Forecast</button>
+        <button class="widget-button scenario-button" data-scenario="Incident">Incident</button>
+      </div>
+    </header>
+
+    <aside class="scenario-rail surface-card">
+      <div class="widget-pill">Debug zone: scenario rail</div>
+      <div class="widget-list">
+        <button class="focus-card is-active" data-focus="Cluster latency focus">Cluster latency focus</button>
+        <button class="focus-card" data-focus="Delivery cost focus">Delivery cost focus</button>
+        <button class="focus-card" data-focus="Desktop engagement focus">Desktop engagement focus</button>
+      </div>
+    </aside>
+
+    <main class="dashboard surface-card">
+      <div class="dashboard-head">
+        <h2 id="cockpit-title">Live dashboard</h2>
+        <span class="widget-pill" id="cockpit-focus">Cluster latency focus</span>
+      </div>
+      <div class="chart-grid">
+        <article class="chart-card wide">
+          <h3>Throughput map</h3>
+          <p>Reserve for main trend chart or route map.</p>
+        </article>
+        <article class="chart-card">
+          <h3>P50</h3>
+          <strong>38 ms</strong>
+        </article>
+        <article class="chart-card">
+          <h3>P99</h3>
+          <strong>112 ms</strong>
+        </article>
+        <article class="chart-card">
+          <h3>Budget drift</h3>
+          <strong>4.1%</strong>
+        </article>
+      </div>
+    </main>
+
+    <aside class="alert-rail surface-card">
+      <div class="widget-pill">Debug zone: alerts</div>
+      <h3>Alerts</h3>
+      <div class="widget-list">
+        <button class="alert-card" data-demo-toast="Escalation packet generated.">P99 crossing threshold</button>
+        <button class="alert-card" data-demo-toast="Forecast variance note copied.">Forecast variance widening</button>
+        <button class="alert-card" data-demo-toast="UX dashboard note saved.">Android session dip</button>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

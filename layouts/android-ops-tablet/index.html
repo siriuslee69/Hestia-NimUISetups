@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hestia Layouts - Android Ops Tablet</title>
+  <link rel="stylesheet" href="../shared/widgets.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="../shared/widgets.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="android-layout">
+  <div class="device-shell">
+    <div class="tablet-frame surface-card">
+      <header class="app-bar">
+        <div>
+          <p class="eyebrow">Dedicated Android tablet shell</p>
+          <h1>Android Ops Tablet</h1>
+        </div>
+        <button class="widget-button" data-demo-toast="Tablet notification bundle opened.">Alerts</button>
+      </header>
+
+      <aside id="android-drawer" class="drawer surface-card" data-panel-name="android drawer">
+        <div class="widget-pill">Debug zone: drawer</div>
+        <div class="widget-list">
+          <button class="drawer-item is-active" data-screen="home">Home</button>
+          <button class="drawer-item" data-screen="tasks">Tasks</button>
+          <button class="drawer-item" data-screen="sync">Sync</button>
+          <button class="drawer-item" data-screen="settings">Settings</button>
+        </div>
+      </aside>
+
+      <main class="tablet-main surface-card">
+        <div class="hero-card surface-card">
+          <div>
+            <p class="eyebrow">Main content</p>
+            <h2 id="android-title">Home overview</h2>
+            <p id="android-copy">A tablet-first shell with side drawer, content cards, and bottom nav.</p>
+          </div>
+          <button class="widget-button" data-toggle-panel="#android-drawer">Drawer</button>
+        </div>
+        <div class="card-grid">
+          <article class="tablet-card wide">
+            <h3>Primary module</h3>
+            <p>Reserve for queue view, maps, or larger content modules.</p>
+          </article>
+          <article class="tablet-card">
+            <h3>Signal</h3>
+            <strong>87%</strong>
+          </article>
+          <article class="tablet-card">
+            <h3>Pending</h3>
+            <strong>12</strong>
+          </article>
+        </div>
+      </main>
+
+      <nav class="bottom-nav surface-card">
+        <button class="nav-tab is-active" data-screen="home">Home</button>
+        <button class="nav-tab" data-screen="tasks">Tasks</button>
+        <button class="nav-tab" data-screen="sync">Sync</button>
+        <button class="nav-tab" data-screen="settings">Settings</button>
+      </nav>
+    </div>
+  </div>
+</body>
+</html>

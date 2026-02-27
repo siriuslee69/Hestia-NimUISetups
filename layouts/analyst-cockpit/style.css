@@ -1,0 +1,154 @@
+:root {
+  --bg: linear-gradient(135deg, #f7f8ff, #eff8ff 50%, #fffaf0);
+  --line: rgba(36, 50, 82, 0.16);
+  --text: #1b2941;
+  --muted: #60708d;
+  --top-debug: rgba(255, 188, 76, 0.17);
+  --left-debug: rgba(86, 144, 255, 0.15);
+  --main-debug: rgba(100, 220, 166, 0.12);
+  --right-debug: rgba(236, 116, 177, 0.14);
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.cockpit-shell {
+  min-height: 100vh;
+  padding: 18px;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 230px minmax(0, 1fr) 260px;
+  grid-template-rows: 82px minmax(0, 1fr);
+  grid-template-areas:
+    "top top top"
+    "left main right";
+}
+
+.topbar,
+.scenario-rail,
+.dashboard,
+.alert-rail {
+  border: 1px solid var(--line);
+}
+
+.topbar {
+  grid-area: top;
+  padding: 18px 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  background: linear-gradient(135deg, var(--top-debug), rgba(255, 255, 255, 0.92));
+}
+
+.scenario-rail {
+  grid-area: left;
+  padding: 18px;
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  background: linear-gradient(180deg, var(--left-debug), rgba(255, 255, 255, 0.88));
+}
+
+.dashboard {
+  grid-area: main;
+  min-width: 0;
+  padding: 18px;
+  display: grid;
+  gap: 16px;
+  grid-template-rows: auto minmax(0, 1fr);
+  background: linear-gradient(180deg, var(--main-debug), rgba(255, 255, 255, 0.84));
+}
+
+.alert-rail {
+  grid-area: right;
+  padding: 18px;
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  background: linear-gradient(180deg, var(--right-debug), rgba(255, 255, 255, 0.88));
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+}
+
+.focus-card,
+.alert-card {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.84);
+  color: inherit;
+  padding: 0.95rem 1rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.focus-card.is-active,
+.scenario-button.is-active {
+  background: linear-gradient(135deg, rgba(95, 208, 255, 0.5), rgba(255, 255, 255, 0.95));
+}
+
+.dashboard-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.chart-grid {
+  min-height: 0;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: minmax(150px, auto);
+}
+
+.chart-card {
+  border-radius: 2px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.8);
+  padding: 16px;
+  grid-column: span 4;
+}
+
+.chart-card.wide {
+  grid-column: span 12;
+}
+
+.chart-card strong {
+  font-size: 2rem;
+}
+
+@media (max-width: 1180px) {
+  .cockpit-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+      "top"
+      "left"
+      "main"
+      "right";
+  }
+
+  .topbar {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-card,
+  .chart-card.wide {
+    grid-column: 1 / -1;
+  }
+}

@@ -1,0 +1,14 @@
+body {
+  min-height: 100vh;
+}
+
+.demo-shell {
+  min-height: 100vh;
+  padding: calc(var(--mod-grid-cell-h) + 16px) 0 0 0;
+  position: relative;
+}
+
+#horizontal-frame {
+  width: 760px;
+  max-width: 100%;
+}

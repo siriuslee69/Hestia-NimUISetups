@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hestia Layouts - Mail Triage</title>
+  <link rel="stylesheet" href="../shared/widgets.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="../shared/widgets.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="mail-layout">
+  <div class="mail-shell">
+    <header class="topbar surface-card">
+      <div>
+        <p class="eyebrow">Email client pattern</p>
+        <h1>Mail Triage</h1>
+      </div>
+      <div class="widget-toolbar">
+        <input class="search-box" type="search" placeholder="Search inbox, tags, senders" />
+        <button class="widget-button" data-toggle-panel="#mail-folders">Folders</button>
+        <button class="widget-button" data-demo-toast="Compose shell opened.">Compose</button>
+      </div>
+    </header>
+
+    <aside id="mail-folders" class="folders surface-card" data-panel-name="folder rail">
+      <div class="widget-pill">Debug zone: folders</div>
+      <div class="widget-list">
+        <button class="folder-button is-active">Inbox</button>
+        <button class="folder-button">Priority</button>
+        <button class="folder-button">Waiting</button>
+        <button class="folder-button">Archive</button>
+      </div>
+    </aside>
+
+    <section class="thread-list surface-card">
+      <div class="section-head">
+        <h2>Thread list</h2>
+        <span class="widget-pill">Middle scan lane</span>
+      </div>
+      <div class="threads widget-list">
+        <button class="thread-item is-active" data-subject="Q2 ship room draft" data-from="ops@hestia.local" data-body="Need a cleaner dependency review before Friday.">
+          <strong>Q2 ship room draft</strong>
+          <span>ops@hestia.local</span>
+        </button>
+        <button class="thread-item" data-subject="Android shell motion notes" data-from="ux@hestia.local" data-body="Tablet affordances are good, but bottom-nav density still feels high.">
+          <strong>Android shell motion notes</strong>
+          <span>ux@hestia.local</span>
+        </button>
+        <button class="thread-item" data-subject="Desktop command center refactor" data-from="infra@hestia.local" data-body="We can collapse the right inspector by default and recover more space.">
+          <strong>Desktop command center refactor</strong>
+          <span>infra@hestia.local</span>
+        </button>
+      </div>
+    </section>
+
+    <article class="reader surface-card">
+      <div class="reader-head">
+        <div>
+          <p class="eyebrow">Reading pane</p>
+          <h2 id="mail-subject">Q2 ship room draft</h2>
+        </div>
+        <div class="widget-toolbar">
+          <span class="widget-pill" id="mail-from">ops@hestia.local</span>
+          <button class="widget-button" data-demo-toast="Reply draft created.">Reply</button>
+        </div>
+      </div>
+      <div class="reader-body" id="mail-body">
+        Need a cleaner dependency review before Friday.
+      </div>
+      <div class="reader-footer">
+        <button class="widget-button" data-demo-toast="Thread snoozed for tomorrow.">Snooze</button>
+        <button class="widget-button" data-demo-toast="Thread moved to Waiting.">Move to waiting</button>
+      </div>
+    </article>
+  </div>
+</body>
+</html>

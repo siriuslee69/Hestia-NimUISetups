@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hestia Layouts - Chat Mission Control</title>
+  <link rel="stylesheet" href="../shared/widgets.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="../shared/widgets.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="chat-layout">
+  <div class="chat-shell">
+    <header class="topbar surface-card">
+      <div>
+        <p class="eyebrow">Chat client pattern</p>
+        <h1>Chat Mission Control</h1>
+      </div>
+      <div class="widget-toolbar">
+        <span class="widget-pill" id="chat-room-label">Room: release-war-room</span>
+        <button class="widget-button" data-toggle-panel="#chat-members">Toggle members</button>
+        <button class="widget-button" data-demo-toast="Call bridge created.">Start call</button>
+      </div>
+    </header>
+
+    <aside class="server-rail surface-card">
+      <div class="widget-pill">Debug zone: servers</div>
+      <div class="widget-list">
+        <button class="server-button is-active">HM</button>
+        <button class="server-button">UX</button>
+        <button class="server-button">OPS</button>
+        <button class="server-button">AI</button>
+      </div>
+    </aside>
+
+    <aside class="channel-rail surface-card">
+      <div class="widget-pill">Debug zone: channels</div>
+      <div class="widget-list">
+        <button class="channel-button is-active" data-room="release-war-room"># release-war-room</button>
+        <button class="channel-button" data-room="desktop-ui"># desktop-ui</button>
+        <button class="channel-button" data-room="android-shell"># android-shell</button>
+        <button class="channel-button" data-room="incident-log"># incident-log</button>
+      </div>
+    </aside>
+
+    <section class="conversation surface-card">
+      <div class="conversation-head">
+        <h2 id="chat-title">release-war-room</h2>
+        <span class="widget-pill">Middle conversation lane</span>
+      </div>
+      <div class="message-stack" id="message-stack">
+        <article class="message incoming">
+          <strong>lina</strong>
+          <p>The new desktop shell is holding together. Need one more compact layout pass.</p>
+        </article>
+        <article class="message outgoing">
+          <strong>you</strong>
+          <p>I will keep the dual-pane option and mail shell separate under layouts.</p>
+        </article>
+      </div>
+      <form class="composer" id="composer">
+        <input id="chat-input" type="text" placeholder="Type a short message" />
+        <button class="widget-button" type="submit">Send</button>
+      </form>
+    </section>
+
+    <aside id="chat-members" class="members surface-card" data-panel-name="member rail">
+      <div class="widget-pill">Debug zone: members</div>
+      <h3>Active people</h3>
+      <div class="widget-list">
+        <div class="member-card">lina - UX</div>
+        <div class="member-card">maro - infra</div>
+        <div class="member-card">you - layout pass</div>
+      </div>
+      <h3>Quick tasks</h3>
+      <div class="widget-list">
+        <button class="widget-button" data-demo-toast="Action item copied to tracker.">Copy task</button>
+        <button class="widget-button" data-demo-toast="Room summary generated.">Summarize room</button>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

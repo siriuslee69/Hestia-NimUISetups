@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hestia Layouts - Dual Workbench</title>
+  <link rel="stylesheet" href="../shared/widgets.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="../shared/widgets.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="workbench-layout">
+  <div class="workbench-shell">
+    <header class="topbar surface-card">
+      <div>
+        <p class="eyebrow">Dual-pane desktop layout</p>
+        <h1>Dual Workbench</h1>
+      </div>
+      <div class="widget-toolbar">
+        <button class="widget-button" data-toggle-panel="#workbench-left" data-tooltip="Retract the tool rail without resizing the core panes.">Left rail</button>
+        <button class="widget-button" data-toggle-panel="#workbench-right" data-tooltip="Retract the context rail for comparison mode.">Right rail</button>
+        <span class="widget-pill" id="workbench-mode-label">Mode: compare</span>
+      </div>
+    </header>
+
+    <aside id="workbench-left" class="left-rail surface-card" data-panel-name="left workbench rail">
+      <div class="widget-pill">Debug zone: left tools</div>
+      <div class="widget-list">
+        <button class="rail-button is-active" data-mode="compare">Compare</button>
+        <button class="rail-button" data-mode="compose">Compose</button>
+        <button class="rail-button" data-mode="simulate">Simulate</button>
+        <button class="rail-button" data-mode="review">Review</button>
+      </div>
+    </aside>
+
+    <section class="pane pane-a surface-card">
+      <div class="pane-head">
+        <h2>Pane A</h2>
+        <span class="widget-pill">Persistent full height</span>
+      </div>
+      <div class="pane-grid">
+        <article class="surface-tile tall">
+          <h3>Source stream</h3>
+          <p>Good for mail lists, logs, branch lists, or queued work.</p>
+        </article>
+        <article class="surface-tile">
+          <h3>Diff summary</h3>
+          <p>Compact high-signal summary block.</p>
+        </article>
+        <article class="surface-tile">
+          <h3>Queued actions</h3>
+          <p>Batch controls and recent commands.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pane pane-b surface-card">
+      <div class="pane-head">
+        <h2>Pane B</h2>
+        <span class="widget-pill">Parallel analysis</span>
+      </div>
+      <div class="pane-grid">
+        <article class="surface-tile wide">
+          <h3 id="scenario-title">Compare state</h3>
+          <p id="scenario-copy">Two center panes stay live while both side menus remain retractable.</p>
+        </article>
+        <article class="surface-tile">
+          <h3>Inspector</h3>
+          <p>Secondary metrics or delta summaries.</p>
+        </article>
+        <article class="surface-tile">
+          <h3>History</h3>
+          <p>Event or commit activity list.</p>
+        </article>
+      </div>
+    </section>
+
+    <aside id="workbench-right" class="right-rail surface-card" data-panel-name="right workbench rail">
+      <div class="widget-pill">Debug zone: right context</div>
+      <h3>Session actions</h3>
+      <div class="widget-list">
+        <button class="widget-button" data-demo-toast="Comparison snapshot stored.">Snapshot</button>
+        <button class="widget-button" data-demo-toast="Spec review opened.">Open spec</button>
+        <button class="widget-button" data-demo-toast="Session handed to reviewer.">Assign reviewer</button>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

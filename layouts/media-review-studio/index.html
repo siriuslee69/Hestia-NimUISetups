@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hestia Layouts - Media Review Studio</title>
+  <link rel="stylesheet" href="../shared/widgets.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="../shared/widgets.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="media-layout">
+  <div class="studio-shell">
+    <header class="topbar surface-card">
+      <div>
+        <p class="eyebrow">Creative review pattern</p>
+        <h1>Media Review Studio</h1>
+      </div>
+      <div class="widget-toolbar">
+        <button class="widget-button" data-toggle-panel="#media-inspector">Inspector</button>
+        <button class="widget-button" data-demo-toast="Version compare opened.">Compare versions</button>
+      </div>
+    </header>
+
+    <aside class="asset-bin surface-card">
+      <div class="widget-pill">Debug zone: asset bin</div>
+      <div class="widget-list">
+        <button class="asset-item is-active" data-title="Launch teaser v08" data-meta="1920x1080 / 00:42 / motion draft">Launch teaser v08</button>
+        <button class="asset-item" data-title="Desktop shell grid check" data-meta="PNG / 2880x1800 / review">Desktop shell grid check</button>
+        <button class="asset-item" data-title="Android shell nav pass" data-meta="MP4 / 00:18 / gesture demo">Android shell nav pass</button>
+      </div>
+    </aside>
+
+    <main class="preview-stack surface-card">
+      <section class="preview surface-card">
+        <div class="preview-head">
+          <h2 id="media-title">Launch teaser v08</h2>
+          <span class="widget-pill" id="media-meta">1920x1080 / 00:42 / motion draft</span>
+        </div>
+        <div class="preview-canvas">
+          <div class="mock-frame">Preview</div>
+        </div>
+      </section>
+      <section class="timeline surface-card">
+        <div class="preview-head">
+          <h3>Timeline</h3>
+          <button class="widget-button" data-demo-toast="Marker added at 00:12.">Add marker</button>
+        </div>
+        <div class="timeline-strip">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </section>
+    </main>
+
+    <aside id="media-inspector" class="inspector surface-card" data-panel-name="media inspector">
+      <div class="widget-pill">Debug zone: inspector</div>
+      <h3>Review notes</h3>
+      <div class="widget-empty">Color, spacing, and safe-area comments fit well here.</div>
+      <div class="widget-list">
+        <button class="widget-button" data-demo-toast="Review note sent to editor.">Send note</button>
+        <button class="widget-button" data-demo-toast="Frame exported to gallery.">Export still</button>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

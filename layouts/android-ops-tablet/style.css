@@ -1,0 +1,180 @@
+:root {
+  --bg: linear-gradient(135deg, #fff8ef, #edf8ff 52%, #f8fff4);
+  --line: rgba(36, 51, 82, 0.16);
+  --text: #1b2940;
+  --muted: #60718d;
+  --frame: rgba(23, 30, 44, 0.92);
+  --drawer-debug: rgba(86, 144, 255, 0.18);
+  --main-debug: rgba(98, 220, 163, 0.13);
+  --nav-debug: rgba(238, 116, 177, 0.15);
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.device-shell {
+  min-height: 100vh;
+  padding: 24px;
+  display: grid;
+  place-items: center;
+}
+
+.tablet-frame {
+  width: min(1080px, 100%);
+  min-height: min(880px, calc(100vh - 48px));
+  padding: 18px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(245, 248, 255, 0.88));
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) 88px;
+  grid-template-areas:
+    "bar bar"
+    "drawer main"
+    "nav nav";
+  box-shadow: 0 28px 80px rgba(18, 27, 38, 0.18);
+}
+
+.app-bar,
+.drawer,
+.tablet-main,
+.bottom-nav,
+.hero-card {
+  border: 1px solid var(--line);
+}
+
+.app-bar {
+  grid-area: bar;
+  padding: 16px 18px;
+  border-radius: 2px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(255, 188, 76, 0.18), rgba(255, 255, 255, 0.92));
+}
+
+.drawer {
+  grid-area: drawer;
+  padding: 18px;
+  border-radius: 2px;
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  background: linear-gradient(180deg, var(--drawer-debug), rgba(255, 255, 255, 0.9));
+}
+
+.tablet-main {
+  grid-area: main;
+  padding: 18px;
+  border-radius: 2px;
+  display: grid;
+  gap: 18px;
+  align-content: start;
+  background: linear-gradient(180deg, var(--main-debug), rgba(255, 255, 255, 0.86));
+}
+
+.hero-card {
+  padding: 18px;
+  border-radius: 2px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.card-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.tablet-card {
+  grid-column: span 3;
+  padding: 16px;
+  border-radius: 2px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.tablet-card.wide {
+  grid-column: span 6;
+}
+
+.tablet-card strong {
+  font-size: 2rem;
+}
+
+.bottom-nav {
+  grid-area: nav;
+  padding: 12px;
+  border-radius: 2px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: linear-gradient(180deg, var(--nav-debug), rgba(255, 255, 255, 0.9));
+}
+
+.drawer-item,
+.nav-tab {
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.84);
+  color: inherit;
+  padding: 0.95rem 1rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+.drawer-item.is-active,
+.nav-tab.is-active {
+  background: linear-gradient(135deg, rgba(95, 208, 255, 0.5), rgba(255, 255, 255, 0.95));
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+}
+
+.drawer.is-collapsed {
+  display: none;
+}
+
+@media (max-width: 960px) {
+  .tablet-frame {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto minmax(0, 1fr) 88px;
+    grid-template-areas:
+      "bar"
+      "drawer"
+      "main"
+      "nav";
+  }
+
+  .app-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tablet-card,
+  .tablet-card.wide {
+    grid-column: 1 / -1;
+  }
+}

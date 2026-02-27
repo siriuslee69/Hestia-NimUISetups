@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hestia Layouts - Atlas Control Hub</title>
+  <link rel="stylesheet" href="../shared/widgets.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="../shared/widgets.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="atlas-layout">
+  <div class="app-shell">
+    <header class="topbar surface-card" data-panel-name="top command bar">
+      <div>
+        <p class="eyebrow">Desktop control shell</p>
+        <h1>Atlas Control Hub</h1>
+      </div>
+      <div class="widget-toolbar">
+        <button class="widget-button" data-toggle-panel="#atlas-nav" data-tooltip="Collapse the left navigation rail.">Toggle nav</button>
+        <button class="widget-button" data-toggle-panel="#atlas-right-rail" data-tooltip="Collapse the right-side actions rail.">Toggle rail</button>
+        <button class="widget-button" data-demo-toast="Atlas sync batch queued.">Queue sync</button>
+      </div>
+    </header>
+
+    <aside id="atlas-nav" class="left-nav surface-card" data-panel-name="left navigation">
+      <div class="widget-pill debug-label">Debug zone: left menu</div>
+      <nav class="widget-list">
+        <button class="nav-item is-active" data-view="overview">Overview</button>
+        <button class="nav-item" data-view="fleet">Fleet health</button>
+        <button class="nav-item" data-view="policies">Policies</button>
+        <button class="nav-item" data-view="notes">Notes</button>
+      </nav>
+    </aside>
+
+    <main class="main-grid">
+      <section class="hero surface-card">
+        <div>
+          <p class="eyebrow">Primary workspace</p>
+          <h2 id="atlas-title">Overview</h2>
+          <p id="atlas-copy">Classic left nav plus top command bar with a wide center dashboard.</p>
+        </div>
+        <div class="metric-row">
+          <article class="metric-card">
+            <span>Active nodes</span>
+            <strong>128</strong>
+          </article>
+          <article class="metric-card">
+            <span>Waiting jobs</span>
+            <strong>17</strong>
+          </article>
+          <article class="metric-card">
+            <span>Policy drift</span>
+            <strong>3</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="workspace surface-card">
+        <div class="section-head">
+          <h3>Operations canvas</h3>
+          <span class="widget-pill">12-col grid</span>
+        </div>
+        <div class="canvas-grid">
+          <article class="canvas-card wide" data-tooltip="Large chart area for throughput, topology, or timeline views.">
+            <h4>Mission graph</h4>
+            <p>Reserve this region for graph, map, or timeline content.</p>
+          </article>
+          <article class="canvas-card">
+            <h4>Alert queue</h4>
+            <div class="widget-list">
+              <button class="feed-item" data-alert="Cooling spike on node-saturn-08">Cooling spike on node-saturn-08</button>
+              <button class="feed-item" data-alert="Build cluster 4 needs a sweep">Build cluster 4 needs a sweep</button>
+              <button class="feed-item" data-alert="2 policy overrides pending review">2 policy overrides pending review</button>
+            </div>
+          </article>
+          <article class="canvas-card tall">
+            <h4>Recent events</h4>
+            <div class="event-stack">
+              <div>10:20 - replication settled</div>
+              <div>10:11 - access review started</div>
+              <div>09:48 - snapshot completed</div>
+              <div>09:31 - queue rebalance accepted</div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <aside id="atlas-right-rail" class="right-rail surface-card" data-panel-name="right utility rail">
+      <div class="widget-pill debug-label">Debug zone: utility rail</div>
+      <h3>Quick actions</h3>
+      <div class="widget-list">
+        <button class="widget-button" data-demo-toast="Audit report exported.">Export audit</button>
+        <button class="widget-button" data-demo-toast="Maintenance window drafted.">Draft maintenance</button>
+        <button class="widget-button" data-demo-toast="Escalation handoff generated.">Create handoff</button>
+      </div>
+      <div class="widget-empty" id="atlas-alert-panel">Select an alert to inspect it here.</div>
+    </aside>
+  </div>
+</body>
+</html>

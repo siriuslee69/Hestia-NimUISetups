@@ -1,0 +1,203 @@
+@font-face {
+  font-family: "Art Of Creation";
+  src: url("../../assets/themes/fonts/art_of_creation/ArtOfCreation_Final-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Atom Braille";
+  src: url("../../assets/themes/fonts/atombraille/AtomBraille.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Cafeina Dig";
+  src: url("../../assets/themes/fonts/cafeina_dig/Cafed_v2.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Circle Things 2";
+  src: url("../../assets/themes/fonts/circle_things_2/circlethings2.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Halo Covenant";
+  src: url("../../assets/themes/fonts/covenant/Halo%20Covenant.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Cropbats";
+  src: url("../../assets/themes/fonts/cropbats/Truetype/CropBatAOE.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Epta Glyphs";
+  src: url("../../assets/themes/fonts/epta/EPTA%20GLYPHS%20.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Fondi KPZ";
+  src: url("../../assets/themes/fonts/fondi_kpz/fondi_kpz.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Galaxy Dingbats";
+  src: url("../../assets/themes/fonts/galaxy_dingbats/Galaxy_dingbats-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Hexacode";
+  src: url("../../assets/themes/fonts/hexacode/Hexacode.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Maze";
+  src: url("../../assets/themes/fonts/maze_2/Maze.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Omnic Sans";
+  src: url("../../assets/themes/fonts/omnic_sans/OmnicSans.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Planets";
+  src: url("../../assets/themes/fonts/planets/Planets.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Rune";
+  src: url("../../assets/themes/fonts/rune/rune.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Square Things 2";
+  src: url("../../assets/themes/fonts/square_things_2/squarethings2.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "SVG Font 1";
+  src: url("../../assets/themes/fonts/svgfont_1/SVGfont_1.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Zuptype Pica";
+  src: url("../../assets/themes/fonts/zuptype_pica/zuptype_pica.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Zuptype Sim";
+  src: url("../../assets/themes/fonts/zuptype_sim/zuptype_SIM.ttf") format("truetype");
+}
+
+:root {
+  --bg: linear-gradient(135deg, #fff8ef, #eef8ff 48%, #f8fff4);
+  --line: rgba(32, 46, 78, 0.16);
+  --text: #1a2840;
+  --muted: #60708d;
+  --top-debug: rgba(255, 187, 78, 0.17);
+  --input-debug: rgba(86, 144, 255, 0.14);
+  --list-debug: rgba(98, 220, 163, 0.12);
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.gallery-shell {
+  min-height: 100vh;
+  padding: 18px;
+  display: grid;
+  gap: 18px;
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+.gallery-topbar,
+.input-panel {
+  border: 1px solid var(--line);
+}
+
+.gallery-topbar {
+  padding: 18px 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  background: linear-gradient(135deg, var(--top-debug), rgba(255, 255, 255, 0.92));
+}
+
+.input-panel {
+  padding: 18px;
+  display: grid;
+  gap: 10px;
+  background: linear-gradient(180deg, var(--input-debug), rgba(255, 255, 255, 0.9));
+}
+
+.input-label {
+  font-size: 0.86rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+#sample-input {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text);
+  padding: 0.9rem 1rem;
+  border-radius: 2px;
+}
+
+.font-list {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  background: linear-gradient(180deg, var(--list-debug), rgba(255, 255, 255, 0.65));
+  padding: 8px;
+  border: 1px solid var(--line);
+}
+
+.font-row {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.font-name {
+  font-size: 0.84rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.font-sample {
+  min-height: 38px;
+  font-size: 2rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+}
+
+h1 {
+  margin: 0;
+}
+
+@media (max-width: 700px) {
+  .gallery-topbar {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .font-sample {
+    font-size: 1.35rem;
+  }
+}
