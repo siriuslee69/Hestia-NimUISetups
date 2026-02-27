@@ -10,6 +10,7 @@
   <script src="app.js" defer></script>
 </head>
 <body class="mod-grid-bg">
+  <button class="mod-edit-toggle" data-mod-edit-toggle type="button"></button>
   <div class="demo-shell">
     <div
       class="mod-search-frame"
@@ -100,6 +101,130 @@
             <span class="mod-symbol">F</span>
             <span class="mod-label">Flow</span>
           </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="mod-content-frame"
+      id="vertical-data-frame"
+      data-grid-box
+      data-grid-col="12"
+      data-grid-row="4"
+      data-grid-width="13"
+      data-grid-height="7"
+    >
+      <button
+        class="mod-floating-handle"
+        data-grid-drag-handle
+        data-drag-target="#vertical-data-frame"
+        aria-label="Drag handle"
+        type="button"
+      ></button>
+      <button
+        class="mod-resize-handle"
+        data-grid-resize-handle
+        data-resize-target="#vertical-data-frame"
+        aria-label="Resize handle"
+        type="button"
+      >+</button>
+      <div class="mod-content-clip">
+        <h2 class="mod-content-title">Data content</h2>
+        <div class="mod-data-list">
+          <article class="mod-data-card">
+            <div class="mod-preview"></div>
+            <div class="mod-data-main">
+              <h3>Northwind Parcel</h3>
+              <p>Container preview with route and processing summary.</p>
+              <div class="mod-meta-row">
+                <span class="mod-meta-pill">Queued</span>
+                <span class="mod-meta-pill">12 items</span>
+                <span class="mod-meta-pill">ETA 14m</span>
+              </div>
+            </div>
+          </article>
+          <article class="mod-data-card">
+            <div class="mod-preview"></div>
+            <div class="mod-data-main">
+              <h3>Atlas Field Notes</h3>
+              <p>Snapshot card with preview block and metadata.</p>
+              <div class="mod-meta-row">
+                <span class="mod-meta-pill">Draft</span>
+                <span class="mod-meta-pill">Owner Lina</span>
+                <span class="mod-meta-pill">v3</span>
+              </div>
+            </div>
+          </article>
+          <article class="mod-data-card">
+            <div class="mod-preview"></div>
+            <div class="mod-data-main">
+              <h3>Ops Camera Feed</h3>
+              <p>Visual item list entry with compact support metadata.</p>
+              <div class="mod-meta-row">
+                <span class="mod-meta-pill">Live</span>
+                <span class="mod-meta-pill">4 alerts</span>
+                <span class="mod-meta-pill">West dock</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="mod-content-frame"
+      id="vertical-settings-frame"
+      data-grid-box
+      data-grid-col="26"
+      data-grid-row="4"
+      data-grid-width="12"
+      data-grid-height="7"
+    >
+      <button
+        class="mod-floating-handle"
+        data-grid-drag-handle
+        data-drag-target="#vertical-settings-frame"
+        aria-label="Drag handle"
+        type="button"
+      ></button>
+      <button
+        class="mod-resize-handle"
+        data-grid-resize-handle
+        data-resize-target="#vertical-settings-frame"
+        aria-label="Resize handle"
+        type="button"
+      >+</button>
+      <div class="mod-content-clip">
+        <h2 class="mod-content-title">Settings content</h2>
+        <div class="mod-settings-grid">
+          <section class="mod-settings-card">
+            <h3>Display</h3>
+            <div class="mod-form-row">
+              <label for="v-theme">Theme preset</label>
+              <select id="v-theme">
+                <option>Light debug</option>
+                <option>Muted neutral</option>
+                <option>High contrast</option>
+              </select>
+            </div>
+            <label class="mod-checkbox-row"><input type="checkbox" checked /> Show previews</label>
+            <label class="mod-checkbox-row"><input type="checkbox" /> Lock grid</label>
+          </section>
+          <section class="mod-settings-card">
+            <h3>Data</h3>
+            <div class="mod-form-row">
+              <label for="v-filter">Default filter</label>
+              <input id="v-filter" type="text" value="recent active items" />
+            </div>
+            <div class="mod-form-row">
+              <label for="v-density">Density</label>
+              <select id="v-density">
+                <option>Compact</option>
+                <option selected>Comfortable</option>
+                <option>Expanded</option>
+              </select>
+            </div>
+          </section>
         </div>
       </div>
     </div>

@@ -144,6 +144,155 @@ input {
   color: var(--mod-muted);
 }
 
+.mod-content-frame {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 8;
+  border: 1px dashed rgba(31, 46, 78, 0.22);
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: var(--mod-radius);
+  overflow: visible;
+}
+
+.mod-content-clip {
+  width: 100%;
+  height: 100%;
+  padding: 14px;
+  overflow: auto;
+  overflow: overlay;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(31, 46, 78, 0.45) transparent;
+}
+
+.mod-content-clip::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.mod-content-clip::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mod-content-clip::-webkit-scrollbar-thumb {
+  background: rgba(31, 46, 78, 0.45);
+  border-radius: 0;
+  border: 0;
+}
+
+.mod-content-clip:hover::-webkit-scrollbar-thumb {
+  background: rgba(31, 46, 78, 0.85);
+}
+
+.mod-content-title {
+  margin: 0 0 12px;
+  font-size: 0.82rem;
+  color: var(--mod-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.mod-data-list {
+  display: grid;
+  gap: 10px;
+}
+
+.mod-data-card {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--mod-line);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.mod-preview {
+  width: 56px;
+  height: 56px;
+  border: 1px solid rgba(31, 46, 78, 0.18);
+  background: linear-gradient(135deg, rgba(95, 208, 255, 0.18), rgba(129, 217, 122, 0.14));
+}
+
+.mod-data-main h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+}
+
+.mod-data-main p {
+  margin: 0 0 8px;
+  color: var(--mod-muted);
+}
+
+.mod-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mod-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid var(--mod-line);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.mod-settings-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.mod-settings-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--mod-line);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.mod-settings-card h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.mod-form-row {
+  display: grid;
+  gap: 6px;
+}
+
+.mod-form-row label {
+  font-size: 0.86rem;
+  color: var(--mod-muted);
+}
+
+.mod-form-row input,
+.mod-form-row select {
+  min-width: 0;
+  border: 1px solid var(--mod-line);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--mod-text);
+  padding: 0.55rem 0.7rem;
+}
+
+.mod-checkbox-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.mod-edit-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 40;
+  border: 1px solid var(--mod-line);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--mod-text);
+  padding: 0.55rem 0.8rem;
+  cursor: pointer;
+}
+
 .mod-menu-clip {
   display: flex;
   width: 100%;
@@ -453,6 +602,13 @@ input {
   bottom: 0;
   width: 100%;
   height: 18px;
+}
+
+body.mod-edit-ui-off .mod-floating-handle,
+body.mod-edit-ui-off .mod-resize-handle,
+body.mod-edit-ui-off .mod-orientation-handle,
+body.mod-edit-ui-off .mod-mode-toggle {
+  display: none !important;
 }
 
 .mod-button[data-render-state="extended"] {

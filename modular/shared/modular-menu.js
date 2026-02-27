@@ -114,6 +114,25 @@
     });
   }
 
+  function bindEditToggle(button) {
+    if (button.dataset.bound === 'true') {
+      return;
+    }
+
+    button.dataset.bound = 'true';
+    function refreshLabel() {
+      const isOff = document.body.classList.contains('mod-edit-ui-off');
+      button.textContent = isOff ? 'Enable edit dots' : 'Disable edit dots';
+    }
+
+    button.addEventListener('click', () => {
+      document.body.classList.toggle('mod-edit-ui-off');
+      refreshLabel();
+    });
+
+    refreshLabel();
+  }
+
   function nextMode(mode) {
     switch (mode) {
     case 'collapsed':
@@ -795,6 +814,9 @@
     syncGridCssVars();
     root.querySelectorAll('[data-grid-box]').forEach(target => {
       setGridBoxDefaults(target);
+    });
+    root.querySelectorAll('[data-mod-edit-toggle]').forEach(button => {
+      bindEditToggle(button);
     });
     root.querySelectorAll('[data-modular-menu]').forEach(menu => {
       initMenu(menu);
