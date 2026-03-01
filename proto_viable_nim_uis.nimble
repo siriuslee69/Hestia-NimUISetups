@@ -1,4 +1,4 @@
-import std/[os, strutils]
+﻿import std/[os, strutils]
 
 version       = "0.1.0"
 author        = "siriuslee69"
@@ -76,3 +76,7 @@ task bundleDir, "Bundle the assets folder into one binary":
 
 task unbundleDir, "Extract the generated bundle binary":
   exec "nim c -r tools/bundler/directory_bundler.nim extract dist/assets.bundle dist/assets_unpacked"
+
+task smoke, "Run smoke tests":
+  exec "nim c -r ../tests/test_smoke.nim"
+

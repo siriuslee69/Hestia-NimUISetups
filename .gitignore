@@ -1,4 +1,4 @@
-# Build outputs
+﻿# Build outputs
 nimcache/
 .nimcache/
 **/.nimcache/
@@ -21,8 +21,9 @@ tools/bundler/directory_bundler
 tools/windows/gtk_builder_msys2
 
 # Local tooling overrides
-valkyrie/.gitmodules.local
+valk/.gitmodules.local
 
 # Editor / OS
 .DS_Store
 Thumbs.db
+
