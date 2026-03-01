@@ -9,6 +9,8 @@
   const orientationHandles = new WeakMap();
   const overflowToggles = new WeakMap();
   let modeTooltip = null;
+  let tagTooltip = null;
+  let pinnedCarousel = null;
 
   function getButtons(menu) {
     return [...menu.querySelectorAll('.mod-button')];
@@ -70,6 +72,98 @@
     modeTooltip.hidden = true;
     document.body.appendChild(modeTooltip);
     return modeTooltip;
+  }
+
+  function ensureTagTooltip() {
+    if (tagTooltip) {
+      return tagTooltip;
+    }
+    tagTooltip = document.createElement('div');
+    tagTooltip.className = 'mod-tag-tooltip';
+    tagTooltip.hidden = true;
+    document.body.appendChild(tagTooltip);
+
+    if (ensureTagTooltip.bound !== true) {
+      document.addEventListener('click', event => {
+        if (!pinnedCarousel) {
+          return;
+        }
+        const tooltip = ensureTagTooltip();
+        if (tooltip.contains(event.target) || pinnedCarousel.contains(event.target)) {
+          return;
+        }
+        hideTagTooltip(true);
+      });
+
+      window.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && pinnedCarousel) {
+          hideTagTooltip(true);
+        }
+      });
+
+      ensureTagTooltip.bound = true;
+    }
+
+    return tagTooltip;
+  }
+
+  function positionTagTooltip(clientX, clientY) {
+    const tooltip = ensureTagTooltip();
+    const margin = 8;
+    const gap = 14;
+    tooltip.style.left = `${Math.round(clientX + gap)}px`;
+    tooltip.style.top = `${Math.round(clientY)}px`;
+
+    const rect = tooltip.getBoundingClientRect();
+    let left = clientX + gap;
+    if (left + rect.width > window.innerWidth - margin) {
+      left = clientX - rect.width - gap;
+    }
+    left = clamp(left, margin, Math.max(margin, window.innerWidth - rect.width - margin));
+
+    let top = clientY - rect.height / 2;
+    top = clamp(top, margin, Math.max(margin, window.innerHeight - rect.height - margin));
+
+    tooltip.style.left = `${Math.round(left)}px`;
+    tooltip.style.top = `${Math.round(top)}px`;
+  }
+
+  function fillTagTooltip(carousel, scrollable) {
+    const tooltip = ensureTagTooltip();
+    const pills = carouselPillsOf(carousel);
+    tooltip.innerHTML = '';
+    tooltip.classList.toggle('is-pinned', scrollable);
+    const list = document.createElement('div');
+    list.className = 'mod-tag-tooltip-list';
+
+    pills.forEach(pill => {
+      const row = document.createElement('span');
+      row.className = 'mod-meta-pill mod-tag-tooltip-pill';
+      row.textContent = pill.textContent || '';
+      list.appendChild(row);
+    });
+
+    tooltip.appendChild(list);
+  }
+
+  function showTagTooltip(carousel, event, scrollable) {
+    fillTagTooltip(carousel, scrollable);
+    const tooltip = ensureTagTooltip();
+    tooltip.hidden = false;
+    positionTagTooltip(event.clientX, event.clientY);
+  }
+
+  function hideTagTooltip(force) {
+    if (!force && pinnedCarousel) {
+      return;
+    }
+    const tooltip = ensureTagTooltip();
+    tooltip.hidden = true;
+    tooltip.classList.remove('is-pinned');
+    tooltip.innerHTML = '';
+    if (force) {
+      pinnedCarousel = null;
+    }
   }
 
   function modeText(mode) {
@@ -810,6 +904,275 @@
     return api;
   }
 
+  let carouselTick = 0;
+  let carouselTimer = null;
+  const activeCarousels = new Set();
+
+  function carouselPillsOf(carousel) {
+    if (!carousel._pills) {
+      carousel._pills = [...carousel.querySelectorAll('.mod-meta-pill')];
+    }
+    return carousel._pills;
+  }
+
+  function syncCarouselTick(carousel) {
+    const pills = carouselPillsOf(carousel);
+    if (pills.length === 0) {
+      return;
+    }
+    pills.forEach(p => p.classList.remove('is-carousel-active'));
+    pills[carouselTick % pills.length].classList.add('is-carousel-active');
+  }
+
+  function globalCarouselTick() {
+    carouselTick++;
+    activeCarousels.forEach(carousel => {
+      syncCarouselTick(carousel);
+    });
+  }
+
+  function ensureGlobalTicker() {
+    if (carouselTimer !== null) {
+      return;
+    }
+    carouselTimer = setInterval(globalCarouselTick, 3000);
+  }
+
+  function registerCarousel(carousel) {
+    const pills = carouselPillsOf(carousel);
+    if (pills.length === 0) {
+      return;
+    }
+    activeCarousels.add(carousel);
+    ensureGlobalTicker();
+    syncCarouselTick(carousel);
+  }
+
+  function unregisterCarousel(carousel) {
+    activeCarousels.delete(carousel);
+    if (pinnedCarousel === carousel) {
+      hideTagTooltip(true);
+    }
+  }
+
+  function attachCarouselHover(carousel) {
+    if (carousel.dataset.hoverBound === 'true') {
+      return;
+    }
+    carousel.dataset.hoverBound = 'true';
+
+    carousel.addEventListener('mouseenter', event => {
+      if (pinnedCarousel && pinnedCarousel !== carousel) {
+        return;
+      }
+      showTagTooltip(carousel, event, pinnedCarousel === carousel);
+    });
+
+    carousel.addEventListener('mousemove', event => {
+      if (pinnedCarousel && pinnedCarousel !== carousel) {
+        return;
+      }
+      showTagTooltip(carousel, event, pinnedCarousel === carousel);
+    });
+
+    carousel.addEventListener('mouseleave', () => {
+      if (pinnedCarousel === carousel) {
+        return;
+      }
+      hideTagTooltip(false);
+    });
+
+    carousel.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (pinnedCarousel === carousel) {
+        hideTagTooltip(true);
+        return;
+      }
+
+      pinnedCarousel = carousel;
+      showTagTooltip(carousel, event, true);
+    });
+  }
+
+  const FAKE_META = [
+    { created: 'Feb 27, 2026', edited: '4h ago' },
+    { created: '1 week ago', edited: '1 day ago' },
+    { created: 'Mar 1, 2026', edited: '12 min ago' },
+    { created: 'Jan 14, 2026', edited: '3 days ago' },
+    { created: 'Feb 1, 2026', edited: '2h ago' },
+    { created: 'Mar 1, 2026', edited: 'Just now' },
+  ];
+
+  function buildDateRow(card, cardIndex) {
+    const m = FAKE_META[cardIndex % FAKE_META.length];
+    const row = document.createElement('div');
+    row.className = 'mod-date-row';
+    row.innerHTML =
+      `<span class="mod-date-item"><span class="mod-date-label">Created</span>${m.created}</span>` +
+      `<span class="mod-date-item"><span class="mod-date-label">Edited</span>${m.edited}</span>`;
+    return row;
+  }
+
+  function buildHybridRow(card, cardIndex) {
+    const m = FAKE_META[cardIndex % FAKE_META.length];
+    const row = document.createElement('div');
+    row.className = 'mod-hybrid-row';
+
+    const dateSpan = document.createElement('span');
+    dateSpan.className = 'mod-date-item mod-hybrid-edited';
+    dateSpan.textContent = m.edited;
+    dateSpan.title = `Last edit: ${m.edited}`;
+    dateSpan.setAttribute('aria-label', `Last edit: ${m.edited}`);
+    row.appendChild(dateSpan);
+
+    const srcPills = [...card.querySelectorAll('.mod-meta-row .mod-meta-pill')];
+    if (srcPills.length > 0) {
+      const carousel = document.createElement('div');
+      carousel.className = 'mod-tag-carousel';
+      const track = document.createElement('div');
+      track.className = 'mod-carousel-track';
+      srcPills.forEach(srcPill => {
+        const pill = document.createElement('span');
+        pill.className = 'mod-meta-pill';
+        pill.textContent = srcPill.textContent;
+        track.appendChild(pill);
+      });
+      carousel.appendChild(track);
+      row.appendChild(carousel);
+      attachCarouselHover(carousel);
+    }
+
+    return row;
+  }
+
+  function ensureInjectedRows(dataList) {
+    [...dataList.querySelectorAll('.mod-data-card')].forEach((card, i) => {
+      const main = card.querySelector('.mod-data-main');
+      if (!main) {
+        return;
+      }
+
+      if (!main.querySelector('.mod-date-row')) {
+        main.appendChild(buildDateRow(card, i));
+      }
+      if (!main.querySelector('.mod-hybrid-row')) {
+        main.appendChild(buildHybridRow(card, i));
+      }
+    });
+  }
+
+  function applyMetaView(dataList, mode) {
+    dataList.dataset.metaView = mode;
+    if (mode === 'dates' || mode === 'hybrid') {
+      ensureInjectedRows(dataList);
+    }
+    if (mode === 'hybrid') {
+      dataList.querySelectorAll('.mod-tag-carousel').forEach(registerCarousel);
+    } else {
+      dataList.querySelectorAll('.mod-tag-carousel').forEach(unregisterCarousel);
+      hideTagTooltip(true);
+    }
+  }
+
+  function initViewSwitchers(root) {
+    const views = [
+      { id: 'list', icon: '☰', label: 'List' },
+      { id: 'details', icon: '▤', label: 'Details' },
+      { id: 'cards', icon: '▦', label: 'Cards' }
+    ];
+
+    const metaOpts = [
+      { id: 'tags', icon: '🏷', label: 'Tags' },
+      { id: 'dates', icon: '📄', label: 'Dates' },
+      { id: 'hybrid', icon: '◑', label: 'Hybrid' },
+    ];
+
+    root.querySelectorAll('.mod-content-frame').forEach(frame => {
+      const dataList = frame.querySelector('.mod-data-list');
+      if (!dataList) {
+        return;
+      }
+      if (frame.querySelector('.mod-view-switcher')) {
+        return;
+      }
+
+      const switcher = document.createElement('div');
+      switcher.className = 'mod-view-switcher';
+
+      views.forEach(view => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'mod-view-btn';
+        btn.dataset.view = view.id;
+        btn.innerHTML = `<span class="mod-view-icon">${view.icon}</span>${view.label}`;
+        if (view.id === 'details') {
+          btn.classList.add('is-active');
+        }
+
+        btn.addEventListener('click', () => {
+          switcher.querySelectorAll('.mod-view-btn').forEach(b => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          dataList.dataset.view = view.id;
+        });
+
+        switcher.appendChild(btn);
+      });
+
+      const dropdown = document.createElement('div');
+      dropdown.className = 'mod-meta-dropdown';
+
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'mod-meta-toggle';
+      toggle.title = 'Metadata display options';
+      toggle.innerHTML = '<span class="mod-view-icon">⋯</span>';
+
+      function closeDropdown() {
+        dropdown.classList.remove('is-open');
+        toggle.classList.remove('is-open');
+      }
+
+      toggle.addEventListener('click', e => {
+        e.stopPropagation();
+        const isOpen = dropdown.classList.contains('is-open');
+        dropdown.classList.toggle('is-open', !isOpen);
+        toggle.classList.toggle('is-open', !isOpen);
+      });
+
+      document.addEventListener('click', () => closeDropdown(), { capture: false });
+      dropdown.addEventListener('click', e => e.stopPropagation());
+
+      metaOpts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'mod-meta-opt';
+        btn.dataset.metaOpt = opt.id;
+        btn.innerHTML = `<span class="mod-meta-opt-icon">${opt.icon}</span>${opt.label}`;
+        if (opt.id === 'tags') {
+          btn.classList.add('is-active');
+        }
+
+        btn.addEventListener('click', () => {
+          dropdown.querySelectorAll('.mod-meta-opt').forEach(b => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          applyMetaView(dataList, opt.id);
+          closeDropdown();
+        });
+
+        dropdown.appendChild(btn);
+      });
+
+      switcher.style.position = 'relative';
+      switcher.appendChild(toggle);
+      switcher.appendChild(dropdown);
+      dataList.dataset.view = 'details';
+      applyMetaView(dataList, 'tags');
+      frame.appendChild(switcher);
+    });
+  }
+
   function init(root = document) {
     syncGridCssVars();
     root.querySelectorAll('[data-grid-box]').forEach(target => {
@@ -830,6 +1193,7 @@
     root.querySelectorAll('[data-orientation-toggle-handle]').forEach(handle => {
       attachOrientationHandle(handle);
     });
+    initViewSwitchers(root);
 
     window.addEventListener('resize', syncGridCssVars);
   }
