@@ -10,7 +10,9 @@
   const overflowToggles = new WeakMap();
   let modeTooltip = null;
   let tagTooltip = null;
+  let metaTooltip = null;
   let pinnedCarousel = null;
+  let pinnedMetaField = null;
 
   function getButtons(menu) {
     return [...menu.querySelectorAll('.mod-button')];
@@ -107,8 +109,40 @@
     return tagTooltip;
   }
 
-  function positionTagTooltip(clientX, clientY) {
-    const tooltip = ensureTagTooltip();
+  function ensureMetaTooltip() {
+    if (metaTooltip) {
+      return metaTooltip;
+    }
+    metaTooltip = document.createElement('div');
+    metaTooltip.className = 'mod-meta-tooltip';
+    metaTooltip.hidden = true;
+    document.body.appendChild(metaTooltip);
+
+    if (ensureMetaTooltip.bound !== true) {
+      document.addEventListener('click', event => {
+        if (!pinnedMetaField) {
+          return;
+        }
+        const tooltip = ensureMetaTooltip();
+        if (tooltip.contains(event.target) || pinnedMetaField.contains(event.target)) {
+          return;
+        }
+        hideMetaTooltip(true);
+      });
+
+      window.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && pinnedMetaField) {
+          hideMetaTooltip(true);
+        }
+      });
+
+      ensureMetaTooltip.bound = true;
+    }
+
+    return metaTooltip;
+  }
+
+  function positionFloatingTooltip(tooltip, clientX, clientY) {
     const margin = 8;
     const gap = 14;
     tooltip.style.left = `${Math.round(clientX + gap)}px`;
@@ -128,11 +162,26 @@
     tooltip.style.top = `${Math.round(top)}px`;
   }
 
+  function positionTagTooltip(clientX, clientY) {
+    const tooltip = ensureTagTooltip();
+    positionFloatingTooltip(tooltip, clientX, clientY);
+  }
+
+  function positionMetaTooltip(clientX, clientY) {
+    const tooltip = ensureMetaTooltip();
+    positionFloatingTooltip(tooltip, clientX, clientY);
+  }
+
   function fillTagTooltip(carousel, scrollable) {
     const tooltip = ensureTagTooltip();
     const pills = carouselPillsOf(carousel);
     tooltip.innerHTML = '';
     tooltip.classList.toggle('is-pinned', scrollable);
+    const fieldTitle = document.createElement('div');
+    fieldTitle.className = 'mod-tag-tooltip-title';
+    fieldTitle.textContent = carousel.dataset.metaField || 'metadata';
+    tooltip.appendChild(fieldTitle);
+
     const list = document.createElement('div');
     list.className = 'mod-tag-tooltip-list';
 
@@ -162,8 +211,99 @@
     tooltip.classList.remove('is-pinned');
     tooltip.innerHTML = '';
     if (force) {
+      if (pinnedCarousel) {
+        pinnedCarousel.classList.remove('is-meta-active');
+      }
       pinnedCarousel = null;
     }
+  }
+
+  function fillMetaTooltip(field, value, scrollable) {
+    const tooltip = ensureMetaTooltip();
+    tooltip.innerHTML = '';
+    tooltip.classList.toggle('is-pinned', scrollable);
+
+    const name = document.createElement('div');
+    name.className = 'mod-meta-tooltip-name';
+    name.textContent = field;
+
+    const text = document.createElement('div');
+    text.className = 'mod-meta-tooltip-value';
+    text.textContent = value;
+
+    tooltip.appendChild(name);
+    tooltip.appendChild(text);
+  }
+
+  function showMetaTooltip(fieldEl, event, scrollable) {
+    const field = fieldEl.dataset.metaField || 'metadata';
+    const value = fieldEl.dataset.metaValue || fieldEl.textContent || '';
+    fillMetaTooltip(field, value, scrollable);
+    const tooltip = ensureMetaTooltip();
+    tooltip.hidden = false;
+    positionMetaTooltip(event.clientX, event.clientY);
+  }
+
+  function hideMetaTooltip(force) {
+    if (!force && pinnedMetaField) {
+      return;
+    }
+    const tooltip = ensureMetaTooltip();
+    tooltip.hidden = true;
+    tooltip.classList.remove('is-pinned');
+    tooltip.innerHTML = '';
+    if (force) {
+      if (pinnedMetaField) {
+        pinnedMetaField.classList.remove('is-meta-active');
+      }
+      pinnedMetaField = null;
+    }
+  }
+
+  function attachMetaFieldHover(fieldEl) {
+    if (fieldEl.dataset.metaHoverBound === 'true') {
+      return;
+    }
+    fieldEl.dataset.metaHoverBound = 'true';
+
+    fieldEl.addEventListener('mouseenter', event => {
+      if (pinnedMetaField && pinnedMetaField !== fieldEl) {
+        return;
+      }
+      showMetaTooltip(fieldEl, event, pinnedMetaField === fieldEl);
+    });
+
+    fieldEl.addEventListener('mousemove', event => {
+      if (pinnedMetaField && pinnedMetaField !== fieldEl) {
+        return;
+      }
+      showMetaTooltip(fieldEl, event, pinnedMetaField === fieldEl);
+    });
+
+    fieldEl.addEventListener('mouseleave', () => {
+      if (pinnedMetaField === fieldEl) {
+        return;
+      }
+      hideMetaTooltip(false);
+    });
+
+    fieldEl.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      hideTagTooltip(true);
+
+      if (pinnedMetaField === fieldEl) {
+        hideMetaTooltip(true);
+        return;
+      }
+
+      if (pinnedMetaField) {
+        pinnedMetaField.classList.remove('is-meta-active');
+      }
+      pinnedMetaField = fieldEl;
+      fieldEl.classList.add('is-meta-active');
+      showMetaTooltip(fieldEl, event, true);
+    });
   }
 
   function modeText(mode) {
@@ -782,6 +922,9 @@
       if (menu && menus.has(menu)) {
         menus.get(menu).refresh();
       }
+      target.querySelectorAll('.mod-data-list').forEach(dataList => {
+        updateMetadataPagers(dataList);
+      });
     }
 
     function ensureInitialHeight() {
@@ -848,6 +991,17 @@
     handle.title = handle.getAttribute('aria-label');
   }
 
+  function applyOrientationTargetLayout(target) {
+    const orientation = target.dataset.orientation || 'horizontal';
+    if (!target.classList.contains('mod-data-list') && !target.classList.contains('mod-settings-grid')) {
+      return;
+    }
+
+    target.style.flexDirection = orientation === 'horizontal' ? 'row' : 'column';
+    target.style.flexWrap = orientation === 'horizontal' ? 'wrap' : 'nowrap';
+    target.style.alignItems = orientation === 'horizontal' ? 'flex-start' : 'stretch';
+  }
+
   function attachOrientationHandle(handle) {
     if (orientationHandles.has(handle)) {
       return;
@@ -867,11 +1021,13 @@
       if (menus.has(menu)) {
         menus.get(menu).refresh();
       }
+      applyOrientationTargetLayout(menu);
       updateOrientationHandleLabel(handle, menu);
     }
 
     handle.addEventListener('click', toggleOrientation);
     attachHoverTooltip(handle, 'Toggle row/column');
+    applyOrientationTargetLayout(menu);
     updateOrientationHandleLabel(handle, menu);
     orientationHandles.set(handle, { toggleOrientation });
   }
@@ -985,95 +1141,1064 @@
     carousel.addEventListener('click', event => {
       event.preventDefault();
       event.stopPropagation();
+      hideMetaTooltip(true);
 
       if (pinnedCarousel === carousel) {
         hideTagTooltip(true);
         return;
       }
 
+      if (pinnedCarousel) {
+        pinnedCarousel.classList.remove('is-meta-active');
+      }
       pinnedCarousel = carousel;
+      carousel.classList.add('is-meta-active');
       showTagTooltip(carousel, event, true);
     });
   }
 
   const FAKE_META = [
     { created: 'Feb 27, 2026', edited: '4h ago' },
-    { created: '1 week ago', edited: '1 day ago' },
+    { created: 'Feb 26, 2026', edited: '1 day ago' },
     { created: 'Mar 1, 2026', edited: '12 min ago' },
     { created: 'Jan 14, 2026', edited: '3 days ago' },
     { created: 'Feb 1, 2026', edited: '2h ago' },
     { created: 'Mar 1, 2026', edited: 'Just now' },
   ];
 
-  function buildDateRow(card, cardIndex) {
-    const m = FAKE_META[cardIndex % FAKE_META.length];
+  const metadataStates = new WeakMap();
+  const metadataPagers = new WeakMap();
+
+  const DEMO_DATA = [
+    {
+      title: 'Northwind Parcel',
+      description: 'Container preview with route and processing summary.',
+      metadata: {
+        created: 'Feb 27, 2026',
+        lastEdited: '4h ago',
+        status: 'Queued',
+        priority: 'High',
+        tags: ['Queued', '12 items', 'ETA 14m', 'Cold chain'],
+        checkpoints: ['Dock A', 'Transit', 'Sorter', 'Outbound'],
+        owner: { lead: 'Lina', reviewer: 'Maks' }
+      }
+    },
+    {
+      title: 'Atlas Field Notes',
+      description: 'Snapshot card with preview block and metadata.',
+      metadata: {
+        created: 'Feb 23, 2026',
+        lastEdited: '1 day ago',
+        status: 'Draft',
+        priority: 'Normal',
+        tags: ['Draft', 'Owner Lina', 'v3', 'Survey'],
+        checkpoints: ['Intake', 'Annotate', 'Review'],
+        owner: { lead: 'Lina', reviewer: 'Noah' }
+      }
+    },
+    {
+      title: 'Ops Camera Feed',
+      description: 'Visual item list entry with compact support metadata.',
+      metadata: {
+        created: 'Mar 1, 2026',
+        lastEdited: '12 min ago',
+        status: 'Live',
+        priority: 'Critical',
+        tags: ['Live', '4 alerts', 'West dock', 'Night shift'],
+        checkpoints: ['Lens check', 'Signal', 'Archive'],
+        owner: { lead: 'Rhea', reviewer: 'Kai' }
+      }
+    },
+    {
+      title: 'Beacon Relay Logs',
+      description: 'Transmission diagnostics and packet integrity scores.',
+      metadata: {
+        created: 'Feb 20, 2026',
+        lastEdited: '2h ago',
+        status: 'Stable',
+        priority: 'Normal',
+        tags: ['Relay', 'Packet loss 0.2%', 'Sector 7'],
+        checkpoints: ['Ingress', 'Normalize', 'Emit'],
+        owner: { lead: 'Sora', reviewer: 'Tao' }
+      }
+    },
+    {
+      title: 'Harbor Shift Board',
+      description: 'Shift assignments with role and handoff markers.',
+      metadata: {
+        created: 'Feb 22, 2026',
+        lastEdited: '5h ago',
+        status: 'Active',
+        priority: 'High',
+        tags: ['Shift', '26 staff', 'Dock cluster C'],
+        checkpoints: ['Morning', 'Swing', 'Night'],
+        owner: { lead: 'Anya', reviewer: 'Milo' }
+      }
+    },
+    {
+      title: 'Incident Bundle 42',
+      description: 'Linked snapshots and timeline notes for triage.',
+      metadata: {
+        created: 'Feb 19, 2026',
+        lastEdited: '3 days ago',
+        status: 'Escalated',
+        priority: 'Critical',
+        tags: ['Escalated', '17 files', 'Tier 2'],
+        checkpoints: ['Collect', 'Correlate', 'Assign'],
+        owner: { lead: 'Vera', reviewer: 'Eli' }
+      }
+    },
+    {
+      title: 'Polar Route Map',
+      description: 'Route alternatives scored by weather and congestion.',
+      metadata: {
+        created: 'Feb 11, 2026',
+        lastEdited: '8h ago',
+        status: 'Planning',
+        priority: 'Normal',
+        tags: ['Map', '6 options', 'Weather aware'],
+        checkpoints: ['Forecast', 'Score', 'Select'],
+        owner: { lead: 'Ari', reviewer: 'Nia' }
+      }
+    },
+    {
+      title: 'Audit Ledger Stream',
+      description: 'Hash-linked entries with compliance annotations.',
+      metadata: {
+        created: 'Feb 5, 2026',
+        lastEdited: '45 min ago',
+        status: 'Live',
+        priority: 'High',
+        tags: ['Ledger', 'Signed', 'Immutable'],
+        checkpoints: ['Write', 'Sign', 'Replicate'],
+        owner: { lead: 'Jun', reviewer: 'Sara' }
+      }
+    },
+    {
+      title: 'Thermal Sensor Mesh',
+      description: 'Edge node thermal readings and anomaly windows.',
+      metadata: {
+        created: 'Feb 16, 2026',
+        lastEdited: '2 days ago',
+        status: 'Monitoring',
+        priority: 'Normal',
+        tags: ['Sensors', '32 nodes', 'Anomaly x2'],
+        checkpoints: ['Poll', 'Smooth', 'Alert'],
+        owner: { lead: 'Uma', reviewer: 'Finn' }
+      }
+    },
+    {
+      title: 'Dockside Manifest',
+      description: 'Manifest cards grouped by gate and vehicle class.',
+      metadata: {
+        created: 'Feb 9, 2026',
+        lastEdited: '6h ago',
+        status: 'Queued',
+        priority: 'High',
+        tags: ['Manifest', 'Gate 4', '11 trucks'],
+        checkpoints: ['Check-in', 'Inspect', 'Dispatch'],
+        owner: { lead: 'Ivo', reviewer: 'Bea' }
+      }
+    },
+    {
+      title: 'Signal Cleanup Batch',
+      description: 'Noise suppression run with quality deltas.',
+      metadata: {
+        created: 'Feb 13, 2026',
+        lastEdited: '30 min ago',
+        status: 'Processing',
+        priority: 'Normal',
+        tags: ['DSP', 'Batch 9', 'Q +12%'],
+        checkpoints: ['Capture', 'Filter', 'Merge'],
+        owner: { lead: 'Yuri', reviewer: 'Pia' }
+      }
+    },
+    {
+      title: 'Route Closure Notices',
+      description: 'Time-bounded closure notices with fallback lanes.',
+      metadata: {
+        created: 'Mar 2, 2026',
+        lastEdited: 'Just now',
+        status: 'Updated',
+        priority: 'Critical',
+        tags: ['Closure', 'North tunnel', 'Fallback live'],
+        checkpoints: ['Detect', 'Publish', 'Notify'],
+        owner: { lead: 'Zed', reviewer: 'Mara' }
+      }
+    },
+  ];
+
+  function metaText(value) {
+    if (value === null || value === undefined) {
+      return 'n/a';
+    }
+    if (typeof value === 'object') {
+      return JSON.stringify(value);
+    }
+    return String(value);
+  }
+
+  function metaValueKind(value) {
+    if (Array.isArray(value)) {
+      return 'array';
+    }
+    if (value !== null && typeof value === 'object') {
+      return 'object';
+    }
+    return 'single';
+  }
+
+  function parseCardMetadata(card, cardIndex) {
+    const raw = card.dataset.metadata;
+    if (typeof raw === 'string' && raw.trim().length > 0) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          return parsed;
+        }
+      } catch (err) {
+        /* keep fallback metadata for malformed card payloads */
+      }
+    }
+
+    const fallback = FAKE_META[cardIndex % FAKE_META.length];
+    const tags = [...card.querySelectorAll('.mod-meta-row .mod-meta-pill')].map(p => p.textContent || '');
+    return {
+      created: fallback.created,
+      lastEdited: fallback.edited,
+      tags
+    };
+  }
+
+  function makeDataCard(entry) {
+    const card = document.createElement('article');
+    card.className = 'mod-data-card';
+    card.dataset.metadata = JSON.stringify(entry.metadata);
+
+    const preview = document.createElement('div');
+    preview.className = 'mod-preview';
+
+    const main = document.createElement('div');
+    main.className = 'mod-data-main';
+
+    const h3 = document.createElement('h3');
+    h3.textContent = entry.title;
+
+    const p = document.createElement('p');
+    p.textContent = entry.description;
+
+    const row = document.createElement('div');
+    row.className = 'mod-meta-row';
+    (entry.metadata.tags || []).slice(0, 3).forEach(tag => {
+      const pill = document.createElement('span');
+      pill.className = 'mod-meta-pill';
+      pill.textContent = String(tag);
+      row.appendChild(pill);
+    });
+
+    main.appendChild(h3);
+    main.appendChild(p);
+    main.appendChild(row);
+    card.appendChild(preview);
+    card.appendChild(main);
+    return card;
+  }
+
+  function seedCardContent(card, entry) {
+    card.dataset.metadata = JSON.stringify(entry.metadata);
+
+    const h3 = card.querySelector('.mod-data-main h3');
+    const p = card.querySelector('.mod-data-main p');
+    if (h3) {
+      h3.textContent = entry.title;
+    }
+    if (p) {
+      p.textContent = entry.description;
+    }
+
+    let row = card.querySelector('.mod-meta-row');
+    if (!row) {
+      row = document.createElement('div');
+      row.className = 'mod-meta-row';
+      card.querySelector('.mod-data-main')?.appendChild(row);
+    }
+    row.innerHTML = '';
+    (entry.metadata.tags || []).slice(0, 3).forEach(tag => {
+      const pill = document.createElement('span');
+      pill.className = 'mod-meta-pill';
+      pill.textContent = String(tag);
+      row.appendChild(pill);
+    });
+  }
+
+  function ensureDemoData(dataList) {
+    if (dataList.dataset.demoFilled === 'true') {
+      return;
+    }
+    const cards = [...dataList.querySelectorAll('.mod-data-card')];
+    cards.forEach((card, i) => {
+      const entry = DEMO_DATA[i % DEMO_DATA.length];
+      seedCardContent(card, entry);
+    });
+
+    for (let i = cards.length; i < DEMO_DATA.length; i++) {
+      dataList.appendChild(makeDataCard(DEMO_DATA[i]));
+    }
+
+    dataList.dataset.demoFilled = 'true';
+  }
+
+  function collectMetadataSchema(dataList) {
+    const schema = new Map();
+    const cards = [...dataList.querySelectorAll('.mod-data-card')];
+
+    cards.forEach((card, i) => {
+      const metadata = parseCardMetadata(card, i);
+      Object.entries(metadata).forEach(([field, value]) => {
+        const kind = metaValueKind(value);
+        if (!schema.has(field)) {
+          schema.set(field, {
+            field,
+            kind,
+            maxLength: kind === 'array' ? value.length : 0,
+            objectKeys: kind === 'object' ? new Set(Object.keys(value)) : new Set()
+          });
+          return;
+        }
+
+        const descriptor = schema.get(field);
+        if (!descriptor) {
+          return;
+        }
+        if (descriptor.kind === 'array' && Array.isArray(value)) {
+          descriptor.maxLength = Math.max(descriptor.maxLength, value.length);
+        }
+        if (descriptor.kind === 'object' && value && typeof value === 'object' && !Array.isArray(value)) {
+          Object.keys(value).forEach(key => descriptor.objectKeys.add(key));
+        }
+      });
+    });
+
+    return schema;
+  }
+
+  function defaultMultiSelection(field, descriptor) {
+    if (field === 'tags') {
+      return 'carousel';
+    }
+
+    if (descriptor.kind === 'array') {
+      return descriptor.maxLength > 0 ? 'index:0' : 'carousel';
+    }
+
+    if (descriptor.kind === 'object') {
+      const keys = [...descriptor.objectKeys];
+      return keys.length > 0 ? `field:${keys[0]}` : 'carousel';
+    }
+
+    return 'carousel';
+  }
+
+  function ensureMetadataState(dataList) {
+    const previous = metadataStates.get(dataList);
+    const schema = collectMetadataSchema(dataList);
+    const state = {
+      schema,
+      singles: new Map(),
+      multis: new Map()
+    };
+
+    schema.forEach((descriptor, field) => {
+      if (descriptor.kind === 'single') {
+        const prev = previous?.singles.get(field);
+        state.singles.set(field, prev === undefined ? true : prev);
+        return;
+      }
+
+      const prev = previous?.multis.get(field);
+      state.multis.set(field, prev || defaultMultiSelection(field, descriptor));
+    });
+
+    metadataStates.set(dataList, state);
+    return state;
+  }
+
+  function buildDateRow(metadata, cardIndex) {
+    const fallback = FAKE_META[cardIndex % FAKE_META.length];
+    const created = metadata.created || fallback.created;
+    const edited = metadata.lastEdited || fallback.edited;
     const row = document.createElement('div');
     row.className = 'mod-date-row';
     row.innerHTML =
-      `<span class="mod-date-item"><span class="mod-date-label">Created</span>${m.created}</span>` +
-      `<span class="mod-date-item"><span class="mod-date-label">Edited</span>${m.edited}</span>`;
+      `<span class="mod-date-item"><span class="mod-date-label">Created</span>${created}</span>` +
+      `<span class="mod-date-item"><span class="mod-date-label">Edited</span>${edited}</span>`;
     return row;
   }
 
-  function buildHybridRow(card, cardIndex) {
-    const m = FAKE_META[cardIndex % FAKE_META.length];
-    const row = document.createElement('div');
-    row.className = 'mod-hybrid-row';
+  function syncDateRow(main, metadata, cardIndex) {
+    const existing = main.querySelector('.mod-date-row');
+    const next = buildDateRow(metadata, cardIndex);
+    if (!existing) {
+      main.appendChild(next);
+      return;
+    }
+    existing.innerHTML = next.innerHTML;
+  }
 
-    const dateSpan = document.createElement('span');
-    dateSpan.className = 'mod-date-item mod-hybrid-edited';
-    dateSpan.textContent = m.edited;
-    dateSpan.title = `Last edit: ${m.edited}`;
-    dateSpan.setAttribute('aria-label', `Last edit: ${m.edited}`);
-    row.appendChild(dateSpan);
+  function carouselValuesOf(value) {
+    if (Array.isArray(value)) {
+      return value.map(item => metaText(item));
+    }
+    if (value && typeof value === 'object') {
+      return Object.values(value).map(v => metaText(v));
+    }
+    return [metaText(value)];
+  }
 
-    const srcPills = [...card.querySelectorAll('.mod-meta-row .mod-meta-pill')];
-    if (srcPills.length > 0) {
-      const carousel = document.createElement('div');
-      carousel.className = 'mod-tag-carousel';
-      const track = document.createElement('div');
-      track.className = 'mod-carousel-track';
-      srcPills.forEach(srcPill => {
-        const pill = document.createElement('span');
-        pill.className = 'mod-meta-pill';
-        pill.textContent = srcPill.textContent;
-        track.appendChild(pill);
-      });
-      carousel.appendChild(track);
-      row.appendChild(carousel);
-      attachCarouselHover(carousel);
+  function selectedValueOf(value, mode) {
+    if (mode === 'carousel') {
+      return null;
+    }
+    if (Array.isArray(value) && mode.startsWith('index:')) {
+      const idx = parseInt(mode.slice('index:'.length), 10);
+      if (Number.isNaN(idx) || idx < 0 || idx >= value.length) {
+        return null;
+      }
+      return metaText(value[idx]);
+    }
+    if (value && typeof value === 'object' && !Array.isArray(value) && mode.startsWith('field:')) {
+      const key = mode.slice('field:'.length);
+      if (!(key in value)) {
+        return null;
+      }
+      return metaText(value[key]);
+    }
+    return null;
+  }
+
+  function createMetaValueLabel(text) {
+    const value = document.createElement('span');
+    value.className = 'mod-meta-value';
+    value.textContent = text;
+    return value;
+  }
+
+  function createMetaPill(text, options = {}) {
+    const pill = document.createElement('span');
+    pill.className = 'mod-meta-pill';
+    const field = options.field || 'metadata';
+    if (options.role === 'name') {
+      pill.classList.add('mod-meta-name-pill');
+    }
+    pill.dataset.metaField = field;
+    pill.dataset.metaValue = text;
+    pill.appendChild(createMetaValueLabel(text));
+    pill.setAttribute('aria-label', `${field}: ${text}`);
+    if (options.tooltip !== false) {
+      attachMetaFieldHover(pill);
+    }
+    return pill;
+  }
+
+  function createEditedMetaItem(text) {
+    const item = document.createElement('span');
+    item.className = 'mod-date-item mod-hybrid-edited';
+    item.dataset.metaField = 'lastEdited';
+    item.dataset.metaValue = text;
+    item.appendChild(createMetaValueLabel(text));
+    item.setAttribute('aria-label', `lastEdited: ${text}`);
+    attachMetaFieldHover(item);
+    return item;
+  }
+
+  function stopOverflowTicker(valueTrack) {
+    const cycle = valueTrack._overflowCycle;
+    if (cycle) {
+      if (cycle.timer) {
+        window.clearTimeout(cycle.timer);
+      }
+      if (cycle.raf) {
+        window.cancelAnimationFrame(cycle.raf);
+      }
+      if (cycle.onEnd) {
+        valueTrack.removeEventListener('transitionend', cycle.onEnd);
+      }
+      valueTrack._overflowCycle = null;
     }
 
-    return row;
+    valueTrack.classList.remove('is-overflow-rotating');
+    valueTrack.style.transition = 'none';
+    valueTrack.style.transform = 'translateX(0)';
   }
 
-  function ensureInjectedRows(dataList) {
-    [...dataList.querySelectorAll('.mod-data-card')].forEach((card, i) => {
+  function startOverflowTicker(valueTrack, distance, forwardMs) {
+    const cycle = {
+      distance,
+      forwardMs,
+      phase: 'idle',
+      timer: 0,
+      raf: 0,
+      onEnd: null
+    };
+    valueTrack._overflowCycle = cycle;
+    valueTrack.classList.add('is-overflow-rotating');
+
+    function runForward() {
+      if (valueTrack._overflowCycle !== cycle) {
+        return;
+      }
+      valueTrack.style.transition = 'none';
+      valueTrack.style.transform = 'translateX(0)';
+      cycle.raf = window.requestAnimationFrame(() => {
+        if (valueTrack._overflowCycle !== cycle) {
+          return;
+        }
+        cycle.phase = 'forward';
+        valueTrack.style.transition = `transform ${forwardMs}ms linear`;
+        valueTrack.style.transform = `translateX(${-distance}px)`;
+      });
+    }
+
+    cycle.onEnd = event => {
+      if (event.target !== valueTrack || event.propertyName !== 'transform') {
+        return;
+      }
+      if (valueTrack._overflowCycle !== cycle) {
+        return;
+      }
+
+      if (cycle.phase === 'forward') {
+        cycle.phase = 'return';
+        valueTrack.style.transition = 'transform 200ms ease';
+        valueTrack.style.transform = 'translateX(0)';
+        return;
+      }
+
+      if (cycle.phase === 'return') {
+        cycle.phase = 'idle';
+        cycle.timer = window.setTimeout(runForward, 0);
+      }
+    };
+
+    valueTrack.addEventListener('transitionend', cycle.onEnd);
+    runForward();
+  }
+
+  function syncOverflowTicker(fieldEl) {
+    const valueTrack = fieldEl.querySelector('.mod-meta-value');
+    if (!valueTrack) {
+      return;
+    }
+
+    const styles = window.getComputedStyle(fieldEl);
+    const paddingLeft = parseFloat(styles.paddingLeft || '0') || 0;
+    const paddingRight = parseFloat(styles.paddingRight || '0') || 0;
+    const availableWidth = Math.max(0, fieldEl.clientWidth - paddingLeft - paddingRight);
+    if (availableWidth <= 0) {
+      stopOverflowTicker(valueTrack);
+      return;
+    }
+
+    const contentWidth = Math.ceil(valueTrack.scrollWidth);
+    const distance = Math.ceil(contentWidth - availableWidth);
+    if (distance <= 1) {
+      stopOverflowTicker(valueTrack);
+      return;
+    }
+
+    const forwardMs = Math.round(Math.max(4000, Math.min(14000, (distance / 10) * 1000)));
+    const running = valueTrack._overflowCycle;
+    if (running && running.distance === distance && running.forwardMs === forwardMs) {
+      return;
+    }
+
+    stopOverflowTicker(valueTrack);
+    startOverflowTicker(valueTrack, distance, forwardMs);
+  }
+
+  function syncMetadataOverflow(dataList) {
+    dataList.querySelectorAll('.mod-selected-meta-row .mod-meta-pill, .mod-selected-meta-row .mod-date-item').forEach(fieldEl => {
+      syncOverflowTicker(fieldEl);
+    });
+  }
+
+  function createMetaCarousel(field, values) {
+    const carousel = document.createElement('div');
+    carousel.className = 'mod-tag-carousel';
+    carousel.dataset.metaField = field;
+
+    const track = document.createElement('div');
+    track.className = 'mod-carousel-track';
+    values.forEach(value => {
+      track.appendChild(createMetaPill(value, { field, tooltip: false }));
+    });
+
+    carousel.appendChild(track);
+    attachCarouselHover(carousel);
+    registerCarousel(carousel);
+    return carousel;
+  }
+
+  function ensureSelectedMetaContainer(main) {
+    let wrap = main.querySelector('.mod-selected-meta-wrap');
+    if (!wrap) {
+      wrap = document.createElement('div');
+      wrap.className = 'mod-selected-meta-wrap';
+      main.appendChild(wrap);
+    }
+
+    let row = wrap.querySelector('.mod-selected-meta-row');
+    if (!row) {
+      row = document.createElement('div');
+      row.className = 'mod-selected-meta-row';
+      wrap.appendChild(row);
+    }
+
+    let toggle = wrap.querySelector('.mod-meta-scroll-toggle');
+    if (!toggle) {
+      toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'mod-meta-scroll-toggle';
+      toggle.textContent = '>';
+      wrap.appendChild(toggle);
+    }
+
+    if (toggle.dataset.bound !== 'true') {
+      toggle.dataset.bound = 'true';
+      toggle.addEventListener('click', () => {
+        const card = toggle.closest('.mod-data-card');
+        if (!card) {
+          return;
+        }
+        const pager = metadataPagers.get(card);
+        if (!pager || pager.pages.length <= 1) {
+          return;
+        }
+        pager.index = (pager.index + 1) % pager.pages.length;
+        applyMetadataPage(card, pager);
+      });
+    }
+
+    return { wrap, row, toggle };
+  }
+
+  function metadataGap(row) {
+    const styles = window.getComputedStyle(row);
+    return parseFloat(styles.columnGap || styles.gap || '0');
+  }
+
+  function computeMetadataPagesHorizontal(row, items, reservedWidth = 0) {
+    const width = Math.max(0, row.clientWidth - reservedWidth);
+    if (items.length <= 1 || width <= 0) {
+      return [items];
+    }
+
+    const pages = [];
+    const gap = metadataGap(row);
+    let page = [];
+    let used = 0;
+
+    items.forEach(item => {
+      const itemWidth = Math.ceil(item.getBoundingClientRect().width);
+      if (page.length === 0) {
+        page = [item];
+        used = itemWidth;
+        return;
+      }
+
+      if (used + gap + itemWidth <= width + 1) {
+        page.push(item);
+        used += gap + itemWidth;
+        return;
+      }
+
+      pages.push(page);
+      page = [item];
+      used = itemWidth;
+    });
+
+    if (page.length > 0) {
+      pages.push(page);
+    }
+    return pages.length > 0 ? pages : [items];
+  }
+
+  function computeMetadataPagesVertical(row, items, reservedHeight = 0) {
+    const height = Math.max(0, row.clientHeight - reservedHeight);
+    if (items.length <= 1 || height <= 0) {
+      return [items];
+    }
+
+    const pages = [];
+    const gap = metadataGap(row);
+    let page = [];
+    let used = 0;
+
+    items.forEach(item => {
+      const itemHeight = Math.ceil(item.getBoundingClientRect().height);
+      if (page.length === 0) {
+        page = [item];
+        used = itemHeight;
+        return;
+      }
+
+      if (used + gap + itemHeight <= height + 1) {
+        page.push(item);
+        used += gap + itemHeight;
+        return;
+      }
+
+      pages.push(page);
+      page = [item];
+      used = itemHeight;
+    });
+
+    if (page.length > 0) {
+      pages.push(page);
+    }
+    return pages.length > 0 ? pages : [items];
+  }
+
+  function nameMetaCellOf(row) {
+    return row.querySelector('.mod-meta-name-pill');
+  }
+
+  function applyMetadataPage(card, pager) {
+    const row = card.querySelector('.mod-selected-meta-row');
+    const toggle = card.querySelector('.mod-meta-scroll-toggle');
+    if (!row || !toggle) {
+      return;
+    }
+
+    const items = [...row.children];
+    const pinnedName = nameMetaCellOf(row);
+    items.forEach(item => item.classList.remove('is-meta-overflow-hidden'));
+
+    if (pager.pages.length <= 1) {
+      toggle.classList.remove('is-visible');
+      toggle.title = 'More metadata';
+      requestAnimationFrame(() => {
+        items.forEach(item => syncOverflowTicker(item));
+      });
+      return;
+    }
+
+    const visible = new Set(pager.pages[pager.index] || []);
+    if (pinnedName) {
+      visible.add(pinnedName);
+    }
+    items.forEach(item => {
+      if (!visible.has(item)) {
+        item.classList.add('is-meta-overflow-hidden');
+      }
+    });
+
+    toggle.classList.add('is-visible');
+    toggle.title = `Metadata page ${pager.index + 1}/${pager.pages.length}`;
+    requestAnimationFrame(() => {
+      items.forEach(item => syncOverflowTicker(item));
+    });
+  }
+
+  function updateMetadataPagerForCard(card, dataList) {
+    const row = card.querySelector('.mod-selected-meta-row');
+    const toggle = card.querySelector('.mod-meta-scroll-toggle');
+    if (!row || !toggle) {
+      return;
+    }
+
+    const view = dataList.dataset.view || 'details';
+    row.querySelectorAll('.is-meta-overflow-hidden').forEach(item => {
+      item.classList.remove('is-meta-overflow-hidden');
+    });
+
+    const items = [...row.children];
+    const pinnedName = nameMetaCellOf(row);
+    const pageableItems = items.filter(item => item !== pinnedName);
+    if (pageableItems.length <= 1) {
+      metadataPagers.delete(card);
+      toggle.classList.remove('is-visible');
+      return;
+    }
+
+    const isCardMode = view === 'cards';
+    toggle.textContent = isCardMode ? 'v' : '>';
+
+    let pages = [];
+    if (isCardMode) {
+      let reservedHeight = 0;
+      if (pinnedName) {
+        reservedHeight = Math.ceil(pinnedName.getBoundingClientRect().height) + metadataGap(row);
+      }
+      pages = computeMetadataPagesVertical(row, pageableItems, reservedHeight);
+    } else {
+      let reservedWidth = 0;
+      if (pinnedName) {
+        reservedWidth = Math.ceil(pinnedName.getBoundingClientRect().width) + metadataGap(row);
+      }
+      pages = computeMetadataPagesHorizontal(row, pageableItems, reservedWidth);
+    }
+    const pager = metadataPagers.get(card) || { index: 0, pages: [] };
+    pager.pages = pages;
+    if (pager.index >= pages.length) {
+      pager.index = 0;
+    }
+    metadataPagers.set(card, pager);
+    applyMetadataPage(card, pager);
+  }
+
+  function updateMetadataPagers(dataList) {
+    dataList.querySelectorAll('.mod-data-card').forEach(card => {
+      updateMetadataPagerForCard(card, dataList);
+    });
+    syncMetadataOverflow(dataList);
+  }
+
+  function resolveCardName(card, main, metadata, cardIndex) {
+    const explicit = card.dataset.dataName;
+    if (typeof explicit === 'string' && explicit.trim().length > 0) {
+      return explicit.trim();
+    }
+
+    const heading = main.querySelector('h3')?.textContent?.trim();
+    if (heading) {
+      return heading;
+    }
+
+    const fallbackMeta = [metadata.filename, metadata.name, metadata.title]
+      .find(value => typeof value === 'string' && value.trim().length > 0);
+    if (fallbackMeta) {
+      return fallbackMeta.trim();
+    }
+
+    return `Entry ${cardIndex + 1}`;
+  }
+
+  function syncMetadataPresentation(dataList) {
+    const state = ensureMetadataState(dataList);
+    const cards = [...dataList.querySelectorAll('.mod-data-card')];
+
+    dataList.querySelectorAll('.mod-tag-carousel').forEach(unregisterCarousel);
+    hideTagTooltip(true);
+    hideMetaTooltip(true);
+
+    cards.forEach((card, i) => {
       const main = card.querySelector('.mod-data-main');
       if (!main) {
         return;
       }
+      const metadata = parseCardMetadata(card, i);
+      const { wrap, row } = ensureSelectedMetaContainer(main);
+      row.querySelectorAll('.mod-meta-value').forEach(stopOverflowTicker);
+      row.innerHTML = '';
 
-      if (!main.querySelector('.mod-date-row')) {
-        main.appendChild(buildDateRow(card, i));
+      const legacyDateRow = main.querySelector('.mod-date-row');
+      const legacyMetaRow = main.querySelector('.mod-meta-row');
+      const legacyHybridRow = main.querySelector('.mod-hybrid-row');
+      if (legacyDateRow) {
+        legacyDateRow.remove();
       }
-      if (!main.querySelector('.mod-hybrid-row')) {
-        main.appendChild(buildHybridRow(card, i));
+      if (legacyMetaRow) {
+        legacyMetaRow.remove();
       }
+      if (legacyHybridRow) {
+        legacyHybridRow.remove();
+      }
+
+      const cardName = resolveCardName(card, main, metadata, i);
+      row.appendChild(createMetaPill(cardName, { field: 'name', role: 'name' }));
+
+      const showEdited = state.singles.has('lastEdited') ? state.singles.get('lastEdited') : true;
+      if (showEdited) {
+        const edited = metadata.lastEdited || FAKE_META[i % FAKE_META.length].edited;
+        row.appendChild(createEditedMetaItem(edited));
+      }
+
+      const orderedFields = [...state.schema.entries()].sort(([a], [b]) => {
+        if (a === 'tags') {
+          return -1;
+        }
+        if (b === 'tags') {
+          return 1;
+        }
+        return 0;
+      });
+
+      orderedFields.forEach(([field, descriptor]) => {
+        const value = metadata[field];
+        if (value === undefined) {
+          return;
+        }
+        if (field === 'lastEdited' || field === 'name' || field === 'title' || field === 'filename') {
+          return;
+        }
+
+        if (descriptor.kind === 'single') {
+          if (!state.singles.get(field)) {
+            return;
+          }
+          row.appendChild(createMetaPill(metaText(value), { field }));
+          return;
+        }
+
+        const mode = state.multis.get(field) || defaultMultiSelection(field, descriptor);
+        if (mode === 'carousel') {
+          const values = carouselValuesOf(value);
+          if (values.length > 0) {
+            row.appendChild(createMetaCarousel(field, values));
+          }
+          return;
+        }
+
+        const selected = selectedValueOf(value, mode);
+        if (selected !== null) {
+          row.appendChild(createMetaPill(selected, { field }));
+        }
+      });
+
+      wrap.hidden = row.childElementCount === 0;
+    });
+
+    requestAnimationFrame(() => {
+      updateMetadataPagers(dataList);
+      syncMetadataOverflow(dataList);
     });
   }
 
   function applyMetaView(dataList, mode) {
     dataList.dataset.metaView = mode;
-    if (mode === 'dates' || mode === 'hybrid') {
-      ensureInjectedRows(dataList);
-    }
+    syncMetadataPresentation(dataList);
     if (mode === 'hybrid') {
-      dataList.querySelectorAll('.mod-tag-carousel').forEach(registerCarousel);
-    } else {
-      dataList.querySelectorAll('.mod-tag-carousel').forEach(unregisterCarousel);
-      hideTagTooltip(true);
+      dataList.querySelectorAll('.mod-selected-meta-row .mod-tag-carousel').forEach(registerCarousel);
+      return;
     }
+    dataList.querySelectorAll('.mod-tag-carousel').forEach(unregisterCarousel);
+    hideTagTooltip(true);
+  }
+
+  function buildMetadataDropdown(switcher, dataList) {
+    const dropdown = document.createElement('div');
+    dropdown.className = 'mod-meta-dropdown mod-meta-field-dropdown';
+
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'mod-meta-toggle';
+    toggle.title = 'Metadata field display';
+    toggle.innerHTML = '<span class="mod-view-icon">☷</span>';
+
+    function closeDropdown() {
+      dropdown.classList.remove('is-open');
+      toggle.classList.remove('is-open');
+    }
+
+    function refreshData() {
+      applyMetaView(dataList, dataList.dataset.metaView || 'hybrid');
+    }
+
+    function getLiveState() {
+      return metadataStates.get(dataList) || ensureMetadataState(dataList);
+    }
+
+    function syncCarouselSelectState(select) {
+      select.classList.toggle('is-carousel-selected', select.value === 'carousel');
+    }
+
+    function buildOptions(descriptor) {
+      const opts = [{ value: 'carousel', label: 'Carousel' }];
+      if (descriptor.kind === 'array') {
+        for (let i = 0; i < descriptor.maxLength; i++) {
+          opts.push({ value: `index:${i}`, label: `Index ${i}` });
+        }
+      }
+      if (descriptor.kind === 'object') {
+        [...descriptor.objectKeys].sort().forEach(key => {
+          opts.push({ value: `field:${key}`, label: key });
+        });
+      }
+      return opts;
+    }
+
+    function renderRows() {
+      const state = getLiveState();
+      dropdown.innerHTML = '';
+
+      state.schema.forEach((descriptor, field) => {
+        if (descriptor.kind === 'single') {
+          const row = document.createElement('label');
+          row.className = 'mod-meta-field-row mod-meta-field-check';
+
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = state.singles.get(field) === true;
+          checkbox.addEventListener('change', () => {
+            const live = getLiveState();
+            live.singles.set(field, checkbox.checked);
+            refreshData();
+          });
+
+          const name = document.createElement('span');
+          name.className = 'mod-meta-field-name';
+          name.textContent = field;
+
+          row.appendChild(checkbox);
+          row.appendChild(name);
+          dropdown.appendChild(row);
+          return;
+        }
+
+        const row = document.createElement('div');
+        row.className = 'mod-meta-field-row';
+
+        const name = document.createElement('span');
+        name.className = 'mod-meta-field-name';
+        name.textContent = field;
+
+        const select = document.createElement('select');
+        select.className = 'mod-meta-field-select';
+        const options = buildOptions(descriptor);
+        options.forEach(opt => {
+          const option = document.createElement('option');
+          option.value = opt.value;
+          option.textContent = opt.label;
+          if (opt.value === 'carousel') {
+            option.classList.add('mod-meta-field-option-carousel');
+            option.style.fontWeight = '700';
+          }
+          select.appendChild(option);
+        });
+
+        const current = state.multis.get(field) || defaultMultiSelection(field, descriptor);
+        select.value = options.some(opt => opt.value === current) ? current : options[0].value;
+        state.multis.set(field, select.value);
+        syncCarouselSelectState(select);
+
+        select.addEventListener('change', () => {
+          const live = getLiveState();
+          live.multis.set(field, select.value);
+          syncCarouselSelectState(select);
+          refreshData();
+        });
+
+        row.appendChild(name);
+        row.appendChild(select);
+        dropdown.appendChild(row);
+      });
+    }
+
+    toggle.addEventListener('click', e => {
+      e.stopPropagation();
+      renderRows();
+      const isOpen = dropdown.classList.contains('is-open');
+      dropdown.classList.toggle('is-open', !isOpen);
+      toggle.classList.toggle('is-open', !isOpen);
+    });
+
+    document.addEventListener('click', () => closeDropdown(), { capture: false });
+    dropdown.addEventListener('click', e => e.stopPropagation());
+
+    renderRows();
+    switcher.appendChild(toggle);
+    switcher.appendChild(dropdown);
   }
 
   function initViewSwitchers(root) {
@@ -1083,16 +2208,16 @@
       { id: 'cards', icon: '▦', label: 'Cards' }
     ];
 
-    const metaOpts = [
-      { id: 'tags', icon: '🏷', label: 'Tags' },
-      { id: 'dates', icon: '📄', label: 'Dates' },
-      { id: 'hybrid', icon: '◑', label: 'Hybrid' },
-    ];
-
     root.querySelectorAll('.mod-content-frame').forEach(frame => {
       const dataList = frame.querySelector('.mod-data-list');
-      if (!dataList) {
+      const settingsGrid = frame.querySelector('.mod-settings-grid');
+      const targetList = dataList || settingsGrid;
+      if (!targetList) {
         return;
+      }
+
+      if (dataList) {
+        ensureDemoData(dataList);
       }
       if (frame.querySelector('.mod-view-switcher')) {
         return;
@@ -1114,61 +2239,27 @@
         btn.addEventListener('click', () => {
           switcher.querySelectorAll('.mod-view-btn').forEach(b => b.classList.remove('is-active'));
           btn.classList.add('is-active');
-          dataList.dataset.view = view.id;
+          targetList.dataset.view = view.id;
+          if (dataList) {
+            applyMetaView(dataList, dataList.dataset.metaView || 'hybrid');
+          }
         });
 
         switcher.appendChild(btn);
       });
 
-      const dropdown = document.createElement('div');
-      dropdown.className = 'mod-meta-dropdown';
-
-      const toggle = document.createElement('button');
-      toggle.type = 'button';
-      toggle.className = 'mod-meta-toggle';
-      toggle.title = 'Metadata display options';
-      toggle.innerHTML = '<span class="mod-view-icon">⋯</span>';
-
-      function closeDropdown() {
-        dropdown.classList.remove('is-open');
-        toggle.classList.remove('is-open');
+      if (dataList) {
+        switcher.style.position = 'relative';
+        buildMetadataDropdown(switcher, dataList);
+      } else {
+        switcher.classList.add('mod-view-switcher-simple');
+        switcher.style.position = 'relative';
       }
 
-      toggle.addEventListener('click', e => {
-        e.stopPropagation();
-        const isOpen = dropdown.classList.contains('is-open');
-        dropdown.classList.toggle('is-open', !isOpen);
-        toggle.classList.toggle('is-open', !isOpen);
-      });
-
-      document.addEventListener('click', () => closeDropdown(), { capture: false });
-      dropdown.addEventListener('click', e => e.stopPropagation());
-
-      metaOpts.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'mod-meta-opt';
-        btn.dataset.metaOpt = opt.id;
-        btn.innerHTML = `<span class="mod-meta-opt-icon">${opt.icon}</span>${opt.label}`;
-        if (opt.id === 'tags') {
-          btn.classList.add('is-active');
-        }
-
-        btn.addEventListener('click', () => {
-          dropdown.querySelectorAll('.mod-meta-opt').forEach(b => b.classList.remove('is-active'));
-          btn.classList.add('is-active');
-          applyMetaView(dataList, opt.id);
-          closeDropdown();
-        });
-
-        dropdown.appendChild(btn);
-      });
-
-      switcher.style.position = 'relative';
-      switcher.appendChild(toggle);
-      switcher.appendChild(dropdown);
-      dataList.dataset.view = 'details';
-      applyMetaView(dataList, 'tags');
+      targetList.dataset.view = 'details';
+      if (dataList) {
+        applyMetaView(dataList, 'hybrid');
+      }
       frame.appendChild(switcher);
     });
   }
@@ -1195,7 +2286,13 @@
     });
     initViewSwitchers(root);
 
-    window.addEventListener('resize', syncGridCssVars);
+    window.addEventListener('resize', () => {
+      syncGridCssVars();
+      root.querySelectorAll('.mod-data-list').forEach(dataList => {
+        updateMetadataPagers(dataList);
+        syncMetadataOverflow(dataList);
+      });
+    });
   }
 
   window.HestiaModularMenus = {

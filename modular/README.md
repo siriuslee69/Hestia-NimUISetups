@@ -25,3 +25,7 @@ Examples:
 
 1. `vertical-menu`
 2. `horizontal-menu`
+
+Metadata:
+
+- See `METADATA_UI_GUIDE.md` for metadata schema rules and menu mapping behavior.

@@ -19,6 +19,8 @@
   --mod-grid-rows: 20;
   --mod-grid-cell-w: 48px;
   --mod-grid-cell-h: 54px;
+  --mod-meta-grid-cell-w: 120px;
+  --mod-meta-grid-name-w: 156px;
 }
 
 *,
@@ -227,6 +229,7 @@ input {
 .mod-data-main h3 {
   margin: 0 0 4px;
   font-size: 1rem;
+  display: none;
 }
 
 .mod-data-main p {
@@ -703,6 +706,10 @@ body.mod-edit-ui-off .mod-view-switcher {
   border-radius: 7px 0 0 7px;
 }
 
+.mod-view-switcher.mod-view-switcher-simple .mod-view-btn:last-child {
+  border-radius: 0 7px 7px 0;
+}
+
 .mod-view-btn:not(:last-child) {
   border-right: 1px solid rgba(31, 46, 78, 0.12);
 }
@@ -749,6 +756,7 @@ body.mod-edit-ui-off .mod-view-switcher {
   margin: 0;
   font-size: 0.88rem;
   white-space: nowrap;
+  display: none;
 }
 
 .mod-data-list[data-view="list"] .mod-data-main p {
@@ -760,9 +768,53 @@ body.mod-edit-ui-off .mod-view-switcher {
 }
 
 .mod-data-list[data-view="list"] .mod-meta-pill {
-  min-height: 20px;
+  min-height: 24px;
+  padding: 0;
+  margin: 0;
+  font-size: 0.76rem;
+}
+
+/* ── Settings view: List (compact rows) ── */
+
+.mod-settings-grid[data-view="list"] {
+  gap: 2px;
+}
+
+.mod-settings-grid[data-view="list"] .mod-settings-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 4px 10px;
+}
+
+.mod-settings-grid[data-view="list"] .mod-settings-card h3 {
+  margin: 0;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.mod-settings-grid[data-view="list"] .mod-form-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mod-settings-grid[data-view="list"] .mod-form-row label {
+  display: none;
+}
+
+.mod-settings-grid[data-view="list"] .mod-form-row input,
+.mod-settings-grid[data-view="list"] .mod-form-row select {
+  min-height: 22px;
   padding: 0.08rem 0.35rem;
   font-size: 0.76rem;
+}
+
+.mod-settings-grid[data-view="list"] .mod-checkbox-row {
+  gap: 6px;
+  font-size: 0.76rem;
+  white-space: nowrap;
 }
 
 /* ── View: Details (default — no overrides needed) ── */
@@ -780,6 +832,7 @@ body.mod-edit-ui-off .mod-view-switcher {
   gap: 8px;
   padding: 10px;
   text-align: center;
+  align-content: start;
 }
 
 .mod-data-list[data-view="cards"] .mod-preview {
@@ -789,10 +842,19 @@ body.mod-edit-ui-off .mod-view-switcher {
 
 .mod-data-list[data-view="cards"] .mod-data-main h3 {
   font-size: 0.92rem;
+  display: none;
 }
 
 .mod-data-list[data-view="cards"] .mod-data-main p {
   display: none;
+}
+
+.mod-data-list[data-view="cards"] .mod-data-main {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  align-self: start;
 }
 
 .mod-data-list[data-view="cards"] .mod-meta-row {
@@ -801,6 +863,29 @@ body.mod-edit-ui-off .mod-view-switcher {
 
 .mod-data-list[data-view="cards"] .mod-meta-pill {
   font-size: 0.76rem;
+}
+
+/* ── Settings view: Cards ── */
+
+.mod-settings-grid[data-view="cards"] {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.mod-settings-grid[data-view="cards"] .mod-settings-card {
+  gap: 8px;
+  padding: 10px;
+}
+
+.mod-settings-grid[data-view="cards"] .mod-settings-card h3 {
+  font-size: 0.92rem;
+}
+
+.mod-settings-grid[data-view="cards"] .mod-form-row input,
+.mod-settings-grid[data-view="cards"] .mod-form-row select,
+.mod-settings-grid[data-view="cards"] .mod-checkbox-row {
+  font-size: 0.8rem;
 }
 
 /* ── Meta options toggle button (appended to view-switcher) ── */
@@ -884,6 +969,208 @@ body.mod-edit-ui-off .mod-view-switcher {
   text-align: center;
 }
 
+.mod-meta-field-dropdown {
+  min-width: 230px;
+}
+
+.mod-meta-field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+}
+
+.mod-meta-field-row:not(:last-child) {
+  border-bottom: 1px solid rgba(31, 46, 78, 0.08);
+}
+
+.mod-meta-field-check {
+  justify-content: flex-start;
+  cursor: pointer;
+}
+
+.mod-meta-field-check input {
+  margin: 0;
+}
+
+.mod-meta-field-name {
+  color: var(--mod-text);
+  font-family: "Courier New", monospace;
+  font-size: 0.75rem;
+}
+
+.mod-meta-field-select {
+  min-width: 108px;
+  border: 1px solid rgba(31, 46, 78, 0.22);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--mod-text);
+  font-size: 0.74rem;
+  padding: 2px 4px;
+}
+
+.mod-meta-field-select.is-carousel-selected {
+  font-weight: 700;
+}
+
+.mod-meta-field-select option.mod-meta-field-option-carousel {
+  font-weight: 700;
+}
+
+.mod-meta-field-select option[value="carousel"] {
+  font-weight: 700 !important;
+}
+
+/* ── Selected metadata flow ── */
+
+.mod-selected-meta-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 6px;
+  min-width: 0;
+}
+
+.mod-selected-meta-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: var(--mod-meta-grid-name-w);
+  grid-auto-columns: var(--mod-meta-grid-cell-w);
+  grid-template-rows: auto;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.mod-selected-meta-row>* {
+  width: 100%;
+  min-width: 0;
+  justify-self: stretch;
+  margin: 0;
+  padding: 0;
+}
+
+.mod-selected-meta-row .mod-meta-pill,
+.mod-selected-meta-row .mod-date-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.mod-selected-meta-row .mod-tag-carousel {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.mod-selected-meta-row .mod-meta-value {
+  display: inline-block;
+  min-width: max-content;
+  white-space: nowrap;
+  transform: translateX(0);
+}
+
+.mod-selected-meta-row .mod-meta-value.is-overflow-rotating {
+  will-change: transform;
+}
+
+.mod-selected-meta-row .mod-meta-name-pill {
+  border: none;
+  background: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.mod-selected-meta-row .mod-meta-name-pill .mod-meta-value {
+  font-weight: 700;
+}
+
+.mod-selected-meta-row .is-meta-active {
+  outline: 1px solid rgba(31, 46, 78, 0.35);
+  outline-offset: 1px;
+}
+
+.mod-meta-scroll-toggle {
+  appearance: none;
+  border: 1px solid rgba(31, 46, 78, 0.26);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--mod-text);
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  line-height: 1;
+  font-size: 9px;
+  display: none;
+  place-items: center;
+  cursor: pointer;
+}
+
+.mod-meta-scroll-toggle.is-visible {
+  display: grid;
+}
+
+.is-meta-overflow-hidden {
+  display: none !important;
+}
+
+.mod-data-list[data-view="list"] .mod-selected-meta-wrap {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+}
+
+.mod-data-list[data-view="list"] .mod-selected-meta-row {
+  grid-auto-flow: column;
+  grid-template-columns: var(--mod-meta-grid-name-w);
+  grid-auto-columns: var(--mod-meta-grid-cell-w);
+  grid-template-rows: auto;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.mod-data-list[data-view="details"] .mod-selected-meta-row {
+  grid-auto-flow: column;
+  grid-template-columns: var(--mod-meta-grid-name-w);
+  grid-auto-columns: var(--mod-meta-grid-cell-w);
+  grid-template-rows: auto;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.mod-data-list[data-view="cards"] .mod-selected-meta-row {
+  grid-auto-flow: row;
+  grid-template-columns: var(--mod-meta-grid-cell-w);
+  grid-auto-rows: auto;
+  justify-content: start;
+  align-content: start;
+  align-items: start;
+  overflow: hidden;
+  max-height: 92px;
+  padding-right: 0;
+}
+
+.mod-data-list[data-view="cards"] .mod-selected-meta-wrap {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  row-gap: 4px;
+  align-items: stretch;
+  align-self: start;
+}
+
+.mod-data-list[data-view="cards"] .mod-meta-scroll-toggle {
+  justify-self: center;
+  align-self: end;
+}
+
 /* ── Date row (dates / hybrid view) ── */
 
 .mod-date-row {
@@ -914,13 +1201,13 @@ body.mod-edit-ui-off .mod-view-switcher {
   position: relative;
   display: flex;
   align-items: center;
+  height: 24px;
   min-height: 24px;
   width: var(--mod-hybrid-carousel-width, 132px);
   max-width: 100%;
   overflow: hidden;
-  border: 1px solid var(--mod-line);
-  background: rgba(255, 255, 255, 0.82);
-  padding: 1px 4px;
+  background: transparent;
+  padding: 0;
   cursor: default;
 }
 
@@ -928,7 +1215,8 @@ body.mod-edit-ui-off .mod-view-switcher {
 .mod-tag-carousel .mod-carousel-track {
   position: relative;
   width: 100%;
-  min-height: 20px;
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -937,15 +1225,20 @@ body.mod-edit-ui-off .mod-view-switcher {
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  top: 50%;
+  top: 0;
   left: 0;
-  transform: translateY(-50%);
-  transition: opacity 320ms ease;
-  min-height: 20px;
-  padding: 0.08rem 0.35rem;
-  font-size: 0.76rem;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  transform: none;
+  transition: opacity 320ms linear;
+  min-height: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  font-size: inherit;
   white-space: nowrap;
-  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -969,6 +1262,14 @@ body.mod-edit-ui-off .mod-view-switcher {
   overflow: hidden;
 }
 
+.mod-tag-tooltip-title {
+  margin-bottom: 6px;
+  color: var(--mod-muted);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 .mod-tag-tooltip.is-pinned {
   pointer-events: auto;
   overflow-y: auto;
@@ -988,9 +1289,40 @@ body.mod-edit-ui-off .mod-view-switcher {
   max-width: 100%;
 }
 
-/* hide original meta-row when meta view is dates or hybrid */
-.mod-data-list[data-meta-view="dates"] .mod-meta-row,
-.mod-data-list[data-meta-view="hybrid"] .mod-meta-row {
+.mod-meta-tooltip {
+  position: fixed;
+  z-index: 2100;
+  min-width: 148px;
+  max-width: min(360px, 56vw);
+  border: 1px solid rgba(31, 46, 78, 0.26);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 10px 24px rgba(15, 24, 34, 0.18);
+  padding: 8px;
+  pointer-events: none;
+}
+
+.mod-meta-tooltip.is-pinned {
+  pointer-events: auto;
+}
+
+.mod-meta-tooltip-name {
+  margin: 0 0 4px;
+  color: var(--mod-muted);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.mod-meta-tooltip-value {
+  color: var(--mod-text);
+  font-size: 0.78rem;
+  line-height: 1.25;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* hide original meta-row when meta view is dates */
+.mod-data-list[data-meta-view="dates"] .mod-meta-row {
   display: none;
 }
 
@@ -1016,6 +1348,12 @@ body.mod-edit-ui-off .mod-view-switcher {
   flex-direction: column;
   align-items: flex-start;
   gap: 6px;
+}
+
+.mod-data-list[data-view="list"] .mod-hybrid-row {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
 }
 
 .mod-hybrid-edited {
