@@ -6,6 +6,9 @@
 
 import std/os
 import owlkettle
+import owlkettle/widgetdef
+import owlkettle/widgetutils
+import owlkettle/bindings/gtk
 import lib/level0/auth
 import owlkettleEnhanced/shared/ui_helpers
 import owlkettleEnhanced
@@ -20,6 +23,41 @@ const
 var
   WindowTitleText = AppName
   EnableStretchLayout = false
+
+proc enforceNativeWindowsTitlebar() =
+  ## Forces GTK to use native window decorations for this default variant.
+  when defined(windows):
+    putEnv("GTK_CSD", "0")
+
+proc gtk_window_set_decorated(window: GtkWidget; setting: cbool) {.cdecl, importc.}
+
+renderable NativeDecoratedWindow of BaseWindow:
+  ## Top-level window that always requests native OS decoration.
+  title: string
+  child: Widget
+  decorated: bool = true
+
+  hooks:
+    beforeBuild:
+      state.internalWidget = gtk_window_new(GTK_WINDOW_TOPLEVEL)
+
+  hooks title:
+    property:
+      gtk_window_set_title(state.internalWidget, state.title.cstring)
+
+  hooks decorated:
+    property:
+      gtk_window_set_decorated(state.internalWidget, cbool(ord(state.decorated)))
+
+  hooks child:
+    (build, update):
+      state.updateChild(state.child, widget.valChild, gtk_window_set_child)
+
+  adder add:
+    if widget.hasChild:
+      raise newException(ValueError, "Unable to add multiple children to a NativeDecoratedWindow.")
+    widget.hasChild = true
+    widget.valChild = child
 
 viewable OwlDefaultApp:
   loginName: string = ""
@@ -346,8 +384,9 @@ proc renderLogin(s: OwlDefaultAppState): Widget =
 method view(s: OwlDefaultAppState): Widget =
   ## s: app state to render.
   result = gui:
-    Window:
+    NativeDecoratedWindow:
       title = WindowTitleText
+      decorated = true
       defaultSize = (1360, 900)
       if s.loggedIn:
         insert(renderMain(s))
@@ -359,11 +398,13 @@ proc resolveConfigPath(): string =
   result = joinPath(currentSourcePath().splitFile.dir, "config.md")
 
 when isMainModule:
+  enforceNativeWindowsTitlebar()
   let cfg = enhance(resolveConfigPath())
   let p = resolveStylesheetPath()
   let ss = if cfg.useThemeStylesheet and p.len > 0: @[loadStylesheet(p)] else: @[]
-  let appTitle = if cfg.disableTitlebar: "" else: AppName
+  if cfg.disableTitlebar:
+    echo "[owl-default] ignore disable_titlebar=true; default variant keeps native titlebar."
   EnableStretchLayout = not cfg.disableStretchingBoxes
-  WindowTitleText = appTitle
+  WindowTitleText = AppName
   brew(gui(OwlDefaultApp()), stylesheets = ss)
 

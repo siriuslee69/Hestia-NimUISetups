@@ -23,12 +23,12 @@ proc runCmd(srcPath, outStem: string): string =
     while fileExists(outPath):
       idx.inc
       outPath = ".nimcache/" & outStem & "_" & $idx & ".exe"
-    result = "nim c --out:" & outPath & " -r " & srcPath
+    result = "nim c -d:release --out:" & outPath & " -r " & srcPath
   else:
-    result = "nim c -r " & srcPath
+    result = "nim c -d:release -r " & srcPath
 
 task test, "Run smoke tests":
-  exec "nim c -r tests/test_smoke.nim"
+  exec "nim c -d:release -r tests/test_smoke.nim"
 
 task autopush, "Add, commit, and push with message from valk/progress.md":
   let path = "valk/progress.md"
@@ -53,7 +53,17 @@ task runWebDefault, "Run web UI (default titlebar variant)":
 task runWebCustom, "Run web UI (custom titlebar variant)":
   exec runCmd("examples/webuiEnhanced/customTitlebar/app.nim", "runWebCustom")
 
+task runWebBrave, "Run web UI (default titlebar variant, Brave first)":
+  putEnv("VNIM_WEBUI_BROWSER", "brave")
+  exec runCmd("examples/webuiEnhanced/defaultTitlebar/app.nim", "runWebBrave")
+
+task runWebAnyBrowser, "Run web UI (prefer brave, vivaldi, firefox over WebView)":
+  putEnv("VNIM_WEBUI_BROWSER_ORDER", "brave,vivaldi,firefox,any")
+  exec runCmd("examples/webuiEnhanced/defaultTitlebar/app.nim", "runWebAnyBrowser")
+
 task runOwlDefault, "Run owlkettle UI (default titlebar variant)":
+  when defined(windows):
+    putEnv("GTK_CSD", "0")
   runWithOwlNixShell(runCmd("examples/owlkettleEnhanced/defaultTitlebar/app.nim", "runOwlDefault"))
 
 task runOwlCustom, "Run owlkettle UI (custom titlebar variant)":
@@ -66,17 +76,17 @@ task runIllwill, "Run illwill UI":
   exec runCmd("examples/illwillEnhanced/app.nim", "runIllwill")
 
 task setupGtkWin, "Install GTK dependencies via MSYS2 (inside an MSYS2 shell)":
-  exec "nim c -r tools/windows/gtk_builder_msys2.nim install"
+  exec "nim c -d:release -r tools/windows/gtk_builder_msys2.nim install"
 
 task copyGtkDlls, "Copy GTK runtime DLLs from MSYS2 into dist/win64/gtk/bin":
-  exec "nim c -r tools/windows/gtk_builder_msys2.nim copydlls"
+  exec "nim c -d:release -r tools/windows/gtk_builder_msys2.nim copydlls"
 
 task bundleDir, "Bundle the assets folder into one binary":
-  exec "nim c -r tools/bundler/directory_bundler.nim bundle assets dist/assets.bundle"
+  exec "nim c -d:release -r tools/bundler/directory_bundler.nim bundle assets dist/assets.bundle"
 
 task unbundleDir, "Extract the generated bundle binary":
-  exec "nim c -r tools/bundler/directory_bundler.nim extract dist/assets.bundle dist/assets_unpacked"
+  exec "nim c -d:release -r tools/bundler/directory_bundler.nim extract dist/assets.bundle dist/assets_unpacked"
 
 task smoke, "Run smoke tests":
-  exec "nim c -r ../tests/test_smoke.nim"
+  exec "nim c -d:release -r ../tests/test_smoke.nim"
 

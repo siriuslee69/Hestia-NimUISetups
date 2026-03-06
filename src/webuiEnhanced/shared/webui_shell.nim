@@ -179,35 +179,28 @@ proc resolveBrowserOrder(pref: string): seq[WebuiBrowser] =
     addBrowserIfMissing(bs, b)
   result = bs
 
+proc parseBrowserOrderCsv(v: string): seq[string] =
+  ## v: comma-separated browser names from environment override.
+  for x in v.split(','):
+    let t = x.strip()
+    if t.len > 0:
+      result.add(t)
+
 proc resolveBrowserOrderFromNames(ns: seq[string]): seq[WebuiBrowser] =
-  ## ns: browser names parsed from user config, kept in given order.
+  ## ns: browser names parsed from config/env, kept in given order.
   var
     bs: seq[WebuiBrowser] = @[]
-    ts: seq[WebuiBrowser] = @[
-      WebuiBrowser.wbWebview,
-      WebuiBrowser.wbEdge,
-      WebuiBrowser.wbChrome,
-      WebuiBrowser.wbFirefox,
-      WebuiBrowser.wbChromium,
-      WebuiBrowser.wbBrave,
-      WebuiBrowser.wbVivaldi,
-      WebuiBrowser.wbOpera,
-      WebuiBrowser.wbYandex,
-      WebuiBrowser.wbEpic,
-      WebuiBrowser.wbChromiumBased,
-      WebuiBrowser.wbAnyBrowser
-    ]
 
   for n in ns:
-    let b = parseBrowserName(n)
+    let b = parseBrowserName(n.strip())
     if b != WebuiBrowser.wbNoBrowser:
       addBrowserIfMissing(bs, b)
 
   if bs.len == 0:
     return resolveBrowserOrder(getEnv("VNIM_WEBUI_BROWSER", ""))
 
-  for b in ts:
-    addBrowserIfMissing(bs, b)
+  # Keep explicit order and add generic external-browser fallback.
+  addBrowserIfMissing(bs, WebuiBrowser.wbAnyBrowser)
   result = bs
 
 proc parseConnectTimeoutSeconds(v: string): int =
@@ -230,6 +223,13 @@ proc hasAnyExe(ts: seq[string]): bool =
       return true
   result = false
 
+proc hasAnyPath(ts: seq[string]): bool =
+  ## ts: absolute executable paths to probe.
+  for t in ts:
+    if t.len > 0 and fileExists(t):
+      return true
+  result = false
+
 proc browserAvailableByExe(b: WebuiBrowser): bool =
   ## b: browser enum to probe using local executable names.
   case b
@@ -240,13 +240,33 @@ proc browserAvailableByExe(b: WebuiBrowser): bool =
   of WebuiBrowser.wbChrome:
     result = hasAnyExe(@["chrome.exe", "chrome", "google-chrome", "google-chrome-stable"])
   of WebuiBrowser.wbFirefox:
-    result = hasAnyExe(@["firefox.exe", "firefox"])
+    when defined(windows):
+      result = hasAnyExe(@["firefox.exe", "firefox"]) or hasAnyPath(@[
+        getEnv("PROGRAMFILES") / "Mozilla Firefox/firefox.exe",
+        getEnv("PROGRAMFILES(X86)") / "Mozilla Firefox/firefox.exe"
+      ])
+    else:
+      result = hasAnyExe(@["firefox.exe", "firefox"])
   of WebuiBrowser.wbChromium:
     result = hasAnyExe(@["chromium.exe", "chromium", "chromium-browser"])
   of WebuiBrowser.wbBrave:
-    result = hasAnyExe(@["brave.exe", "brave", "brave-browser"])
+    when defined(windows):
+      result = hasAnyExe(@["brave.exe", "brave", "brave-browser"]) or hasAnyPath(@[
+        getEnv("PROGRAMFILES") / "BraveSoftware/Brave-Browser/Application/brave.exe",
+        getEnv("PROGRAMFILES(X86)") / "BraveSoftware/Brave-Browser/Application/brave.exe",
+        getEnv("LOCALAPPDATA") / "BraveSoftware/Brave-Browser/Application/brave.exe"
+      ])
+    else:
+      result = hasAnyExe(@["brave.exe", "brave", "brave-browser"])
   of WebuiBrowser.wbVivaldi:
-    result = hasAnyExe(@["vivaldi.exe", "vivaldi"])
+    when defined(windows):
+      result = hasAnyExe(@["vivaldi.exe", "vivaldi"]) or hasAnyPath(@[
+        getEnv("PROGRAMFILES") / "Vivaldi/Application/vivaldi.exe",
+        getEnv("PROGRAMFILES(X86)") / "Vivaldi/Application/vivaldi.exe",
+        getEnv("LOCALAPPDATA") / "Vivaldi/Application/vivaldi.exe"
+      ])
+    else:
+      result = hasAnyExe(@["vivaldi.exe", "vivaldi"])
   of WebuiBrowser.wbOpera:
     result = hasAnyExe(@["opera.exe", "opera"])
   of WebuiBrowser.wbYandex:
@@ -311,6 +331,8 @@ proc runWebUi*(c: WebUiConfig) =
     bs: seq[WebuiBrowser]
     selected: WebuiBrowser = WebuiBrowser.wbNoBrowser
     timeoutSec: int
+    prefBrowser: string
+    prefBrowserOrder: string
 
   if not dirExists(c.webRoot):
     raise newException(IOError, "web root does not exist: " & c.webRoot)
@@ -335,10 +357,16 @@ proc runWebUi*(c: WebUiConfig) =
   if c.forceWebView:
     selected = WebuiBrowser.wbWebview
   else:
-    if c.browserOrderNames.len > 0:
+    prefBrowserOrder = getEnv("VNIM_WEBUI_BROWSER_ORDER", "").strip()
+    prefBrowser = getEnv("VNIM_WEBUI_BROWSER", "").strip()
+    if prefBrowserOrder.len > 0:
+      bs = resolveBrowserOrderFromNames(parseBrowserOrderCsv(prefBrowserOrder))
+    elif prefBrowser.len > 0:
+      bs = resolveBrowserOrderFromNames(@[prefBrowser])
+    elif c.browserOrderNames.len > 0:
       bs = resolveBrowserOrderFromNames(c.browserOrderNames)
     else:
-      bs = resolveBrowserOrder(getEnv("VNIM_WEBUI_BROWSER", ""))
+      bs = resolveBrowserOrder(prefBrowser)
     selected = selectBrowserTarget(bs)
 
   if selected == WebuiBrowser.wbWebview:
@@ -363,6 +391,7 @@ proc runWebUi*(c: WebUiConfig) =
     echo "Connect timeout per attempt (seconds): ", $timeoutSec
     echo "Web root: ", c.webRoot
     echo "Set VNIM_WEBUI_BROWSER to one of: webview, edge, chrome, firefox, chromium, brave, vivaldi, opera, yandex, epic, chromiumBased, any"
+    echo "Set VNIM_WEBUI_BROWSER_ORDER for explicit order (example: brave,vivaldi,firefox,any)."
     echo "Optional: set VNIM_WEBUI_CONNECT_TIMEOUT to tune per-attempt timeout."
     clean()
     return
