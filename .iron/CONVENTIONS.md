@@ -157,7 +157,7 @@ Prefer understanding, long-term maintainability, and modularity over efficiency.
 
 - The actual project belongs in `src`. If it is missing, create it.
 - Submodules can live outside `src` inside a `sumbodules`folder.
-- Every repo must include a `iron/` folder next to `src/` for repo-coordination metadata and templates.
+- Every repo must include a `.iron/` folder next to `src/` for repo-coordination metadata and templates.
 - Every module (`.nim` file) must have a description at the top explaining what it does.
   - Prefer visual hints like arrows (`<- ->`), ASCII art boxes, and separators (`|`, `-`).
 
@@ -194,11 +194,11 @@ At the bottom of the README of a project, include a cleaner, more formatted vers
 
 ## iron Folder (Repo Coordination)
 
-Every repo must have a `iron/` folder located next to `src/`.
+Every repo must have a `.iron/` folder located next to `src/`.
 
 - Store repo-coordination configs and templates there.
-- Use `proto-conventions/iron/` as the template source.
-- The local submodule override file lives at `iron/.gitmodules.local` and should be ignored by git.
+- Use `Proto-TemplateRepo/.iron/` as the template source.
+- The local submodule override file lives at `.iron/.local.gitmodules.toml` and should be ignored by git.
 
 ## Dependencies and External Projects
 
@@ -207,7 +207,7 @@ If you need an entirely different project as a dependency (because a library or 
 Prefer Nim and nimble only. No Python, bash, or PowerShell.
 
 Submodules always live in the devs folder. However, locally the submodules should not be cloned nor should they be modified. 
-The actual, local path for the submodules should be set via iron's "config.md" file inside a repos' iron folder.
+The actual, local path for the submodules should be set via `.iron/.local.config.toml` inside a repo's `.iron/` folder.
 
 ## C Bindings (cNimWrapper)
 
@@ -264,7 +264,7 @@ The compiling user should be prompted if there are missing dependencies on wheth
 
 ## Git
 
-1. Add a nimble task that auto-pushes with a commit message from `progress.md` (see `proto_conventions.nimble` in this repo).
+1. Add a nimble task that auto-pushes with a commit message from `.iron/PROGRESS.md` (see `proto_conventions.nimble` in this repo).
 2. Add a `.gitignore` that excludes `builds` and `.exe` files.
 3. Add a submodules folder to each repo in which all the submodules go.
 
@@ -275,7 +275,7 @@ This repo includes one `src` folder for app repos and another for library repos.
 - There should be no frontend/backend separation for libraries.
 - If a repo has interface + libraries, its `src` folder should be split into `interfaces` and `lib`.
 
-You may follow the general structure of the rest of this proto-conventions repo and the example files.
+You may follow the general structure of the rest of this Proto-TemplateRepo repo and the example files.
 
 ## Issue Playbook
 
@@ -283,5 +283,5 @@ Create an issue playbook at the bottom of the README.md which lists common issue
 
 ## Conventions
 
-Keep a copy of this iron folder and its contents in each repo.
-Make sure to change the path in the iron_config.md in the iron folder accordingly.
+Keep a copy of this `.iron/` folder and its contents in each repo.
+Make sure to change the path in `.iron/.local.config.toml` accordingly.
