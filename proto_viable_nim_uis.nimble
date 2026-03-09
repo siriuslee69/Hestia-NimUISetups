@@ -30,8 +30,8 @@ proc runCmd(srcPath, outStem: string): string =
 task test, "Run smoke tests":
   exec "nim c -d:release -r tests/test_smoke.nim"
 
-task autopush, "Add, commit, and push with message from valk/progress.md":
-  let path = "valk/progress.md"
+task autopush, "Add, commit, and push with message from iron/progress.md":
+  let path = "iron/progress.md"
   var msg = ""
   if fileExists(path):
     let content = readFile(path)

@@ -11,8 +11,10 @@
   let modeTooltip = null;
   let tagTooltip = null;
   let metaTooltip = null;
+  let dataNameTooltip = null;
   let pinnedCarousel = null;
   let pinnedMetaField = null;
+  let activeDataNameCard = null;
 
   function getButtons(menu) {
     return [...menu.querySelectorAll('.mod-button')];
@@ -38,8 +40,8 @@
   }
 
   function getDesktopMetrics() {
-    const sw = window.screen?.availWidth || window.screen?.width || window.innerWidth;
-    const sh = window.screen?.availHeight || window.screen?.height || window.innerHeight;
+    const sw = window.innerWidth || document.documentElement.clientWidth || window.screen?.availWidth || window.screen?.width;
+    const sh = window.innerHeight || document.documentElement.clientHeight || window.screen?.availHeight || window.screen?.height;
     return {
       width: sw,
       height: sh
@@ -48,18 +50,29 @@
 
   function syncGridCssVars() {
     const root = document.documentElement;
+    const styles = getComputedStyle(root);
     const desktop = getDesktopMetrics();
-    const cols = parseFloat(getComputedStyle(root).getPropertyValue('--mod-grid-cols')) || 40;
-    const rows = parseFloat(getComputedStyle(root).getPropertyValue('--mod-grid-rows')) || 20;
-    root.style.setProperty('--mod-grid-cell-w', `${desktop.width / cols}px`);
-    root.style.setProperty('--mod-grid-cell-h', `${desktop.height / rows}px`);
+    const cols = parseFloat(styles.getPropertyValue('--mod-grid-cols')) || 40;
+    const rows = parseFloat(styles.getPropertyValue('--mod-grid-rows')) || 20;
+    const lockedWidth = parseFloat(styles.getPropertyValue('--mod-grid-cell-w-lock')) || 0;
+    const lockedHeight = parseFloat(styles.getPropertyValue('--mod-grid-cell-h-lock')) || 0;
+    const cellWidth = lockedWidth > 0 ? lockedWidth : desktop.width / cols;
+    const cellHeight = lockedHeight > 0 ? lockedHeight : desktop.height / rows;
+    const activeCols = lockedWidth > 0 ? Math.max(cols, Math.ceil(desktop.width / cellWidth)) : cols;
+    const activeRows = lockedHeight > 0 ? Math.max(rows, Math.ceil(desktop.height / cellHeight)) : rows;
+    root.style.setProperty('--mod-grid-cols-active', `${activeCols}`);
+    root.style.setProperty('--mod-grid-rows-active', `${activeRows}`);
+    root.style.setProperty('--mod-grid-cell-w', `${cellWidth}px`);
+    root.style.setProperty('--mod-grid-cell-h', `${cellHeight}px`);
   }
 
   function getGridMetrics() {
     const styles = window.getComputedStyle(document.documentElement);
     return {
-      cols: parseFloat(styles.getPropertyValue('--mod-grid-cols')) || 40,
-      rows: parseFloat(styles.getPropertyValue('--mod-grid-rows')) || 20,
+      cols: parseFloat(styles.getPropertyValue('--mod-grid-cols-active')) ||
+        parseFloat(styles.getPropertyValue('--mod-grid-cols')) || 40,
+      rows: parseFloat(styles.getPropertyValue('--mod-grid-rows-active')) ||
+        parseFloat(styles.getPropertyValue('--mod-grid-rows')) || 20,
       cellWidth: parseFloat(styles.getPropertyValue('--mod-grid-cell-w')) || 32,
       cellHeight: parseFloat(styles.getPropertyValue('--mod-grid-cell-h')) || 40
     };
@@ -142,6 +155,31 @@
     return metaTooltip;
   }
 
+  function ensureDataNameTooltip() {
+    if (dataNameTooltip) {
+      return dataNameTooltip;
+    }
+
+    dataNameTooltip = document.createElement('div');
+    dataNameTooltip.className = 'mod-data-name-tooltip';
+    dataNameTooltip.hidden = true;
+    document.body.appendChild(dataNameTooltip);
+
+    if (ensureDataNameTooltip.bound !== true) {
+      window.addEventListener('resize', () => {
+        hideDataNameTooltip(true);
+      });
+
+      window.addEventListener('scroll', () => {
+        hideDataNameTooltip(true);
+      }, true);
+
+      ensureDataNameTooltip.bound = true;
+    }
+
+    return dataNameTooltip;
+  }
+
   function positionFloatingTooltip(tooltip, clientX, clientY) {
     const margin = 8;
     const gap = 14;
@@ -170,6 +208,63 @@
   function positionMetaTooltip(clientX, clientY) {
     const tooltip = ensureMetaTooltip();
     positionFloatingTooltip(tooltip, clientX, clientY);
+  }
+
+  function positionDataNameTooltip(card) {
+    const tooltip = ensureDataNameTooltip();
+    const preview = card.querySelector('.mod-preview') || card;
+    const rect = preview.getBoundingClientRect();
+    const margin = 8;
+
+    tooltip.style.left = `${Math.round(rect.right - 1)}px`;
+    tooltip.style.top = `${Math.round(rect.top - 1)}px`;
+
+    const tooltipRect = tooltip.getBoundingClientRect();
+    let left = rect.right - 1;
+    if (left + tooltipRect.width > window.innerWidth - margin) {
+      left = rect.left - tooltipRect.width + 1;
+    }
+    left = clamp(left, margin, Math.max(margin, window.innerWidth - tooltipRect.width - margin));
+
+    let top = rect.top - 1;
+    top = clamp(top, margin, Math.max(margin, window.innerHeight - tooltipRect.height - margin));
+
+    tooltip.style.left = `${Math.round(left)}px`;
+    tooltip.style.top = `${Math.round(top)}px`;
+  }
+
+  function showDataNameTooltip(card) {
+    if (card.dataset.dataNameFloat !== 'true') {
+      return;
+    }
+
+    const main = card.querySelector('.mod-data-main');
+    if (!main) {
+      return;
+    }
+
+    const tooltip = ensureDataNameTooltip();
+    tooltip.innerHTML = '';
+    tooltip.appendChild(main.cloneNode(true));
+    tooltip.hidden = false;
+    activeDataNameCard = card;
+    positionDataNameTooltip(card);
+  }
+
+  function hideDataNameTooltip(force) {
+    if (!force && activeDataNameCard?.matches(':hover, :focus-within')) {
+      return;
+    }
+
+    if (!dataNameTooltip) {
+      activeDataNameCard = null;
+      return;
+    }
+
+    const tooltip = dataNameTooltip;
+    tooltip.hidden = true;
+    tooltip.innerHTML = '';
+    activeDataNameCard = null;
   }
 
   function fillTagTooltip(carousel, scrollable) {
@@ -380,6 +475,138 @@
     default:
       return 'collapsed';
     }
+  }
+
+  function normalizeDataNameMode(mode) {
+    switch (mode) {
+    case 'hover':
+    case 'extended':
+      return mode;
+    default:
+      return 'auto';
+    }
+  }
+
+  function getDataNameMode(dataList) {
+    return normalizeDataNameMode(dataList?.dataset?.nameMode || 'auto');
+  }
+
+  function measureDataCardExpandedWidth(card, view) {
+    const preview = card.querySelector('.mod-preview');
+    const main = card.querySelector('.mod-data-main');
+    const previewWidth = Math.ceil(preview?.getBoundingClientRect().width || 56);
+    if (!main) {
+      return previewWidth;
+    }
+
+    const mainWidth = Math.ceil(main.scrollWidth || main.getBoundingClientRect().width || 0);
+    const gap = parseFloat(window.getComputedStyle(card).columnGap || window.getComputedStyle(card).gap || '0');
+
+    if (view === 'cards') {
+      return Math.max(160, mainWidth + 20);
+    }
+
+    return previewWidth + gap + mainWidth;
+  }
+
+  function bindDataNameHover(card) {
+    if (card.dataset.dataNameHoverBound === 'true') {
+      return;
+    }
+
+    card.dataset.dataNameHoverBound = 'true';
+
+    card.addEventListener('mouseenter', () => {
+      showDataNameTooltip(card);
+    });
+
+    card.addEventListener('mouseleave', () => {
+      if (activeDataNameCard === card) {
+        hideDataNameTooltip(true);
+      }
+    });
+
+    card.addEventListener('focusin', () => {
+      showDataNameTooltip(card);
+    });
+
+    card.addEventListener('focusout', () => {
+      window.requestAnimationFrame(() => {
+        if (activeDataNameCard === card && !card.contains(document.activeElement)) {
+          hideDataNameTooltip(true);
+        }
+      });
+    });
+  }
+
+  function syncDataNameModePresentation(dataList) {
+    if (!dataList) {
+      return;
+    }
+
+    const view = dataList.dataset.view || 'details';
+    const mode = getDataNameMode(dataList);
+    dataList.dataset.nameMode = mode;
+
+    const cards = [...dataList.querySelectorAll('.mod-data-card')];
+    cards.forEach(card => {
+      card.classList.remove('is-name-collapsed', 'is-name-extended');
+      card.dataset.dataNameFloat = 'false';
+      bindDataNameHover(card);
+    });
+
+    if (view === 'list') {
+      hideDataNameTooltip(true);
+      return;
+    }
+
+    cards.forEach(card => {
+      let collapsed = false;
+      if (mode === 'hover') {
+        collapsed = true;
+      } else if (mode === 'auto') {
+        const availableWidth = view === 'cards'
+          ? Math.ceil(card.getBoundingClientRect().width || card.clientWidth || 0)
+          : Math.ceil(dataList.getBoundingClientRect().width || dataList.clientWidth || 0);
+        const requiredWidth = measureDataCardExpandedWidth(card, view);
+        collapsed = availableWidth > 0 && requiredWidth > availableWidth + 1;
+      }
+
+      card.classList.toggle('is-name-collapsed', collapsed);
+      card.classList.toggle('is-name-extended', !collapsed);
+      card.dataset.dataNameFloat = view === 'details' && mode === 'hover' && collapsed ? 'true' : 'false';
+      bindDataNameHover(card);
+    });
+
+    if (activeDataNameCard && activeDataNameCard.dataset.dataNameFloat !== 'true') {
+      hideDataNameTooltip(true);
+    }
+  }
+
+  function syncSettingsCardTitles(settingsGrid) {
+    if (!settingsGrid) {
+      return;
+    }
+
+    const view = settingsGrid.dataset.view || 'details';
+    settingsGrid.querySelectorAll('.mod-settings-card').forEach(card => {
+      const heading = card.querySelector('h3')?.textContent?.trim() || card.dataset.settingsTitle || '';
+      if (!heading) {
+        card.removeAttribute('title');
+        card.removeAttribute('aria-label');
+        return;
+      }
+
+      card.dataset.settingsTitle = heading;
+      if (view === 'details') {
+        card.removeAttribute('title');
+        card.removeAttribute('aria-label');
+        return;
+      }
+
+      card.title = heading;
+      card.setAttribute('aria-label', heading);
+    });
   }
 
   function setState(button, state) {
@@ -1505,7 +1732,8 @@
     const state = {
       schema,
       singles: new Map(),
-      multis: new Map()
+      multis: new Map(),
+      multiEnabled: new Map()
     };
 
     schema.forEach((descriptor, field) => {
@@ -1516,7 +1744,9 @@
       }
 
       const prev = previous?.multis.get(field);
+      const prevEnabled = previous?.multiEnabled?.get(field);
       state.multis.set(field, prev || defaultMultiSelection(field, descriptor));
+      state.multiEnabled.set(field, prevEnabled === undefined ? true : prevEnabled);
     });
 
     metadataStates.set(dataList, state);
@@ -2041,6 +2271,11 @@
           return;
         }
 
+        const isEnabled = state.multiEnabled.has(field) ? state.multiEnabled.get(field) : true;
+        if (!isEnabled) {
+          return;
+        }
+
         const mode = state.multis.get(field) || defaultMultiSelection(field, descriptor);
         if (mode === 'carousel') {
           const values = carouselValuesOf(value);
@@ -2060,6 +2295,7 @@
     });
 
     requestAnimationFrame(() => {
+      syncDataNameModePresentation(dataList);
       updateMetadataPagers(dataList);
       syncMetadataOverflow(dataList);
     });
@@ -2122,6 +2358,35 @@
       const state = getLiveState();
       dropdown.innerHTML = '';
 
+      const nameModeRow = document.createElement('div');
+      nameModeRow.className = 'mod-meta-field-row';
+
+      const nameModeLabel = document.createElement('span');
+      nameModeLabel.className = 'mod-meta-field-name';
+      nameModeLabel.textContent = 'name mode';
+
+      const nameModeSelect = document.createElement('select');
+      nameModeSelect.className = 'mod-meta-field-select';
+      [
+        { value: 'auto', label: 'Auto' },
+        { value: 'hover', label: 'Hover' },
+        { value: 'extended', label: 'Extended' }
+      ].forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.label;
+        nameModeSelect.appendChild(option);
+      });
+      nameModeSelect.value = getDataNameMode(dataList);
+      nameModeSelect.addEventListener('change', () => {
+        dataList.dataset.nameMode = normalizeDataNameMode(nameModeSelect.value);
+        refreshData();
+      });
+
+      nameModeRow.appendChild(nameModeLabel);
+      nameModeRow.appendChild(nameModeSelect);
+      dropdown.appendChild(nameModeRow);
+
       state.schema.forEach((descriptor, field) => {
         if (descriptor.kind === 'single') {
           const row = document.createElement('label');
@@ -2147,7 +2412,11 @@
         }
 
         const row = document.createElement('div');
-        row.className = 'mod-meta-field-row';
+        row.className = 'mod-meta-field-row mod-meta-field-row-multi';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = state.multiEnabled.get(field) !== false;
 
         const name = document.createElement('span');
         name.className = 'mod-meta-field-name';
@@ -2172,6 +2441,18 @@
         state.multis.set(field, select.value);
         syncCarouselSelectState(select);
 
+        function syncMultiRowState() {
+          row.classList.toggle('is-disabled', !checkbox.checked);
+          select.disabled = !checkbox.checked;
+        }
+
+        checkbox.addEventListener('change', () => {
+          const live = getLiveState();
+          live.multiEnabled.set(field, checkbox.checked);
+          syncMultiRowState();
+          refreshData();
+        });
+
         select.addEventListener('change', () => {
           const live = getLiveState();
           live.multis.set(field, select.value);
@@ -2179,8 +2460,10 @@
           refreshData();
         });
 
+        row.appendChild(checkbox);
         row.appendChild(name);
         row.appendChild(select);
+        syncMultiRowState();
         dropdown.appendChild(row);
       });
     }
@@ -2209,6 +2492,10 @@
     ];
 
     root.querySelectorAll('.mod-content-frame').forEach(frame => {
+      if (frame.dataset.skipViewSwitcher === 'true') {
+        return;
+      }
+
       const dataList = frame.querySelector('.mod-data-list');
       const settingsGrid = frame.querySelector('.mod-settings-grid');
       const targetList = dataList || settingsGrid;
@@ -2242,6 +2529,8 @@
           targetList.dataset.view = view.id;
           if (dataList) {
             applyMetaView(dataList, dataList.dataset.metaView || 'hybrid');
+          } else if (settingsGrid) {
+            syncSettingsCardTitles(settingsGrid);
           }
         });
 
@@ -2259,6 +2548,8 @@
       targetList.dataset.view = 'details';
       if (dataList) {
         applyMetaView(dataList, 'hybrid');
+      } else if (settingsGrid) {
+        syncSettingsCardTitles(settingsGrid);
       }
       frame.appendChild(switcher);
     });
@@ -2289,6 +2580,7 @@
     window.addEventListener('resize', () => {
       syncGridCssVars();
       root.querySelectorAll('.mod-data-list').forEach(dataList => {
+        syncDataNameModePresentation(dataList);
         updateMetadataPagers(dataList);
         syncMetadataOverflow(dataList);
       });

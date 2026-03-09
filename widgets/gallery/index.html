@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hestia Widgets - Creative Menu Gallery</title>
+  <link rel="stylesheet" href="../../modular/shared/modular-menu.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="app.js" defer></script>
+</head>
+
+<body class="mod-grid-bg widget-gallery-page">
+  <main class="widget-gallery-shell">
+    <header class="widget-gallery-header mod-shell-card">
+      <div class="widget-gallery-title">
+        <p class="mod-eyebrow">Hestia widgets</p>
+        <h1>Creative Menu Gallery</h1>
+        <p class="widget-gallery-intro">
+          A broad column gallery for menu experiments built on the modular menu visual language.
+          The first concept turns the menu into a cairn of floating stones that pitch forward when selected.
+        </p>
+      </div>
+      <div class="widget-gallery-stats" aria-label="Gallery summary">
+        <div class="widget-gallery-stat">
+          <span class="widget-gallery-stat-label">Columns</span>
+          <strong>4</strong>
+        </div>
+        <div class="widget-gallery-stat">
+          <span class="widget-gallery-stat-label">Menus</span>
+          <strong>4</strong>
+        </div>
+        <div class="widget-gallery-stat">
+          <span class="widget-gallery-stat-label">Interactive</span>
+          <strong>1</strong>
+        </div>
+      </div>
+    </header>
+
+    <section class="widget-gallery-grid" aria-label="Creative HTML menus">
+      <article class="widget-gallery-column mod-shell-card column-floating-stones">
+        <div class="widget-gallery-column-head">
+          <p class="mod-eyebrow">Menu 01</p>
+          <h2>Floating Stones</h2>
+          <p>
+            Rounded menu stones sit in a tall cairn. Selecting one lifts it out of the stack,
+            tilts it toward the viewer, and updates the active detail card below.
+          </p>
+        </div>
+
+        <div class="mod-menu-frame stone-menu-frame">
+          <div class="mod-menu-clip">
+            <div class="mod-menu stone-menu" data-orientation="vertical" data-floating-stone-menu>
+              <div class="stone-slot">
+                <button class="mod-button stone-button is-selected" type="button" aria-pressed="true"
+                  data-stone-title="Harbor Signal"
+                  data-stone-meta="North deck / 4 live feeds"
+                  data-stone-note="A heavier anchor stone for routing and radar views. It should feel like the stack settles under it.">
+                  <span class="mod-symbol">H</span>
+                  <span class="mod-label">Harbor Signal</span>
+                  <span class="menu-aux">Live</span>
+                </button>
+              </div>
+              <div class="stone-slot">
+                <button class="mod-button stone-button" type="button" aria-pressed="false"
+                  data-stone-title="Cedar Archive"
+                  data-stone-meta="Shelf 12 / cold storage"
+                  data-stone-note="A quieter archival stone for long-form reference material, logs, and preserved snapshots.">
+                  <span class="mod-symbol">C</span>
+                  <span class="mod-label">Cedar Archive</span>
+                  <span class="menu-aux">Cold</span>
+                </button>
+              </div>
+              <div class="stone-slot">
+                <button class="mod-button stone-button" type="button" aria-pressed="false"
+                  data-stone-title="Drift Atlas"
+                  data-stone-meta="Route layer / 12 lanes"
+                  data-stone-note="A navigation-focused stone for paths, moving units, and softened trajectory overlays.">
+                  <span class="mod-symbol">D</span>
+                  <span class="mod-label">Drift Atlas</span>
+                  <span class="menu-aux">Route</span>
+                </button>
+              </div>
+              <div class="stone-slot">
+                <button class="mod-button stone-button" type="button" aria-pressed="false"
+                  data-stone-title="Quarry Console"
+                  data-stone-meta="Ops rig / console depth"
+                  data-stone-note="A denser operational stone with a slightly more abrupt tilt, meant for tools and machine states.">
+                  <span class="mod-symbol">Q</span>
+                  <span class="mod-label">Quarry Console</span>
+                  <span class="menu-aux">Ops</span>
+                </button>
+              </div>
+              <div class="stone-slot">
+                <button class="mod-button stone-button" type="button" aria-pressed="false"
+                  data-stone-title="Bloom Relay"
+                  data-stone-meta="Garden link / 8 channels"
+                  data-stone-note="A lighter communication stone for message relays, handoffs, and collaborative status signals.">
+                  <span class="mod-symbol">B</span>
+                  <span class="mod-label">Bloom Relay</span>
+                  <span class="menu-aux">8 ch</span>
+                </button>
+              </div>
+              <div class="stone-slot">
+                <button class="mod-button stone-button" type="button" aria-pressed="false"
+                  data-stone-title="Ember Vault"
+                  data-stone-meta="Secure core / burn gate"
+                  data-stone-note="A warm final stone for secured actions, approvals, and anything that should feel deliberate and expensive.">
+                  <span class="mod-symbol">E</span>
+                  <span class="mod-label">Ember Vault</span>
+                  <span class="menu-aux">Secure</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section class="stone-detail mod-shell-card" aria-live="polite" data-stone-detail>
+          <span class="stone-detail-kicker">Selected stone</span>
+          <h3 data-stone-detail-title>Harbor Signal</h3>
+          <div class="stone-detail-meta" data-stone-detail-meta>North deck / 4 live feeds</div>
+          <p data-stone-detail-note>
+            A heavier anchor stone for routing and radar views. It should feel like the stack settles under it.
+          </p>
+        </section>
+      </article>
+
+      <article class="widget-gallery-column mod-shell-card column-signal-reeds">
+        <div class="widget-gallery-column-head">
+          <p class="mod-eyebrow">Menu 02</p>
+          <h2>Signal Reeds</h2>
+          <p>
+            A narrow reed-bed menu study: long slotted rails, status tags, and a quiet left-to-right tension.
+          </p>
+        </div>
+
+        <div class="mod-menu-frame signal-menu-frame">
+          <div class="mod-menu-clip">
+            <div class="mod-menu signal-menu" data-orientation="vertical">
+              <button class="mod-button signal-button" type="button">
+                <span class="mod-symbol">L</span>
+                <span class="mod-label">Sweep lane</span>
+                <span class="menu-aux">06</span>
+              </button>
+              <button class="mod-button signal-button" type="button">
+                <span class="mod-symbol">R</span>
+                <span class="mod-label">Relay gate</span>
+                <span class="menu-aux">12</span>
+              </button>
+              <button class="mod-button signal-button" type="button">
+                <span class="mod-symbol">P</span>
+                <span class="mod-label">Pulse rig</span>
+                <span class="menu-aux">Armed</span>
+              </button>
+              <button class="mod-button signal-button" type="button">
+                <span class="mod-symbol">S</span>
+                <span class="mod-label">Spine cache</span>
+                <span class="menu-aux">Warm</span>
+              </button>
+              <button class="mod-button signal-button" type="button">
+                <span class="mod-symbol">T</span>
+                <span class="mod-label">Tide watch</span>
+                <span class="menu-aux">Now</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p class="widget-gallery-caption">
+          This column stays static for now and acts as a second visual direction built on the same modular button skeleton.
+        </p>
+      </article>
+
+      <article class="widget-gallery-column mod-shell-card column-folded-plates">
+        <div class="widget-gallery-column-head">
+          <p class="mod-eyebrow">Menu 03</p>
+          <h2>Folded Plates</h2>
+          <p>
+            A stacked plate concept with alternating offsets. The menu feels more architectural and planar than soft.
+          </p>
+        </div>
+
+        <div class="mod-menu-frame plate-menu-frame">
+          <div class="mod-menu-clip">
+            <div class="mod-menu plate-menu" data-orientation="vertical">
+              <button class="mod-button plate-button" type="button">
+                <span class="mod-symbol">A</span>
+                <span class="mod-label">Access shelf</span>
+                <span class="menu-aux">Pinned</span>
+              </button>
+              <button class="mod-button plate-button" type="button">
+                <span class="mod-symbol">F</span>
+                <span class="mod-label">Field panel</span>
+                <span class="menu-aux">Grid</span>
+              </button>
+              <button class="mod-button plate-button" type="button">
+                <span class="mod-symbol">M</span>
+                <span class="mod-label">Map chamber</span>
+                <span class="menu-aux">Sync</span>
+              </button>
+              <button class="mod-button plate-button" type="button">
+                <span class="mod-symbol">O</span>
+                <span class="mod-label">Orbit queue</span>
+                <span class="menu-aux">3</span>
+              </button>
+              <button class="mod-button plate-button" type="button">
+                <span class="mod-symbol">V</span>
+                <span class="mod-label">Vault sketch</span>
+                <span class="menu-aux">Draft</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p class="widget-gallery-caption">
+          The plate stack keeps the modular proportions but pushes them toward rigid folds and offset seams.
+        </p>
+      </article>
+
+      <article class="widget-gallery-column mod-shell-card column-beacon-rungs">
+        <div class="widget-gallery-column-head">
+          <p class="mod-eyebrow">Menu 04</p>
+          <h2>Beacon Rungs</h2>
+          <p>
+            A rung ladder concept with a central spine and glowing guide points. It reads more like equipment than navigation chrome.
+          </p>
+        </div>
+
+        <div class="mod-menu-frame beacon-menu-frame">
+          <div class="mod-menu-clip">
+            <div class="mod-menu beacon-menu" data-orientation="vertical">
+              <button class="mod-button beacon-button" type="button">
+                <span class="mod-symbol">N</span>
+                <span class="mod-label">North beacon</span>
+                <span class="menu-aux">Calm</span>
+              </button>
+              <button class="mod-button beacon-button" type="button">
+                <span class="mod-symbol">E</span>
+                <span class="mod-label">East relay</span>
+                <span class="menu-aux">Ready</span>
+              </button>
+              <button class="mod-button beacon-button" type="button">
+                <span class="mod-symbol">S</span>
+                <span class="mod-label">South array</span>
+                <span class="menu-aux">Watch</span>
+              </button>
+              <button class="mod-button beacon-button" type="button">
+                <span class="mod-symbol">W</span>
+                <span class="mod-label">West spool</span>
+                <span class="menu-aux">Sync</span>
+              </button>
+              <button class="mod-button beacon-button" type="button">
+                <span class="mod-symbol">C</span>
+                <span class="mod-label">Core handoff</span>
+                <span class="menu-aux">2</span>
+              </button>
+              <button class="mod-button beacon-button" type="button">
+                <span class="mod-symbol">G</span>
+                <span class="mod-label">Glow audit</span>
+                <span class="menu-aux">Run</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p class="widget-gallery-caption">
+          This one keeps the long-column rhythm and leaves room for a later version with motion along the center spine.
+        </p>
+      </article>
+    </section>
+  </main>
+</body>
+
+</html>

@@ -14,6 +14,7 @@
   --mod-radius: 2px;
   --mod-gap: 8px;
   --mod-button-size: 44px;
+  --mod-data-preview-size: 56px;
   --mod-grid-line: rgba(31, 46, 78, 0.08);
   --mod-grid-cols: 40;
   --mod-grid-rows: 20;
@@ -47,8 +48,8 @@ body.mod-grid-bg::before {
   position: fixed;
   top: 0;
   left: 0;
-  width: calc(var(--mod-grid-cols) * var(--mod-grid-cell-w));
-  height: calc(var(--mod-grid-rows) * var(--mod-grid-cell-h));
+  width: calc(var(--mod-grid-cols-active, var(--mod-grid-cols)) * var(--mod-grid-cell-w));
+  height: calc(var(--mod-grid-rows-active, var(--mod-grid-rows)) * var(--mod-grid-cell-h));
   background-image:
     linear-gradient(to right, var(--mod-grid-line) 1px, transparent 1px),
     linear-gradient(to bottom, var(--mod-grid-line) 1px, transparent 1px);
@@ -212,7 +213,7 @@ input {
 
 .mod-data-card {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
+  grid-template-columns: var(--mod-data-preview-size) minmax(0, 1fr);
   gap: 12px;
   padding: 12px;
   border: 1px solid var(--mod-line);
@@ -220,8 +221,8 @@ input {
 }
 
 .mod-preview {
-  width: 56px;
-  height: 56px;
+  width: var(--mod-data-preview-size);
+  height: var(--mod-data-preview-size);
   border: 1px solid rgba(31, 46, 78, 0.18);
   background: linear-gradient(135deg, rgba(95, 208, 255, 0.18), rgba(129, 217, 122, 0.14));
 }
@@ -519,6 +520,7 @@ input {
   position: absolute;
   top: -1px;
   left: calc(var(--mod-button-size) - 1px);
+  z-index: 5001;
   min-height: var(--mod-button-size);
   padding: 0 12px 0 12px;
   border: 1px solid var(--mod-line);
@@ -537,7 +539,7 @@ input {
 
 .mod-button[data-button-mode="hover"]:hover,
 .mod-button[data-button-mode="hover"]:focus-within {
-  z-index: 8;
+  z-index: 5000;
 }
 
 .mod-button[data-button-mode="hover"]:hover .mod-label,
@@ -740,6 +742,7 @@ body.mod-edit-ui-off .mod-view-switcher {
   gap: 0;
   padding: 4px 10px;
   align-items: center;
+  min-width: calc(var(--mod-grid-cell-w) * 4);
 }
 
 .mod-data-list[data-view="list"] .mod-preview {
@@ -789,9 +792,7 @@ body.mod-edit-ui-off .mod-view-switcher {
 }
 
 .mod-settings-grid[data-view="list"] .mod-settings-card h3 {
-  margin: 0;
-  font-size: 0.88rem;
-  white-space: nowrap;
+  display: none;
 }
 
 .mod-settings-grid[data-view="list"] .mod-form-row {
@@ -819,18 +820,59 @@ body.mod-edit-ui-off .mod-view-switcher {
 
 /* ── View: Details (default — no overrides needed) ── */
 
+.mod-data-list[data-view="details"] .mod-data-card {
+  padding: 4px;
+  align-items: center;
+}
+
+.mod-data-list[data-view="details"] .mod-data-card.is-name-collapsed {
+  position: relative;
+  grid-template-columns: var(--mod-data-preview-size);
+  width: fit-content;
+  min-width: var(--mod-data-preview-size);
+}
+
+.mod-data-list[data-view="details"] .mod-data-card.is-name-collapsed .mod-data-main {
+  display: none;
+}
+
+.mod-data-list[data-view="details"][data-name-mode="hover"] .mod-data-card.is-name-collapsed {
+  overflow: visible;
+}
+.mod-data-list[data-view="details"][data-name-mode="hover"] .mod-data-card.is-name-collapsed .mod-data-main {
+  display: none;
+}
+.mod-data-list[data-view="details"][data-name-mode="hover"] .mod-data-card.is-name-collapsed:hover,
+.mod-data-list[data-view="details"][data-name-mode="hover"] .mod-data-card.is-name-collapsed:focus-within {
+  z-index: 8;
+}
+
+.mod-data-list[data-view="details"] .mod-data-main {
+  display: flex;
+  align-items: center;
+  min-height: var(--mod-data-preview-size);
+}
+
+.mod-data-list[data-view="details"] .mod-data-main p {
+  display: none;
+}
+
 /* ── View: Cards (large tile grid) ── */
 
 .mod-data-list[data-view="cards"] {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(var(--mod-data-card-track-min, 160px), 1fr));
+  gap: 0;
+}
+
+.mod-data-list[data-view="cards"][data-name-mode="auto"] {
+  --mod-data-card-track-min: var(--mod-data-preview-size);
 }
 
 .mod-data-list[data-view="cards"] .mod-data-card {
   grid-template-columns: 1fr;
-  gap: 8px;
-  padding: 10px;
+  gap: 4px;
+  padding: 4px;
   text-align: center;
   align-content: start;
 }
@@ -838,6 +880,68 @@ body.mod-edit-ui-off .mod-view-switcher {
 .mod-data-list[data-view="cards"] .mod-preview {
   width: 100%;
   height: 96px;
+}
+
+.mod-data-list[data-view="cards"] .mod-data-card.is-name-collapsed {
+  position: relative;
+  grid-template-columns: var(--mod-data-preview-size);
+  justify-items: center;
+  width: fit-content;
+  min-width: var(--mod-data-preview-size);
+  padding: 4px;
+}
+
+.mod-data-list[data-view="cards"] .mod-data-card.is-name-collapsed .mod-preview {
+  width: var(--mod-data-preview-size);
+  height: var(--mod-data-preview-size);
+}
+
+.mod-data-list[data-view="cards"] .mod-data-card.is-name-collapsed .mod-data-main {
+  display: none;
+}
+
+.mod-data-list[data-view="cards"][data-name-mode="hover"] .mod-data-card.is-name-collapsed {
+  grid-template-columns: 1fr;
+  justify-items: stretch;
+  width: auto;
+  min-width: 0;
+  padding: 4px;
+  overflow: visible;
+}
+
+.mod-data-list[data-view="cards"][data-name-mode="hover"] .mod-data-card.is-name-collapsed .mod-preview {
+  width: 100%;
+  height: 96px;
+}
+
+.mod-data-list[data-view="cards"][data-name-mode="hover"] .mod-data-card.is-name-collapsed .mod-data-main {
+  display: flex;
+  position: absolute;
+  top: calc(100% - 1px);
+  left: -1px;
+  z-index: 20;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  min-width: calc(100% + 2px);
+  padding: 8px 10px;
+  border: 1px solid var(--mod-line);
+  background: linear-gradient(135deg, rgba(185, 144, 255, 0.14), rgba(255, 255, 255, 0.96));
+  width: max-content;
+  max-width: min(320px, calc(100vw - 24px));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.mod-data-list[data-view="cards"][data-name-mode="hover"] .mod-data-card.is-name-collapsed:hover,
+.mod-data-list[data-view="cards"][data-name-mode="hover"] .mod-data-card.is-name-collapsed:focus-within {
+  z-index: 8;
+}
+
+.mod-data-list[data-view="cards"][data-name-mode="hover"] .mod-data-card.is-name-collapsed:hover .mod-data-main,
+.mod-data-list[data-view="cards"][data-name-mode="hover"] .mod-data-card.is-name-collapsed:focus-within .mod-data-main {
+  opacity: 1;
 }
 
 .mod-data-list[data-view="cards"] .mod-data-main h3 {
@@ -870,16 +974,16 @@ body.mod-edit-ui-off .mod-view-switcher {
 .mod-settings-grid[data-view="cards"] {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 12px;
+  gap: 0;
 }
 
 .mod-settings-grid[data-view="cards"] .mod-settings-card {
-  gap: 8px;
-  padding: 10px;
+  gap: 4px;
+  padding: 4px;
 }
 
 .mod-settings-grid[data-view="cards"] .mod-settings-card h3 {
-  font-size: 0.92rem;
+  display: none;
 }
 
 .mod-settings-grid[data-view="cards"] .mod-form-row input,
@@ -1008,6 +1112,20 @@ body.mod-edit-ui-off .mod-view-switcher {
   color: var(--mod-text);
   font-size: 0.74rem;
   padding: 2px 4px;
+}
+
+.mod-meta-field-row-multi {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.mod-meta-field-row-multi input {
+  margin: 0;
+}
+
+.mod-meta-field-row-multi.is-disabled {
+  opacity: 0.58;
 }
 
 .mod-meta-field-select.is-carousel-selected {
@@ -1320,6 +1438,31 @@ body.mod-edit-ui-off .mod-view-switcher {
   white-space: normal;
   word-break: break-word;
 }
+.mod-data-name-tooltip {
+  position: fixed;
+  z-index: 2100;
+  min-height: var(--mod-data-preview-size);
+  max-width: min(360px, calc(100vw - 24px));
+  padding: 0 12px;
+  border: 1px solid var(--mod-line);
+  background: linear-gradient(135deg, rgba(185, 144, 255, 0.14), rgba(255, 255, 255, 0.96));
+  box-shadow: 0 10px 24px rgba(15, 24, 34, 0.18);
+  pointer-events: none;
+}
+.mod-data-name-tooltip .mod-data-main {
+  display: flex;
+  align-items: center;
+  min-height: var(--mod-data-preview-size);
+  gap: 12px;
+  white-space: nowrap;
+}
+.mod-data-name-tooltip .mod-data-main h3 {
+  display: block;
+  margin: 0;
+}
+.mod-data-name-tooltip .mod-data-main p {
+  display: none;
+}
 
 /* hide original meta-row when meta view is dates */
 .mod-data-list[data-meta-view="dates"] .mod-meta-row {
@@ -1371,3 +1514,5 @@ body.mod-edit-ui-off .mod-view-switcher {
 .mod-hybrid-row .mod-date-item {
   flex-shrink: 0;
 }
+
+

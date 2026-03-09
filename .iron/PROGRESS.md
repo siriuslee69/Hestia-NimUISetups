@@ -14,18 +14,21 @@ Commit Message: add modular adaptive menu demos and shared button system
 - [x] docs for framework differences and setup
 - [x] standalone layout gallery separate from enhancer code
 - [x] modular adaptive menu demos separate from layouts and src
+- [x] standalone widget gallery area for creative menu experiments
 
 2. Features already implemented
 - complete scaffold and UI demos
 - copied white theme assets from Maya-Themes
 - added shared widget helpers plus 8 standalone HTML layout examples in `layouts/`
 - added shared modular adaptive menu helpers plus vertical and horizontal demos in `modular/`
+- added `widgets/gallery/` with a multi-column menu study page and a first floating-stones menu concept
 
 3. Features in progress
-- verify modular button auto-collapse behavior and demo ergonomics
+- expand the widgets gallery with additional menu behaviors beyond the first floating-stones interaction
 
 Last big change or problem encountered
-- user requested a separate modular widget area with rearrangeable adaptive buttons.
+- user requested a new `widgets/` gallery area with several long columns and a first creative floating-stones menu.
 
 Fix attempt and outcome
 - added a new top-level `modular/` folder with shared adaptive menu CSS/JS plus vertical and horizontal demos using Art Of Creation symbols and drag-reordering.
+- added a new top-level `widgets/` folder with a gallery page that reuses the modular menu styling baseline and introduces a selectable floating-stones menu.

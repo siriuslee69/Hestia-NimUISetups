@@ -157,7 +157,7 @@ Prefer understanding, long-term maintainability, and modularity over efficiency.
 
 - The actual project belongs in `src`. If it is missing, create it.
 - Submodules can live outside `src` inside a `sumbodules`folder.
-- Every repo must include a `valkyrie/` folder next to `src/` for repo-coordination metadata and templates.
+- Every repo must include a `iron/` folder next to `src/` for repo-coordination metadata and templates.
 - Every module (`.nim` file) must have a description at the top explaining what it does.
   - Prefer visual hints like arrows (`<- ->`), ASCII art boxes, and separators (`|`, `-`).
 
@@ -192,13 +192,13 @@ At the bottom of the README of a project, include a cleaner, more formatted vers
 - Always include a `test` folder with unit tests for important functions.
 - After changing code or dependencies, run tests and fix errors.
 
-## Valkyrie Folder (Repo Coordination)
+## iron Folder (Repo Coordination)
 
-Every repo must have a `valkyrie/` folder located next to `src/`.
+Every repo must have a `iron/` folder located next to `src/`.
 
 - Store repo-coordination configs and templates there.
-- Use `proto-conventions/valkyrie/` as the template source.
-- The local submodule override file lives at `valkyrie/.gitmodules.local` and should be ignored by git.
+- Use `proto-conventions/iron/` as the template source.
+- The local submodule override file lives at `iron/.gitmodules.local` and should be ignored by git.
 
 ## Dependencies and External Projects
 
@@ -207,7 +207,7 @@ If you need an entirely different project as a dependency (because a library or 
 Prefer Nim and nimble only. No Python, bash, or PowerShell.
 
 Submodules always live in the devs folder. However, locally the submodules should not be cloned nor should they be modified. 
-The actual, local path for the submodules should be set via Valkyrie's "config.md" file inside a repos' valkyrie folder.
+The actual, local path for the submodules should be set via iron's "config.md" file inside a repos' iron folder.
 
 ## C Bindings (cNimWrapper)
 
@@ -232,7 +232,7 @@ Do not write pre-compile time import statements that prevent nimsuggest from che
 
 ## progress.md
 
-Inside each project, create `progress.md` inside valkyrie (if it does not exist) and track:
+Inside each project, create `progress.md` inside iron (if it does not exist) and track:
 0. Current commit message (update after every change)
 1. Features to implement (total)
 2. Features already implemented
@@ -283,5 +283,5 @@ Create an issue playbook at the bottom of the README.md which lists common issue
 
 ## Conventions
 
-Keep a copy of this valkyrie folder and its contents in each repo.
-Make sure to change the path in the valkyrie_config.md in the valkyrie folder accordingly.
+Keep a copy of this iron folder and its contents in each repo.
+Make sure to change the path in the iron_config.md in the iron folder accordingly.

@@ -13,26 +13,38 @@
 
 <body class="mod-grid-bg">
   <button class="mod-edit-toggle" data-mod-edit-toggle type="button"></button>
+  <aside class="mod-module-rail" aria-label="Module manager">
+    <h2>Modules</h2>
+    <p>Add or remove demo frames from the current workspace.</p>
+    <div class="mod-module-manager" data-module-manager>
+      <div class="mod-module-manager-head">
+        <span class="mod-module-list-title">Active</span>
+        <button class="mod-module-add-toggle" type="button" data-module-add-toggle>Add</button>
+      </div>
+      <div class="mod-module-add-menu" data-module-add-menu hidden></div>
+      <div class="mod-module-active-list" data-module-active-list></div>
+    </div>
+  </aside>
   <div class="demo-shell">
-    <div class="mod-search-frame" id="vertical-search-frame" data-grid-box data-grid-col="14" data-grid-row="1"
-      data-grid-width="12" data-grid-height="1">
+    <div class="mod-search-frame" id="vertical-search-frame" data-module-kind="search" data-grid-box data-grid-col="28" data-grid-row="2"
+      data-grid-width="24" data-grid-height="2">
       <button class="mod-floating-handle" data-grid-drag-handle data-drag-target="#vertical-search-frame"
         aria-label="Drag handle" type="button"></button>
       <button class="mod-resize-handle" data-grid-resize-handle data-resize-target="#vertical-search-frame"
-        aria-label="Resize handle" type="button">⤡</button>
+        aria-label="Resize handle" type="button">+</button>
       <div class="mod-search-clip">
         <input class="mod-search-input" type="search" placeholder="Search modules, labels, actions" />
       </div>
     </div>
 
-    <div class="mod-menu-frame" id="vertical-frame" data-grid-box data-grid-col="1" data-grid-row="3"
-      data-grid-width="8" data-grid-height="6">
+    <div class="mod-menu-frame" id="vertical-frame" data-module-kind="navigation" data-grid-box data-grid-col="2" data-grid-row="6"
+      data-grid-width="16" data-grid-height="12">
       <button class="mod-floating-handle" data-grid-drag-handle data-drag-target="#vertical-frame"
         aria-label="Drag handle" type="button"></button>
       <button class="mod-orientation-handle" data-orientation-toggle-handle
         data-orientation-target="#vertical-frame-menu" type="button"></button>
       <button class="mod-resize-handle" data-grid-resize-handle data-resize-target="#vertical-frame"
-        aria-label="Resize handle" type="button">⤡</button>
+        aria-label="Resize handle" type="button">+</button>
       <div class="mod-menu-clip">
         <div id="vertical-frame-menu" class="mod-menu" data-modular-menu data-orientation="vertical"
           data-collapse-width="168">
@@ -64,8 +76,8 @@
       </div>
     </div>
 
-    <div class="mod-content-frame" id="vertical-data-frame" data-grid-box data-grid-col="12" data-grid-row="4"
-      data-grid-width="13" data-grid-height="7">
+    <div class="mod-content-frame" id="vertical-data-frame" data-module-kind="data" data-grid-box data-grid-col="24" data-grid-row="8"
+      data-grid-width="26" data-grid-height="14">
       <button class="mod-floating-handle" data-grid-drag-handle data-drag-target="#vertical-data-frame"
         aria-label="Drag handle" type="button"></button>
       <button class="mod-resize-handle" data-grid-resize-handle data-resize-target="#vertical-data-frame"
@@ -114,8 +126,8 @@
       </div>
     </div>
 
-    <div class="mod-content-frame" id="vertical-settings-frame" data-grid-box data-grid-col="26" data-grid-row="4"
-      data-grid-width="12" data-grid-height="7">
+    <div class="mod-content-frame" id="vertical-settings-frame" data-module-kind="settings" data-grid-box data-grid-col="52" data-grid-row="8"
+      data-grid-width="24" data-grid-height="14">
       <button class="mod-floating-handle" data-grid-drag-handle data-drag-target="#vertical-settings-frame"
         aria-label="Drag handle" type="button"></button>
       <button class="mod-resize-handle" data-grid-resize-handle data-resize-target="#vertical-settings-frame"
@@ -153,6 +165,171 @@
             </div>
           </section>
         </div>
+      </div>
+    </div>
+
+    <div class="mod-content-frame mod-chat-frame" id="vertical-chat-history-frame" data-module-kind="chat-history" data-grid-box data-grid-col="24"
+      data-grid-row="24" data-grid-width="52" data-grid-height="12" data-skip-view-switcher="true">
+      <button class="mod-floating-handle" data-grid-drag-handle data-drag-target="#vertical-chat-history-frame"
+        aria-label="Drag handle" type="button"></button>
+      <button class="mod-resize-handle" data-grid-resize-handle data-resize-target="#vertical-chat-history-frame"
+        aria-label="Resize handle" type="button">+</button>
+      <div class="mod-content-clip">
+        <section class="mod-chat-history-panel">
+          <div class="mod-chat-history" id="vertical-chat-history" data-chat-history data-chat-view="details" data-chat-meta="full"
+            data-chat-flow="ltr" data-chat-density="comfortable" data-chat-width="wide">
+            <article class="mod-chat-entry is-participant-a">
+              <div class="mod-chat-entry-head">
+                <span class="mod-chat-author">Mina / Ops</span>
+                <span class="mod-chat-stamp">10:42</span>
+              </div>
+              <div class="mod-chat-bubble">
+                Need a concise handoff for the dock camera issue before the next shift picks it up.
+              </div>
+              <div class="mod-chat-meta-row">
+                <span class="mod-meta-pill">handoff</span>
+                <span class="mod-meta-pill">camera</span>
+                <span class="mod-meta-pill">queued</span>
+              </div>
+            </article>
+
+            <article class="mod-chat-entry is-participant-b">
+              <div class="mod-chat-entry-head">
+                <span class="mod-chat-author">Atlas Fast / Draft</span>
+                <span class="mod-chat-stamp">10:43</span>
+              </div>
+              <div class="mod-chat-bubble">
+                Drafting response now. I will keep it short and include owner, risk, and next step.
+              </div>
+              <div class="mod-chat-meta-row">
+                <span class="mod-meta-pill">atlas</span>
+                <span class="mod-meta-pill">summary</span>
+                <span class="mod-meta-pill">ready</span>
+              </div>
+            </article>
+
+            <article class="mod-chat-entry is-participant-a">
+              <div class="mod-chat-entry-head">
+                <span class="mod-chat-author">Mina / Ops</span>
+                <span class="mod-chat-stamp">10:44</span>
+              </div>
+              <div class="mod-chat-bubble">
+                Include tags for escalation and attach the Atlas summary once it is ready.
+              </div>
+              <div class="mod-chat-meta-row">
+                <span class="mod-meta-pill">escalate</span>
+                <span class="mod-meta-pill">atlas</span>
+                <span class="mod-meta-pill">dock-west</span>
+              </div>
+            </article>
+          </div>
+
+        </section>
+      </div>
+      <div class="mod-chat-history-menu mod-view-switcher" data-chat-history-menu>
+        <button class="mod-view-btn" type="button" data-view="list"><span class="mod-view-icon">=</span>List</button>
+        <button class="mod-view-btn is-active" type="button" data-view="details"><span class="mod-view-icon">:</span>Details</button>
+        <button class="mod-view-btn" type="button" data-view="bubble"><span class="mod-view-icon">o</span>Bubble</button>
+        <button class="mod-meta-toggle" type="button" data-chat-options-toggle title="History options">
+          <span class="mod-view-icon">+</span>
+        </button>
+        <div class="mod-meta-dropdown mod-meta-field-dropdown" data-chat-options-menu>
+          <div class="mod-meta-field-row">
+            <span class="mod-meta-field-name">metadata</span>
+            <select class="mod-meta-field-select" data-chat-setting="meta">
+              <option value="full" selected>Full</option>
+              <option value="compact">Compact</option>
+              <option value="hidden">Hidden</option>
+            </select>
+          </div>
+          <div class="mod-meta-field-row">
+            <span class="mod-meta-field-name">flow</span>
+            <select class="mod-meta-field-select" data-chat-setting="flow">
+              <option value="ltr" selected>Left -> Right</option>
+              <option value="rtl">Right -> Left</option>
+            </select>
+          </div>
+          <div class="mod-meta-field-row">
+            <span class="mod-meta-field-name">density</span>
+            <select class="mod-meta-field-select" data-chat-setting="density">
+              <option value="comfortable" selected>Comfortable</option>
+              <option value="compact">Compact</option>
+            </select>
+          </div>
+          <div class="mod-meta-field-row">
+            <span class="mod-meta-field-name">bubble width</span>
+            <select class="mod-meta-field-select" data-chat-setting="width">
+              <option value="wide" selected>Wide</option>
+              <option value="narrow">Narrow</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mod-content-frame mod-chat-compose-frame" id="vertical-chat-compose-frame" data-module-kind="chat-compose" data-grid-box
+      data-grid-col="24" data-grid-row="36" data-grid-width="52" data-grid-height="6" data-skip-view-switcher="true">
+      <button class="mod-floating-handle" data-grid-drag-handle data-drag-target="#vertical-chat-compose-frame"
+        aria-label="Drag handle" type="button"></button>
+      <button class="mod-resize-handle" data-grid-resize-handle data-resize-target="#vertical-chat-compose-frame"
+        aria-label="Resize handle" type="button">+</button>
+      <div class="mod-content-clip">
+        <section class="mod-chat-composer-panel">
+          <label class="mod-chat-input-wrap" for="vertical-chat-input">
+            <textarea id="vertical-chat-input" class="mod-chat-textarea" rows="2"
+              placeholder="Write a multi-line chat draft, incident note, or operator reply..."></textarea>
+          </label>
+          <div class="mod-chat-quote-preview" data-chat-quote-preview hidden>
+            <button class="mod-chat-quote-preview-body" type="button" data-chat-quote-preview-jump>
+              <span class="mod-chat-quote-preview-label">Replying to</span>
+              <span class="mod-chat-quote-preview-source" data-chat-quote-preview-source></span>
+              <span class="mod-chat-quote-preview-text" data-chat-quote-preview-text></span>
+            </button>
+            <button class="mod-chat-quote-clear" type="button" data-chat-quote-clear
+              aria-label="Clear quoted message">x</button>
+          </div>
+
+          <div class="mod-chat-compose-bottom">
+            <div class="mod-chat-toolbar-shell" data-chat-toolbar-shell>
+              <div class="mod-chat-toolbar-scrollport" data-chat-toolbar-scrollport>
+                <div class="mod-chat-toolbar-strip">
+                  <select id="vertical-chat-model" class="mod-chat-toolbar-select" data-chat-compose-setting="model"
+                    aria-label="Draft model">
+                    <option>Atlas Fast</option>
+                    <option>Atlas Deep</option>
+                    <option>Local Draft</option>
+                  </select>
+                  <select id="vertical-chat-lines" class="mod-chat-toolbar-select" data-chat-compose-setting="lines"
+                    aria-label="Input height">
+                    <option value="1">1 line</option>
+                    <option value="2" selected>2 lines</option>
+                  </select>
+                  <select id="vertical-chat-channel" class="mod-chat-toolbar-select" data-chat-compose-setting="channel"
+                    aria-label="Channel">
+                    <option>Ops</option>
+                    <option>Incident</option>
+                    <option>Handoff</option>
+                  </select>
+                  <label class="mod-chat-toolbar-check">
+                    <span>Enter sends</span>
+                    <input type="checkbox" data-chat-compose-setting="enter-send" checked />
+                  </label>
+                  <button class="mod-chat-tag-toggle" type="button" data-chat-tag-toggle>Tags</button>
+                </div>
+              </div>
+              <button class="mod-chat-toolbar-scroll" type="button" data-chat-toolbar-scroll
+                aria-label="Scroll toolbar">+</button>
+              <div class="mod-chat-tag-menu" data-chat-tag-menu>
+                <button class="mod-meta-pill mod-chat-tag-pill" type="button" data-chat-tag="handoff">handoff</button>
+                <button class="mod-meta-pill mod-chat-tag-pill" type="button" data-chat-tag="escalate">escalate</button>
+                <button class="mod-meta-pill mod-chat-tag-pill" type="button" data-chat-tag="atlas">atlas</button>
+                <button class="mod-meta-pill mod-chat-tag-pill" type="button" data-chat-tag="camera">camera</button>
+              </div>
+            </div>
+
+            <button class="mod-chat-send" type="button" data-chat-send>Send</button>
+          </div>
+        </section>
       </div>
     </div>
   </div>

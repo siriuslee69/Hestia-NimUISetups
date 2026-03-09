@@ -37,6 +37,8 @@ layouts/
   media-review-studio/
   analyst-cockpit/
   android-ops-tablet/
+widgets/
+  gallery/
 modular/
   shared/
   vertical-menu/
@@ -56,6 +58,7 @@ modular/
   - `examples/webuiEnhanced/defaultTitlebar/web/index.html`, `app.js`, `style.css`
   - `examples/webuiEnhanced/customTitlebar/web/index.html`, `app.js`, `style.css`
 - Standalone HTML layout studies are in `layouts/` and intentionally separate from enhancer code in `src/`.
+- Standalone widget gallery studies are in `widgets/` and reuse the modular menu styling baseline where needed.
 - Rearrangeable adaptive menu widgets are in `modular/`.
 - Windows GTK setup helper for MSYS2 + DLL copier (`tools/windows/gtk_builder_msys2.nim`).
 - Nix shell for Owlkettle (`nix/owlkettle-shell.nix`).
@@ -112,7 +115,7 @@ nix-shell nix/owlkettle-shell.nix
 - Prefer `func(a, b)` or method-call syntax; avoid unusual Nim call styles.
 - Keep reusable helpers in low-level modules (`src/lib/level0`).
 - Use clear state fields and explicit UI routing.
-- Keep `valkyrie/` at repo root for repo coordination metadata.
+- Keep `iron/` at repo root for repo coordination metadata.
 - Update `progress.md` with major change tracking.
 - Keep tests in `tests/` and run them after meaningful changes.
 
