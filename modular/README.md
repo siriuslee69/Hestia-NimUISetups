@@ -12,6 +12,10 @@ Current shared module:
   - `extended`
   - `collapsed`
   - `auto`
+- organizer kanban cards with:
+  - manual drag-and-drop ordering
+  - fixed post-drop order (no automatic sorting)
+  - per-item assignment menus with selects and checkboxes
 
 Rules:
 
@@ -24,7 +28,7 @@ Rules:
 Examples:
 
 1. `vertical-menu`
-2. `horizontal-menu`
+2. organizer kanban frame inside `vertical-menu`
 
 Metadata:
 
