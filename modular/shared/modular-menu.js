@@ -432,14 +432,39 @@
     tooltip.style.left = `${Math.round(rect.left)}px`;
     tooltip.style.top = `${Math.round(rect.bottom + 8)}px`;
     window.clearTimeout(showModeTooltip.timer);
+    window.clearTimeout(hideModeTooltip.timer);
     showModeTooltip.timer = window.setTimeout(() => {
+      hideModeTooltip(0);
+    }, 520);
+  }
+
+  function hideModeTooltip(delay = 0) {
+    window.clearTimeout(showModeTooltip.timer);
+    window.clearTimeout(hideModeTooltip.timer);
+    if (delay <= 0) {
+      const tooltip = ensureModeTooltip();
       tooltip.hidden = true;
-    }, 1000);
+      return;
+    }
+    hideModeTooltip.timer = window.setTimeout(() => {
+      const tooltip = ensureModeTooltip();
+      tooltip.hidden = true;
+    }, delay);
   }
 
   function attachHoverTooltip(element, text) {
+    if (element.dataset.hoverTooltipBound === 'true') {
+      return;
+    }
+    element.dataset.hoverTooltipBound = 'true';
     element.addEventListener('mouseenter', () => {
       showModeTooltip(element, text);
+    });
+    element.addEventListener('mouseleave', () => {
+      hideModeTooltip(60);
+    });
+    element.addEventListener('blur', () => {
+      hideModeTooltip(0);
     });
   }
 
@@ -967,39 +992,45 @@
   }
 
   function attachDrag(menu) {
-    const orientation = menu.dataset.orientation || 'horizontal';
-    let dragged = null;
-
     getButtons(menu).forEach(button => {
+      if (button.dataset.dragBound === 'true') {
+        return;
+      }
+      button.dataset.dragBound = 'true';
       button.draggable = true;
       button.addEventListener('dragstart', () => {
-        dragged = button;
+        menu._modDraggedButton = button;
         button.classList.add('is-dragging');
       });
       button.addEventListener('dragend', () => {
         button.classList.remove('is-dragging');
-        dragged = null;
+        menu._modDraggedButton = null;
         applyAutoStates(menu);
       });
     });
 
-    menu.addEventListener('dragover', event => {
-      if (!dragged) {
-        return;
-      }
-      event.preventDefault();
-      const target = getTargetButton(menu, event);
-      if (!target || target === dragged) {
-        return;
-      }
+    if (menu.dataset.dragContainerBound !== 'true') {
+      menu.dataset.dragContainerBound = 'true';
+      menu.addEventListener('dragover', event => {
+        const dragged = menu._modDraggedButton || null;
+        if (!dragged) {
+          return;
+        }
+        event.preventDefault();
+        const target = getTargetButton(menu, event);
+        if (!target || target === dragged) {
+          return;
+        }
 
-      const rect = target.getBoundingClientRect();
-      const before = orientation === 'vertical'
-        ? event.clientY < rect.top + rect.height / 2
-        : event.clientX < rect.left + rect.width / 2;
+        const rect = target.getBoundingClientRect();
+        const orientation = menu.dataset.orientation || 'horizontal';
+        const before = orientation === 'vertical'
+          ? event.clientY < rect.top + rect.height / 2
+          : event.clientX < rect.left + rect.width / 2;
 
-      menu.insertBefore(dragged, before ? target : target.nextSibling);
-    });
+        menu.insertBefore(dragged, before ? target : target.nextSibling);
+      });
+    }
   }
 
   function clamp(v, min, max) {
@@ -1089,6 +1120,14 @@
       handle.classList.remove('is-dragging');
       handle.releasePointerCapture(pointerId);
       pointerId = null;
+      window.dispatchEvent(new CustomEvent('hestia:grid-drag-end', {
+        detail: {
+          target,
+          handle,
+          left: parseFloat(target.style.left || '0') || 0,
+          top: parseFloat(target.style.top || '0') || 0
+        }
+      }));
     }
 
     handle.addEventListener('pointerup', stopDrag);
@@ -1187,6 +1226,14 @@
       handle.classList.remove('is-dragging');
       handle.releasePointerCapture(pointerId);
       pointerId = null;
+      window.dispatchEvent(new CustomEvent('hestia:grid-resize-end', {
+        detail: {
+          target,
+          handle,
+          width: parseFloat(target.style.width || '0') || 0,
+          height: parseFloat(target.style.height || '0') || 0
+        }
+      }));
     }
 
     handle.addEventListener('pointerup', stopResize);
@@ -1259,15 +1306,19 @@
     orientationHandles.set(handle, { toggleOrientation });
   }
 
+  function hydrateMenuButtons(menu) {
+    getButtons(menu).forEach(button => {
+      ensureLabelTrack(button);
+      ensureModeToggle(button, menu);
+    });
+  }
+
   function initMenu(menu) {
     if (menus.has(menu)) {
       return menus.get(menu);
     }
 
-    getButtons(menu).forEach(button => {
-      ensureLabelTrack(button);
-      ensureModeToggle(button, menu);
-    });
+    hydrateMenuButtons(menu);
 
     applyAutoStates(menu);
     attachDrag(menu);
@@ -1279,6 +1330,8 @@
 
     const api = {
       refresh() {
+        hydrateMenuButtons(menu);
+        attachDrag(menu);
         applyAutoStates(menu);
       }
     };
@@ -2564,6 +2617,10 @@
       bindEditToggle(button);
     });
     root.querySelectorAll('[data-modular-menu]').forEach(menu => {
+      if (menus.has(menu)) {
+        menus.get(menu).refresh();
+        return;
+      }
       initMenu(menu);
     });
     root.querySelectorAll('[data-grid-drag-handle]').forEach(handle => {
@@ -2577,14 +2634,17 @@
     });
     initViewSwitchers(root);
 
-    window.addEventListener('resize', () => {
-      syncGridCssVars();
-      root.querySelectorAll('.mod-data-list').forEach(dataList => {
-        syncDataNameModePresentation(dataList);
-        updateMetadataPagers(dataList);
-        syncMetadataOverflow(dataList);
+    if (init.resizeBound !== true) {
+      window.addEventListener('resize', () => {
+        syncGridCssVars();
+        document.querySelectorAll('.mod-data-list').forEach(dataList => {
+          syncDataNameModePresentation(dataList);
+          updateMetadataPagers(dataList);
+          syncMetadataOverflow(dataList);
+        });
       });
-    });
+      init.resizeBound = true;
+    }
   }
 
   window.HestiaModularMenus = {

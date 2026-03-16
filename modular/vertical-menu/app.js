@@ -3,6 +3,8 @@
     { kind: 'search', label: 'Search' },
     { kind: 'navigation', label: 'Navigation' },
     { kind: 'data', label: 'Data' },
+    { kind: 'text', label: 'Text' },
+    { kind: 'graph', label: 'Graph' },
     { kind: 'organizer', label: 'Organizer' },
     { kind: 'settings', label: 'Settings' },
     { kind: 'chat-history', label: 'Chat History' },
@@ -14,6 +16,99 @@
   let chatEntryCounter = 0;
   let activeOrganizerMenu = null;
   let organizerCardCounter = 0;
+  let graphNodeCounter = 0;
+  let graphConnectionCounter = 0;
+  const CONTENT_STACK_KINDS = new Set([
+    'data',
+    'text',
+    'graph',
+    'settings',
+    'organizer',
+    'chat-history',
+    'chat-compose'
+  ]);
+  const MENU_STACK_KINDS = new Set(['navigation']);
+  let stackGroupCounter = 0;
+  let menuButtonCounter = 0;
+  const stackGroups = new Map();
+  const frameToStackGroupId = new WeakMap();
+  const contentTabWires = new Map();
+  const menuTabTargets = new Map();
+  let activeContentGroupId = '';
+  let stackContextMenu = null;
+  let contentStackSeeded = false;
+  const GRAPH_NODE_TEMPLATES = [
+    {
+      kind: 'number',
+      label: 'Number',
+      subtitle: 'Numeric source',
+      inputs: [],
+      outputs: [{ key: 'value', label: 'Value', type: 'number' }]
+    },
+    {
+      kind: 'boolean',
+      label: 'Boolean',
+      subtitle: 'True / false source',
+      inputs: [],
+      outputs: [{ key: 'value', label: 'Value', type: 'boolean' }]
+    },
+    {
+      kind: 'text-value',
+      label: 'Text',
+      subtitle: 'String source',
+      inputs: [],
+      outputs: [{ key: 'value', label: 'Value', type: 'string' }]
+    },
+    {
+      kind: 'add',
+      label: 'Add',
+      subtitle: 'Number + number',
+      inputs: [
+        { key: 'a', label: 'A', type: 'number' },
+        { key: 'b', label: 'B', type: 'number' }
+      ],
+      outputs: [{ key: 'sum', label: 'Result', type: 'number' }]
+    },
+    {
+      kind: 'subtract',
+      label: 'Subtract',
+      subtitle: 'Number - number',
+      inputs: [
+        { key: 'a', label: 'A', type: 'number' },
+        { key: 'b', label: 'B', type: 'number' }
+      ],
+      outputs: [{ key: 'result', label: 'Result', type: 'number' }]
+    },
+    {
+      kind: 'if',
+      label: 'If',
+      subtitle: 'Boolean branch',
+      inputs: [
+        { key: 'condition', label: 'Condition', type: 'boolean' },
+        { key: 'yes', label: 'Then', type: 'number' },
+        { key: 'no', label: 'Else', type: 'number' }
+      ],
+      outputs: [{ key: 'result', label: 'Result', type: 'number' }]
+    },
+    {
+      kind: 'trigger',
+      label: 'Trigger',
+      subtitle: 'Flow source',
+      inputs: [],
+      outputs: [{ key: 'flow', label: 'Flow', type: 'flow' }]
+    },
+    {
+      kind: 'log',
+      label: 'Log',
+      subtitle: 'Flow + text sink',
+      inputs: [
+        { key: 'flow', label: 'Flow', type: 'flow' },
+        { key: 'message', label: 'Message', type: 'string' }
+      ],
+      outputs: []
+    }
+  ];
+  const GRAPH_TEMPLATE_BY_KIND = new Map(GRAPH_NODE_TEMPLATES.map(template => [template.kind, template]));
 
   function moduleFrames(root = document) {
     return [...root.querySelectorAll('.demo-shell > [data-module-kind]')];
@@ -195,6 +290,1158 @@
     addMenu.hidden = true;
   }
 
+  function frameInstanceId(frame) {
+    return frame?.dataset?.moduleInstance || '';
+  }
+
+  function frameStackCategory(frameOrKind) {
+    const kind = typeof frameOrKind === 'string'
+      ? frameOrKind
+      : frameOrKind?.dataset?.moduleKind || '';
+    if (CONTENT_STACK_KINDS.has(kind)) {
+      return 'content';
+    }
+    if (MENU_STACK_KINDS.has(kind)) {
+      return 'menu';
+    }
+    return '';
+  }
+
+  function frameTabKey(frame) {
+    return frameInstanceId(frame);
+  }
+
+  function stackGroupForFrame(frame) {
+    if (!frame) {
+      return null;
+    }
+    const groupId = frameToStackGroupId.get(frame) || frame.dataset.stackGroupId || '';
+    if (!groupId) {
+      return null;
+    }
+    return stackGroups.get(groupId) || null;
+  }
+
+  function ensureMenuButtonId(button) {
+    const existing = button?.dataset?.menuButtonId || '';
+    if (existing) {
+      const match = existing.match(/(\d+)$/);
+      if (match) {
+        menuButtonCounter = Math.max(menuButtonCounter, Number(match[1]) || 0);
+      }
+      return existing;
+    }
+
+    menuButtonCounter += 1;
+    const next = `menu-button-${menuButtonCounter}`;
+    button.dataset.menuButtonId = next;
+    return next;
+  }
+
+  function registerMenuButtonIds(root = document) {
+    root.querySelectorAll('[data-module-kind="navigation"] .mod-button').forEach(button => {
+      ensureMenuButtonId(button);
+    });
+  }
+
+  function copyFrameGeometry(sourceFrame, targetFrame) {
+    if (!sourceFrame || !targetFrame || sourceFrame === targetFrame) {
+      return;
+    }
+
+    targetFrame.style.left = sourceFrame.style.left;
+    targetFrame.style.top = sourceFrame.style.top;
+    targetFrame.style.width = sourceFrame.style.width;
+    targetFrame.style.height = sourceFrame.style.height;
+
+    ['gridCol', 'gridRow', 'gridWidth', 'gridHeight'].forEach(key => {
+      if (sourceFrame.dataset[key] !== undefined) {
+        targetFrame.dataset[key] = sourceFrame.dataset[key];
+      }
+    });
+  }
+
+  function setStackFrameVisibility(frame, visible) {
+    if (!frame) {
+      return;
+    }
+    frame.dataset.stackHidden = visible ? 'false' : 'true';
+    frame.hidden = !visible;
+    frame.style.display = visible ? '' : 'none';
+  }
+
+  function createStackGroup(frame, category) {
+    stackGroupCounter += 1;
+    const group = {
+      id: `stack-group-${stackGroupCounter}`,
+      category,
+      frames: [frame],
+      activeFrame: frame,
+      header: null
+    };
+    stackGroups.set(group.id, group);
+    frame.dataset.stackGroupId = group.id;
+    frameToStackGroupId.set(frame, group.id);
+    return group;
+  }
+
+  function ensureStackGroup(frame) {
+    if (!frame) {
+      return null;
+    }
+    const category = frameStackCategory(frame);
+    if (!category) {
+      return null;
+    }
+    const existing = stackGroupForFrame(frame);
+    if (existing) {
+      return existing;
+    }
+    return createStackGroup(frame, category);
+  }
+
+  function removeStackGroup(group) {
+    if (!group) {
+      return;
+    }
+    if (group.header) {
+      group.header.remove();
+      group.header = null;
+    }
+    group.frames.forEach(frame => {
+      frameToStackGroupId.delete(frame);
+      delete frame.dataset.stackGroupId;
+      delete frame.dataset.stackHidden;
+      frame.classList.remove('mod-has-stack-header');
+      frame.hidden = false;
+      frame.style.display = '';
+    });
+    stackGroups.delete(group.id);
+  }
+
+  function syncStackGroupGeometry(group, sourceFrame = group?.activeFrame) {
+    if (!group || !sourceFrame) {
+      return;
+    }
+    group.frames.forEach(frame => {
+      if (frame !== sourceFrame) {
+        copyFrameGeometry(sourceFrame, frame);
+      }
+    });
+  }
+
+  function attachStackHeaderToActiveFrame(group) {
+    if (!group || !group.header || !group.activeFrame) {
+      return;
+    }
+    group.frames.forEach(frame => {
+      if (frame !== group.activeFrame) {
+        frame.classList.remove('mod-has-stack-header');
+      }
+    });
+    group.activeFrame.classList.add('mod-has-stack-header');
+    group.activeFrame.appendChild(group.header);
+  }
+
+  function syncStackGroupVisibility(group) {
+    if (!group) {
+      return;
+    }
+    group.frames.forEach(frame => {
+      setStackFrameVisibility(frame, frame === group.activeFrame);
+    });
+    attachStackHeaderToActiveFrame(group);
+  }
+
+  function frameOverlapScore(source, target) {
+    const a = source.getBoundingClientRect();
+    const b = target.getBoundingClientRect();
+    const left = Math.max(a.left, b.left);
+    const right = Math.min(a.right, b.right);
+    const top = Math.max(a.top, b.top);
+    const bottom = Math.min(a.bottom, b.bottom);
+    if (right <= left || bottom <= top) {
+      return 0;
+    }
+    const overlap = (right - left) * (bottom - top);
+    const area = Math.max(1, Math.min(a.width * a.height, b.width * b.height));
+    return overlap / area;
+  }
+
+  function mergeStackGroups(targetGroup, sourceGroup) {
+    if (!targetGroup || !sourceGroup || targetGroup === sourceGroup) {
+      return targetGroup;
+    }
+
+    sourceGroup.frames.forEach(frame => {
+      if (targetGroup.frames.includes(frame)) {
+        return;
+      }
+      targetGroup.frames.push(frame);
+      frame.dataset.stackGroupId = targetGroup.id;
+      frameToStackGroupId.set(frame, targetGroup.id);
+    });
+
+    if (sourceGroup.header) {
+      sourceGroup.header.remove();
+      sourceGroup.header = null;
+    }
+
+    if (activeContentGroupId === sourceGroup.id) {
+      activeContentGroupId = targetGroup.id;
+    }
+
+    stackGroups.delete(sourceGroup.id);
+    return targetGroup;
+  }
+
+  function firstContentGroup() {
+    return [...stackGroups.values()].find(group => group.category === 'content' && group.frames.length > 0) || null;
+  }
+
+  function preferredContentGroup(excludeFrame = null) {
+    const activeGroup = activeContentGroupId ? stackGroups.get(activeContentGroupId) || null : null;
+    if (
+      activeGroup &&
+      activeGroup.category === 'content' &&
+      activeGroup.frames.length > 0 &&
+      !activeGroup.frames.includes(excludeFrame)
+    ) {
+      return activeGroup;
+    }
+
+    return [...stackGroups.values()].find(group =>
+      group.category === 'content' &&
+      group.frames.length > 0 &&
+      !group.frames.includes(excludeFrame)
+    ) || null;
+  }
+
+  function positionFrameNearPointer(frame, clientX, clientY, options = {}) {
+    if (!frame) {
+      return;
+    }
+
+    const width = parseFloat(frame.style.width || '0') || frame.getBoundingClientRect().width || 320;
+    const height = parseFloat(frame.style.height || '0') || frame.getBoundingClientRect().height || 220;
+    const margin = 8;
+    const offsetX = options.offsetX ?? Math.min(96, width * 0.3);
+    const offsetY = options.offsetY ?? 14;
+
+    let left = clientX - offsetX;
+    let top = clientY - offsetY;
+    left = Math.max(margin, Math.min(left, window.innerWidth - width - margin));
+    top = Math.max(margin, Math.min(top, window.innerHeight - height - margin));
+
+    frame.style.left = `${Math.round(left)}px`;
+    frame.style.top = `${Math.round(top)}px`;
+  }
+
+  function detachFrameFromStackGroup(frame, options = {}) {
+    if (!frame) {
+      return null;
+    }
+
+    const category = frameStackCategory(frame);
+    const group = stackGroupForFrame(frame);
+    if (!category || !group || group.frames.length <= 1) {
+      return group;
+    }
+
+    const wasActive = group.activeFrame === frame;
+    group.frames = group.frames.filter(member => member !== frame);
+    frameToStackGroupId.delete(frame);
+    delete frame.dataset.stackGroupId;
+    delete frame.dataset.stackHidden;
+    frame.classList.remove('mod-has-stack-header');
+    frame.hidden = false;
+    frame.style.display = '';
+
+    const nextGroup = createStackGroup(frame, category);
+
+    if (typeof options.left === 'number') {
+      frame.style.left = `${Math.round(options.left)}px`;
+    }
+    if (typeof options.top === 'number') {
+      frame.style.top = `${Math.round(options.top)}px`;
+    }
+
+    if (group.frames.length === 0) {
+      removeStackGroup(group);
+    } else {
+      if (wasActive) {
+        group.activeFrame = group.frames[0];
+      }
+      syncStackGroupGeometry(group, group.activeFrame);
+      syncStackGroupVisibility(group);
+      renderStackGroupHeader(group);
+    }
+
+    syncStackGroupGeometry(nextGroup, frame);
+    syncStackGroupVisibility(nextGroup);
+    renderStackGroupHeader(nextGroup);
+
+    if (category === 'content') {
+      activeContentGroupId = nextGroup.id;
+      syncMenuGroupsForActiveContent();
+    }
+
+    renderAllStackGroupHeaders();
+    return nextGroup;
+  }
+
+  function stackContentFrameIntoPreferredGroup(frame, options = {}) {
+    if (!frame || frameStackCategory(frame) !== 'content') {
+      return null;
+    }
+
+    const targetGroup = preferredContentGroup(frame);
+    const sourceGroup = ensureStackGroup(frame);
+    if (!targetGroup || !sourceGroup || targetGroup === sourceGroup) {
+      if (sourceGroup && options.activate === true) {
+        setStackGroupActiveFrame(sourceGroup, frame);
+      }
+      return sourceGroup;
+    }
+
+    mergeStackGroups(targetGroup, sourceGroup);
+    setStackGroupActiveFrame(targetGroup, frame, { skipContentSync: false });
+    renderAllStackGroupHeaders();
+    return targetGroup;
+  }
+
+  function seedInitialContentStack(root = document) {
+    if (contentStackSeeded) {
+      return;
+    }
+
+    const contentFrames = moduleFrames(root).filter(frame => frameStackCategory(frame) === 'content');
+    if (contentFrames.length === 0) {
+      contentStackSeeded = true;
+      return;
+    }
+
+    const primaryGroup = ensureStackGroup(contentFrames[0]);
+    contentFrames.slice(1).forEach(frame => {
+      const sourceGroup = ensureStackGroup(frame);
+      if (sourceGroup && sourceGroup !== primaryGroup) {
+        mergeStackGroups(primaryGroup, sourceGroup);
+      }
+    });
+
+    syncStackGroupGeometry(primaryGroup, primaryGroup.activeFrame);
+    syncStackGroupVisibility(primaryGroup);
+    renderStackGroupHeader(primaryGroup);
+    activeContentGroupId = primaryGroup.id;
+    syncMenuGroupsForActiveContent();
+    renderAllStackGroupHeaders();
+    contentStackSeeded = true;
+  }
+
+  function buttonDisplayText(button) {
+    const label = button.querySelector('.mod-label')?.textContent?.trim();
+    if (label) {
+      return label;
+    }
+    return button.querySelector('.mod-symbol')?.textContent?.trim() || 'Button';
+  }
+
+  function frameTabName(frame, group) {
+    const kind = frame?.dataset?.moduleKind || '';
+    const label = moduleLabel(kind);
+    if (!group) {
+      return label;
+    }
+    const sameKind = group.frames.filter(candidate => candidate.dataset.moduleKind === kind);
+    if (sameKind.length <= 1) {
+      return label;
+    }
+    const index = sameKind.indexOf(frame) + 1;
+    return `${label} ${index}`;
+  }
+
+  function contentGroupName(group) {
+    if (!group || group.frames.length === 0) {
+      return 'Content';
+    }
+    if (group.frames.length === 1) {
+      return frameTabName(group.frames[0], group);
+    }
+    return `${frameTabName(group.activeFrame || group.frames[0], group)} stack`;
+  }
+
+  function menuGroupName(group) {
+    if (!group || group.frames.length === 0) {
+      return 'Menu';
+    }
+    const frame = group.activeFrame || group.frames[0];
+    const base = frameTabName(frame, group);
+    return group.frames.length > 1 ? `${base} set` : base;
+  }
+
+  function closeStackContextMenu() {
+    if (!stackContextMenu) {
+      return;
+    }
+    stackContextMenu.hidden = true;
+    stackContextMenu.innerHTML = '';
+  }
+
+  function ensureStackContextMenu() {
+    if (stackContextMenu) {
+      return stackContextMenu;
+    }
+    stackContextMenu = document.createElement('div');
+    stackContextMenu.className = 'mod-stack-context-menu';
+    stackContextMenu.dataset.stackContextMenu = 'true';
+    stackContextMenu.hidden = true;
+    document.body.appendChild(stackContextMenu);
+    return stackContextMenu;
+  }
+
+  function openStackContextMenu(event, title, options, onPick) {
+    const menu = ensureStackContextMenu();
+    menu.innerHTML = '';
+
+    if (title) {
+      const heading = document.createElement('p');
+      heading.className = 'mod-stack-context-title';
+      heading.textContent = title;
+      menu.appendChild(heading);
+    }
+
+    options.forEach(option => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'mod-stack-context-option';
+      if (option.active) {
+        button.classList.add('is-active');
+      }
+      button.textContent = option.label;
+      button.addEventListener('click', eventClick => {
+        eventClick.preventDefault();
+        onPick(option.value);
+        closeStackContextMenu();
+      });
+      menu.appendChild(button);
+    });
+
+    const margin = 8;
+    menu.hidden = false;
+    menu.style.left = `${Math.round(event.clientX + 8)}px`;
+    menu.style.top = `${Math.round(event.clientY + 8)}px`;
+    const rect = menu.getBoundingClientRect();
+    const left = Math.min(Math.max(margin, event.clientX + 8), Math.max(margin, window.innerWidth - rect.width - margin));
+    const top = Math.min(Math.max(margin, event.clientY + 8), Math.max(margin, window.innerHeight - rect.height - margin));
+    menu.style.left = `${Math.round(left)}px`;
+    menu.style.top = `${Math.round(top)}px`;
+  }
+
+  function activeMenuButtonTargets() {
+    const targets = [];
+    moduleFrames().forEach(frame => {
+      if (frame.dataset.moduleKind !== 'navigation' || frame.dataset.stackHidden === 'true') {
+        return;
+      }
+      const group = stackGroupForFrame(frame);
+      const menuName = frameTabName(frame, group);
+      frame.querySelectorAll('.mod-button').forEach(button => {
+        const id = ensureMenuButtonId(button);
+        targets.push({
+          value: id,
+          label: `${menuName}: ${buttonDisplayText(button)}`
+        });
+      });
+    });
+    return targets;
+  }
+
+  function contentGroupTargets() {
+    return [...stackGroups.values()]
+      .filter(group => group.category === 'content' && group.frames.length > 0)
+      .map(group => ({
+        value: group.id,
+        label: contentGroupName(group)
+      }));
+  }
+
+  function wireLabelForButtonId(buttonId) {
+    const button = document.querySelector(`.mod-button[data-menu-button-id="${buttonId}"]`);
+    if (!button) {
+      return 'missing menu button';
+    }
+    const frame = button.closest('[data-module-kind="navigation"]');
+    const group = stackGroupForFrame(frame);
+    const menuName = frameTabName(frame, group);
+    return `${menuName}: ${buttonDisplayText(button)}`;
+  }
+
+  function wireLabelForContentGroupId(groupId) {
+    const group = stackGroups.get(groupId);
+    return group ? contentGroupName(group) : 'missing content target';
+  }
+
+  function openContentWirePicker(event, frame) {
+    event.preventDefault();
+    const tabKey = frameTabKey(frame);
+    const current = contentTabWires.get(tabKey) || '';
+    const targets = activeMenuButtonTargets();
+    const options = [
+      { value: '', label: 'No wire', active: current === '' },
+      ...targets.map(target => ({
+        value: target.value,
+        label: target.label,
+        active: target.value === current
+      }))
+    ];
+
+    openStackContextMenu(event, 'Connect tab to menu button', options, nextValue => {
+      if (!nextValue) {
+        contentTabWires.delete(tabKey);
+      } else {
+        contentTabWires.set(tabKey, nextValue);
+      }
+      renderAllStackGroupHeaders();
+    });
+  }
+
+  function openMenuTargetPicker(event, frame) {
+    event.preventDefault();
+    const tabKey = frameTabKey(frame);
+    const current = menuTabTargets.get(tabKey) || '';
+    const targets = contentGroupTargets();
+    const options = [
+      { value: '', label: 'No dependency', active: current === '' },
+      ...targets.map(target => ({
+        value: target.value,
+        label: target.label,
+        active: target.value === current
+      }))
+    ];
+
+    openStackContextMenu(event, 'Connect menu tab to content window', options, nextValue => {
+      if (!nextValue) {
+        menuTabTargets.delete(tabKey);
+      } else {
+        menuTabTargets.set(tabKey, nextValue);
+      }
+      syncMenuGroupsForActiveContent();
+      renderAllStackGroupHeaders();
+    });
+  }
+
+  function closeAllMenuGroupLists(exceptGroupId = '') {
+    stackGroups.forEach(group => {
+      if (group.category !== 'menu' || !group.header || group.id === exceptGroupId) {
+        return;
+      }
+      const list = group.header.querySelector('[data-menu-group-list]');
+      if (list) {
+        list.hidden = true;
+      }
+    });
+  }
+
+  function menuForFrame(frame) {
+    return frame?.querySelector('[data-modular-menu]') || null;
+  }
+
+  function nextMenuButtonSymbol(menu) {
+    const index = menu.querySelectorAll('.mod-button').length;
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return alphabet[index % alphabet.length];
+  }
+
+  function removeWiresForButtonId(buttonId) {
+    if (!buttonId) {
+      return;
+    }
+    [...contentTabWires.entries()].forEach(([tabKey, wiredButtonId]) => {
+      if (wiredButtonId === buttonId) {
+        contentTabWires.delete(tabKey);
+      }
+    });
+  }
+
+  function pruneContentWiresByExistingButtons() {
+    const activeIds = new Set(
+      [...document.querySelectorAll('.mod-button[data-menu-button-id]')]
+        .map(button => button.dataset.menuButtonId)
+    );
+    [...contentTabWires.entries()].forEach(([tabKey, buttonId]) => {
+      if (!activeIds.has(buttonId)) {
+        contentTabWires.delete(tabKey);
+      }
+    });
+  }
+
+  function pruneMenuDependenciesByExistingGroups() {
+    const activeGroups = new Set(
+      [...stackGroups.values()]
+        .filter(group => group.category === 'content' && group.frames.length > 0)
+        .map(group => group.id)
+    );
+    [...menuTabTargets.entries()].forEach(([tabKey, groupId]) => {
+      if (!activeGroups.has(groupId)) {
+        menuTabTargets.delete(tabKey);
+      }
+    });
+  }
+
+  function addMenuButtonToFrame(frame) {
+    const menu = menuForFrame(frame);
+    if (!menu) {
+      return;
+    }
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'mod-button';
+    button.dataset.buttonMode = 'auto';
+
+    const symbol = document.createElement('span');
+    symbol.className = 'mod-symbol';
+    symbol.textContent = nextMenuButtonSymbol(menu);
+
+    const label = document.createElement('span');
+    label.className = 'mod-label';
+    label.textContent = `Item ${menu.querySelectorAll('.mod-button').length + 1}`;
+
+    button.appendChild(symbol);
+    button.appendChild(label);
+    menu.appendChild(button);
+    ensureMenuButtonId(button);
+
+    window.HestiaModularMenus.init(frame);
+    renderAllStackGroupHeaders();
+  }
+
+  function removeMenuButtonFromFrame(frame) {
+    const menu = menuForFrame(frame);
+    if (!menu) {
+      return;
+    }
+    const buttons = [...menu.querySelectorAll('.mod-button')];
+    if (buttons.length <= 1) {
+      return;
+    }
+
+    const last = buttons[buttons.length - 1];
+    removeWiresForButtonId(last.dataset.menuButtonId || '');
+    last.remove();
+    window.HestiaModularMenus.init(frame);
+    renderAllStackGroupHeaders();
+  }
+
+  function setStackGroupActiveFrame(group, nextFrame, options = {}) {
+    if (!group || !nextFrame || !group.frames.includes(nextFrame)) {
+      return;
+    }
+
+    const previous = group.activeFrame;
+    if (previous && previous !== nextFrame) {
+      copyFrameGeometry(previous, nextFrame);
+    }
+
+    group.activeFrame = nextFrame;
+    syncStackGroupGeometry(group, nextFrame);
+    syncStackGroupVisibility(group);
+    renderStackGroupHeader(group);
+
+    if (group.category === 'content' && options.skipContentSync !== true) {
+      activeContentGroupId = group.id;
+      syncMenuGroupsForActiveContent();
+    }
+  }
+
+  function activateContentTabByKey(tabKey) {
+    const frame = document.querySelector(`.demo-shell > [data-module-instance="${tabKey}"]`);
+    if (!frame) {
+      return false;
+    }
+    const group = ensureStackGroup(frame);
+    if (!group || group.category !== 'content') {
+      return false;
+    }
+    setStackGroupActiveFrame(group, frame);
+    return true;
+  }
+
+  function activateContentForMenuButton(buttonId) {
+    if (!buttonId) {
+      return false;
+    }
+    const match = [...contentTabWires.entries()].find(([, wiredButtonId]) => wiredButtonId === buttonId);
+    if (!match) {
+      return false;
+    }
+    return activateContentTabByKey(match[0]);
+  }
+
+  function syncMenuGroupsForActiveContent() {
+    if (!activeContentGroupId) {
+      return;
+    }
+    stackGroups.forEach(group => {
+      if (group.category !== 'menu') {
+        return;
+      }
+
+      const nextFrame = group.frames.find(frame => {
+        const tabKey = frameTabKey(frame);
+        return menuTabTargets.get(tabKey) === activeContentGroupId;
+      });
+
+      if (nextFrame && nextFrame !== group.activeFrame) {
+        setStackGroupActiveFrame(group, nextFrame, { skipContentSync: true });
+      } else {
+        renderStackGroupHeader(group);
+      }
+    });
+  }
+
+  function bindContentTabDetach(button, group, frame) {
+    button.addEventListener('pointerdown', event => {
+      if (event.button !== 0 || group.frames.length <= 1) {
+        return;
+      }
+
+      const startX = event.clientX;
+      const startY = event.clientY;
+      let detached = false;
+
+      function onMove(moveEvent) {
+        const dx = moveEvent.clientX - startX;
+        const dy = moveEvent.clientY - startY;
+        if (!detached && Math.hypot(dx, dy) < 12) {
+          return;
+        }
+
+        if (!detached) {
+          detached = true;
+          button.dataset.tabDetached = 'true';
+          detachFrameFromStackGroup(frame);
+        }
+
+        positionFrameNearPointer(frame, moveEvent.clientX, moveEvent.clientY);
+        const nextGroup = stackGroupForFrame(frame);
+        if (nextGroup) {
+          syncStackGroupGeometry(nextGroup, frame);
+          syncStackGroupVisibility(nextGroup);
+          renderStackGroupHeader(nextGroup);
+        }
+      }
+
+      function onUp() {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp, true);
+        window.removeEventListener('pointercancel', onUp, true);
+      }
+
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp, true);
+      window.addEventListener('pointercancel', onUp, true);
+    });
+  }
+
+  function renderContentStackHeader(group) {
+    if (!group) {
+      return;
+    }
+
+    if (!group.header) {
+      group.header = document.createElement('div');
+      group.header.className = 'mod-stack-header mod-stack-header-content';
+      group.header.dataset.stackHeader = group.id;
+    }
+
+    group.header.innerHTML = '';
+    const row = document.createElement('div');
+    row.className = 'mod-stack-tabs';
+
+    group.frames.forEach(frame => {
+      const tabKey = frameTabKey(frame);
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'mod-stack-tab';
+      if (frame === group.activeFrame) {
+        button.classList.add('is-active');
+      }
+      button.textContent = frameTabName(frame, group);
+
+      const wiredButtonId = contentTabWires.get(tabKey) || '';
+      if (wiredButtonId) {
+        button.classList.add('is-wired');
+        button.title = `wired to ${wireLabelForButtonId(wiredButtonId)}`;
+      }
+
+      button.addEventListener('click', event => {
+        if (button.dataset.tabDetached === 'true') {
+          delete button.dataset.tabDetached;
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        setStackGroupActiveFrame(group, frame);
+      });
+      button.addEventListener('contextmenu', event => {
+        openContentWirePicker(event, frame);
+      });
+      bindContentTabDetach(button, group, frame);
+      row.appendChild(button);
+    });
+
+    group.header.appendChild(row);
+    attachStackHeaderToActiveFrame(group);
+  }
+
+  function renderMenuStackHeader(group) {
+    if (!group) {
+      return;
+    }
+
+    if (!group.header) {
+      group.header = document.createElement('div');
+      group.header.className = 'mod-stack-header mod-stack-header-menu';
+      group.header.dataset.stackHeader = group.id;
+      group.header.dataset.menuGroupSwitcher = group.id;
+    }
+
+    group.header.innerHTML = '';
+
+    const switcher = document.createElement('div');
+    switcher.className = 'mod-stack-select';
+
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'mod-stack-select-toggle';
+    toggle.textContent = menuGroupName(group);
+
+    const list = document.createElement('div');
+    list.className = 'mod-stack-select-menu';
+    list.dataset.menuGroupList = group.id;
+    list.hidden = true;
+
+    group.frames.forEach(frame => {
+      const entry = document.createElement('button');
+      entry.type = 'button';
+      entry.className = 'mod-stack-select-item';
+      if (frame === group.activeFrame) {
+        entry.classList.add('is-active');
+      }
+
+      const title = document.createElement('span');
+      title.className = 'mod-stack-select-item-title';
+      title.textContent = frameTabName(frame, group);
+      entry.appendChild(title);
+
+      const targetGroupId = menuTabTargets.get(frameTabKey(frame)) || '';
+      if (targetGroupId) {
+        const target = document.createElement('span');
+        target.className = 'mod-stack-select-item-target';
+        target.textContent = wireLabelForContentGroupId(targetGroupId);
+        entry.appendChild(target);
+      }
+
+      entry.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopPropagation();
+        list.hidden = true;
+        setStackGroupActiveFrame(group, frame, { skipContentSync: true });
+      });
+
+      entry.addEventListener('contextmenu', event => {
+        event.stopPropagation();
+        list.hidden = true;
+        openMenuTargetPicker(event, frame);
+      });
+
+      list.appendChild(entry);
+    });
+
+    toggle.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      const isOpen = !list.hidden;
+      closeAllMenuGroupLists(group.id);
+      list.hidden = isOpen;
+    });
+
+    switcher.appendChild(toggle);
+    switcher.appendChild(list);
+
+    const editor = document.createElement('div');
+    editor.className = 'mod-stack-menu-editor';
+
+    const addButton = document.createElement('button');
+    addButton.type = 'button';
+    addButton.className = 'mod-stack-mini-btn';
+    addButton.textContent = '+';
+    addButton.title = 'Add menu button';
+    addButton.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      addMenuButtonToFrame(group.activeFrame);
+    });
+
+    const removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'mod-stack-mini-btn';
+    removeButton.textContent = '-';
+    removeButton.title = 'Remove menu button';
+    removeButton.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      removeMenuButtonFromFrame(group.activeFrame);
+    });
+
+    editor.appendChild(addButton);
+    editor.appendChild(removeButton);
+
+    group.header.appendChild(editor);
+    group.header.appendChild(switcher);
+    attachStackHeaderToActiveFrame(group);
+  }
+
+  function renderStackGroupHeader(group) {
+    if (!group || group.frames.length === 0) {
+      return;
+    }
+    if (group.category === 'content') {
+      renderContentStackHeader(group);
+      return;
+    }
+    renderMenuStackHeader(group);
+  }
+
+  function renderAllStackGroupHeaders() {
+    stackGroups.forEach(group => {
+      renderStackGroupHeader(group);
+    });
+  }
+
+  function stackFrameOntoGroup(targetFrame, sourceFrame) {
+    if (!targetFrame || !sourceFrame || targetFrame === sourceFrame) {
+      return;
+    }
+
+    const category = frameStackCategory(targetFrame);
+    if (!category || frameStackCategory(sourceFrame) !== category) {
+      return;
+    }
+
+    const targetGroup = ensureStackGroup(targetFrame);
+    const sourceGroup = ensureStackGroup(sourceFrame);
+    if (!targetGroup || !sourceGroup || targetGroup === sourceGroup) {
+      return;
+    }
+
+    mergeStackGroups(targetGroup, sourceGroup);
+    setStackGroupActiveFrame(targetGroup, targetFrame, { skipContentSync: category !== 'content' });
+    if (category === 'content') {
+      activeContentGroupId = targetGroup.id;
+    }
+    syncMenuGroupsForActiveContent();
+    renderAllStackGroupHeaders();
+  }
+
+  function maybeStackFrameByOverlap(frame) {
+    const category = frameStackCategory(frame);
+    if (!category || frame.dataset.stackHidden === 'true') {
+      return;
+    }
+
+    let bestTarget = null;
+    let bestScore = 0;
+    const frameGroup = stackGroupForFrame(frame);
+
+    moduleFrames().forEach(candidate => {
+      if (candidate === frame) {
+        return;
+      }
+      if (candidate.dataset.stackHidden === 'true') {
+        return;
+      }
+      if (frameStackCategory(candidate) !== category) {
+        return;
+      }
+      if (stackGroupForFrame(candidate) === frameGroup) {
+        return;
+      }
+
+      const score = frameOverlapScore(frame, candidate);
+      if (score > bestScore) {
+        bestScore = score;
+        bestTarget = candidate;
+      }
+    });
+
+    if (bestTarget && bestScore >= 0.34) {
+      stackFrameOntoGroup(bestTarget, frame);
+    }
+  }
+
+  function normalizeStackGroups() {
+    [...stackGroups.values()].forEach(group => {
+      group.frames = group.frames.filter(frame => document.body.contains(frame));
+      if (group.frames.length === 0) {
+        removeStackGroup(group);
+        return;
+      }
+      if (!group.activeFrame || !group.frames.includes(group.activeFrame)) {
+        group.activeFrame = group.frames[0];
+      }
+    });
+  }
+
+  function initStackGroups(root = document) {
+    moduleFrames(root).forEach(frame => {
+      if (!frameStackCategory(frame)) {
+        return;
+      }
+      ensureStackGroup(frame);
+    });
+
+    normalizeStackGroups();
+    registerMenuButtonIds(root);
+    pruneContentWiresByExistingButtons();
+    pruneMenuDependenciesByExistingGroups();
+
+    stackGroups.forEach(group => {
+      syncStackGroupGeometry(group, group.activeFrame);
+      syncStackGroupVisibility(group);
+      renderStackGroupHeader(group);
+    });
+
+    if (!activeContentGroupId) {
+      const first = firstContentGroup();
+      if (first) {
+        activeContentGroupId = first.id;
+      }
+    }
+
+    syncMenuGroupsForActiveContent();
+    renderAllStackGroupHeaders();
+    seedInitialContentStack(root);
+  }
+
+  function unregisterFrameFromStacking(frame) {
+    if (!frame) {
+      return;
+    }
+
+    const category = frameStackCategory(frame);
+    const tabKey = frameTabKey(frame);
+    contentTabWires.delete(tabKey);
+    menuTabTargets.delete(tabKey);
+
+    if (category === 'menu') {
+      frame.querySelectorAll('.mod-button').forEach(button => {
+        removeWiresForButtonId(button.dataset.menuButtonId || '');
+      });
+    }
+
+    const group = stackGroupForFrame(frame);
+    if (!group) {
+      return;
+    }
+
+    const wasActive = group.activeFrame === frame;
+    group.frames = group.frames.filter(member => member !== frame);
+    frameToStackGroupId.delete(frame);
+    delete frame.dataset.stackGroupId;
+    delete frame.dataset.stackHidden;
+    frame.classList.remove('mod-has-stack-header');
+    frame.hidden = false;
+    frame.style.display = '';
+
+    if (group.frames.length === 0) {
+      removeStackGroup(group);
+      if (activeContentGroupId === group.id) {
+        activeContentGroupId = '';
+      }
+    } else {
+      if (wasActive) {
+        group.activeFrame = group.frames[0];
+        copyFrameGeometry(frame, group.activeFrame);
+      }
+      syncStackGroupGeometry(group, group.activeFrame);
+      syncStackGroupVisibility(group);
+      renderStackGroupHeader(group);
+    }
+
+    pruneContentWiresByExistingButtons();
+    pruneMenuDependenciesByExistingGroups();
+    if (!activeContentGroupId) {
+      const first = firstContentGroup();
+      if (first) {
+        activeContentGroupId = first.id;
+      }
+    }
+    syncMenuGroupsForActiveContent();
+  }
+
+  function bindStackUi() {
+    if (document.body.dataset.stackUiBound === 'true') {
+      return;
+    }
+    document.body.dataset.stackUiBound = 'true';
+
+    window.addEventListener('hestia:grid-drag-end', event => {
+      const frame = event.detail?.target;
+      if (!(frame instanceof HTMLElement) || !frame.matches('.demo-shell > [data-module-kind]')) {
+        return;
+      }
+      const group = stackGroupForFrame(frame);
+      if (group) {
+        syncStackGroupGeometry(group, frame);
+        syncStackGroupVisibility(group);
+        renderStackGroupHeader(group);
+      }
+      maybeStackFrameByOverlap(frame);
+    });
+
+    window.addEventListener('hestia:grid-resize-end', event => {
+      const frame = event.detail?.target;
+      if (!(frame instanceof HTMLElement) || !frame.matches('.demo-shell > [data-module-kind]')) {
+        return;
+      }
+      const group = stackGroupForFrame(frame);
+      if (!group) {
+        return;
+      }
+      syncStackGroupGeometry(group, frame);
+      syncStackGroupVisibility(group);
+      renderStackGroupHeader(group);
+    });
+
+    document.addEventListener('click', event => {
+      if (!event.target.closest('[data-stack-context-menu]')) {
+        closeStackContextMenu();
+      }
+      if (!event.target.closest('[data-menu-group-switcher]')) {
+        closeAllMenuGroupLists();
+      }
+
+      const menuButton = event.target.closest('.mod-button');
+      if (!menuButton || event.target.closest('.mod-mode-toggle')) {
+        return;
+      }
+      const menuFrame = menuButton.closest('[data-module-kind="navigation"]');
+      if (!menuFrame || menuFrame.dataset.stackHidden === 'true') {
+        return;
+      }
+      activateContentForMenuButton(ensureMenuButtonId(menuButton));
+    });
+
+    window.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        closeStackContextMenu();
+        closeAllMenuGroupLists();
+      }
+    });
+  }
+
   function organizerBoards(root = document) {
     return [...root.querySelectorAll('[data-organizer-board]')];
   }
@@ -351,6 +1598,7 @@
       switcher.innerHTML = `
         <button class="mod-view-btn" type="button" data-view="details"><span class="mod-view-icon">:</span>Details</button>
         <button class="mod-view-btn" type="button" data-view="cards"><span class="mod-view-icon">#</span>Cards</button>
+        <button class="mod-view-btn" type="button" data-view="list"><span class="mod-view-icon">≡</span>List</button>
       `;
       frame.appendChild(switcher);
     }
@@ -436,7 +1684,10 @@
 
   function syncOrganizerBoard(board) {
     const chrome = ensureOrganizerChrome(board);
-    const view = board.dataset.view === 'details' ? 'details' : 'cards';
+    const requestedView = board.dataset.view || 'cards';
+    const view = requestedView === 'details' || requestedView === 'list'
+      ? requestedView
+      : 'cards';
     const selected = organizerSelectedCard(board);
 
     board.dataset.view = view;
@@ -554,8 +1805,69 @@
     return row;
   }
 
-  function setOrganizerMenuState(card, open) {
-    const menu = card.querySelector('[data-organizer-menu]');
+  function organizerMenuForCard(card) {
+    let menu = card?._organizerMenu || card?.querySelector('[data-organizer-menu]') || null;
+    if (!menu) {
+      return null;
+    }
+
+    card._organizerMenu = menu;
+    menu._organizerOwnerCard = card;
+    if (menu.parentElement !== document.body) {
+      document.body.appendChild(menu);
+    }
+    return menu;
+  }
+
+  function positionOrganizerMenu(menu, pageX, pageY) {
+    if (!menu) {
+      return;
+    }
+
+    const scrollX = window.scrollX || window.pageXOffset || 0;
+    const scrollY = window.scrollY || window.pageYOffset || 0;
+    const clientX = pageX - scrollX;
+    const clientY = pageY - scrollY;
+    const gap = 12;
+    const margin = 8;
+
+    menu.style.left = `${Math.round(pageX + gap)}px`;
+    menu.style.top = `${Math.round(pageY)}px`;
+
+    const rect = menu.getBoundingClientRect();
+    let left = clientX + gap;
+    if (left + rect.width > window.innerWidth - margin) {
+      left = clientX - rect.width - gap;
+    }
+    left = Math.max(margin, Math.min(left, window.innerWidth - rect.width - margin));
+
+    let top = clientY;
+    if (top + rect.height > window.innerHeight - margin) {
+      top = window.innerHeight - rect.height - margin;
+    }
+    top = Math.max(margin, top);
+
+    menu.style.left = `${Math.round(left + scrollX)}px`;
+    menu.style.top = `${Math.round(top + scrollY)}px`;
+  }
+
+  function organizerMenuAnchor(card, anchorEvent) {
+    if (anchorEvent && typeof anchorEvent.pageX === 'number' && typeof anchorEvent.pageY === 'number') {
+      return { pageX: anchorEvent.pageX, pageY: anchorEvent.pageY };
+    }
+
+    const toggle = ensureOrganizerHeadActions(card).optionsToggle;
+    const rect = toggle?.getBoundingClientRect();
+    const scrollX = window.scrollX || window.pageXOffset || 0;
+    const scrollY = window.scrollY || window.pageYOffset || 0;
+    return {
+      pageX: (rect ? rect.right : 0) + scrollX,
+      pageY: (rect ? rect.top + rect.height / 2 : 0) + scrollY
+    };
+  }
+
+  function setOrganizerMenuState(card, open, anchorEvent = null) {
+    const menu = organizerMenuForCard(card);
     const { optionsToggle: toggle } = ensureOrganizerHeadActions(card);
     if (!menu || !toggle) {
       return;
@@ -566,6 +1878,8 @@
     menu.classList.toggle('is-open', open);
     menu.hidden = !open;
     if (open) {
+      const anchor = organizerMenuAnchor(card, anchorEvent);
+      positionOrganizerMenu(menu, anchor.pageX, anchor.pageY);
       activeOrganizerMenu = menu;
       return;
     }
@@ -640,7 +1954,7 @@
   }
 
   function renderOrganizerMenu(card, state) {
-    const menu = card.querySelector('[data-organizer-menu]');
+    const menu = organizerMenuForCard(card);
     if (!menu) {
       return;
     }
@@ -770,7 +2084,7 @@
     const { optionsToggle: toggle } = ensureOrganizerHeadActions(card);
     const fieldsRow = ensureOrganizerFieldRow(card);
     const summaryRow = ensureOrganizerSummaryRow(card);
-    const menu = card.querySelector('[data-organizer-menu]');
+    const menu = organizerMenuForCard(card);
 
     fieldsRow.addEventListener('click', event => {
       event.preventDefault();
@@ -813,7 +2127,7 @@
         }
         const shouldOpen = !card.classList.contains('is-menu-open');
         closeOrganizerMenus();
-        setOrganizerMenuState(card, shouldOpen);
+        setOrganizerMenuState(card, shouldOpen, event);
       });
     }
 
@@ -935,6 +2249,718 @@
       if (event.key === 'Escape') {
         closeOrganizerMenus();
       }
+    });
+  }
+
+  function graphModules(root = document) {
+    return [...root.querySelectorAll('[data-graph-module]')];
+  }
+
+  function nextGraphNodeId() {
+    graphNodeCounter += 1;
+    return `graph-node-${graphNodeCounter}`;
+  }
+
+  function nextGraphConnectionId() {
+    graphConnectionCounter += 1;
+    return `graph-connection-${graphConnectionCounter}`;
+  }
+
+  function graphTemplate(kind) {
+    return GRAPH_TEMPLATE_BY_KIND.get(kind) || GRAPH_NODE_TEMPLATES[0];
+  }
+
+  function createGraphNode(kind, x, y) {
+    const template = graphTemplate(kind);
+    return {
+      id: nextGraphNodeId(),
+      kind: template.kind,
+      x,
+      y
+    };
+  }
+
+  function createDefaultGraphState() {
+    const numberA = createGraphNode('number', 56, 72);
+    const numberB = createGraphNode('number', 56, 216);
+    const add = createGraphNode('add', 332, 108);
+    const subtract = createGraphNode('subtract', 332, 288);
+    const condition = createGraphNode('boolean', 632, 52);
+    const branch = createGraphNode('if', 632, 196);
+    const trigger = createGraphNode('trigger', 52, 432);
+    const text = createGraphNode('text-value', 324, 444);
+    const log = createGraphNode('log', 632, 424);
+
+    return {
+      nodes: [numberA, numberB, add, subtract, condition, branch, trigger, text, log],
+      connections: [
+        {
+          id: nextGraphConnectionId(),
+          fromNodeId: numberA.id,
+          fromSocket: 'value',
+          toNodeId: add.id,
+          toSocket: 'a',
+          type: 'number'
+        },
+        {
+          id: nextGraphConnectionId(),
+          fromNodeId: numberB.id,
+          fromSocket: 'value',
+          toNodeId: add.id,
+          toSocket: 'b',
+          type: 'number'
+        },
+        {
+          id: nextGraphConnectionId(),
+          fromNodeId: numberA.id,
+          fromSocket: 'value',
+          toNodeId: subtract.id,
+          toSocket: 'a',
+          type: 'number'
+        },
+        {
+          id: nextGraphConnectionId(),
+          fromNodeId: add.id,
+          fromSocket: 'sum',
+          toNodeId: branch.id,
+          toSocket: 'yes',
+          type: 'number'
+        },
+        {
+          id: nextGraphConnectionId(),
+          fromNodeId: subtract.id,
+          fromSocket: 'result',
+          toNodeId: branch.id,
+          toSocket: 'no',
+          type: 'number'
+        },
+        {
+          id: nextGraphConnectionId(),
+          fromNodeId: condition.id,
+          fromSocket: 'value',
+          toNodeId: branch.id,
+          toSocket: 'condition',
+          type: 'boolean'
+        },
+        {
+          id: nextGraphConnectionId(),
+          fromNodeId: trigger.id,
+          fromSocket: 'flow',
+          toNodeId: log.id,
+          toSocket: 'flow',
+          type: 'flow'
+        },
+        {
+          id: nextGraphConnectionId(),
+          fromNodeId: text.id,
+          fromSocket: 'value',
+          toNodeId: log.id,
+          toSocket: 'message',
+          type: 'string'
+        }
+      ],
+      pendingSocket: null,
+      pendingPoint: null,
+      nodeElements: new Map(),
+      socketElements: new Map(),
+      spawnCount: 0
+    };
+  }
+
+  function ensureGraphState(module) {
+    if (!module._graphState) {
+      module._graphState = createDefaultGraphState();
+    }
+    return module._graphState;
+  }
+
+  function graphSocketKey(nodeId, direction, socketKey) {
+    return `${nodeId}:${direction}:${socketKey}`;
+  }
+
+  function socketTypeMatches(a, b) {
+    return a && b && a === b;
+  }
+
+  function graphConnectionExists(state, fromNodeId, fromSocket, toNodeId, toSocket) {
+    return state.connections.some(connection =>
+      connection.fromNodeId === fromNodeId &&
+      connection.fromSocket === fromSocket &&
+      connection.toNodeId === toNodeId &&
+      connection.toSocket === toSocket
+    );
+  }
+
+  function graphCanvasParts(module) {
+    return {
+      canvas: module.querySelector('[data-graph-canvas]'),
+      surface: module.querySelector('[data-graph-surface]'),
+      wires: module.querySelector('[data-graph-wires]'),
+      searchMenu: module.querySelector('[data-graph-search-menu]'),
+      searchInput: module.querySelector('[data-graph-search-input]'),
+      searchResults: module.querySelector('[data-graph-search-results]')
+    };
+  }
+
+  function graphViewportSpawn(module, state) {
+    const { canvas } = graphCanvasParts(module);
+    const scrollLeft = canvas?.scrollLeft || 0;
+    const scrollTop = canvas?.scrollTop || 0;
+    const width = canvas?.clientWidth || 640;
+    const height = canvas?.clientHeight || 420;
+    const offset = state.spawnCount * 22;
+    state.spawnCount += 1;
+    return {
+      x: Math.round(scrollLeft + width * 0.32 + offset),
+      y: Math.round(scrollTop + height * 0.24 + offset)
+    };
+  }
+
+  function renderGraphSearchResults(module) {
+    const { searchInput, searchResults } = graphCanvasParts(module);
+    if (!searchResults) {
+      return;
+    }
+
+    const query = (searchInput?.value || '').trim().toLowerCase();
+    searchResults.innerHTML = '';
+
+    GRAPH_NODE_TEMPLATES
+      .filter(template => {
+        if (query.length === 0) {
+          return true;
+        }
+        return template.label.toLowerCase().includes(query) ||
+          template.subtitle.toLowerCase().includes(query) ||
+          template.kind.toLowerCase().includes(query);
+      })
+      .forEach(template => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'mod-graph-search-item';
+        button.dataset.graphNodeKind = template.kind;
+        button.innerHTML = `
+          <span class="mod-graph-search-item-name">${template.label}</span>
+          <span class="mod-graph-search-item-copy">${template.subtitle}</span>
+        `;
+        searchResults.appendChild(button);
+      });
+  }
+
+  function setGraphSearchMenuState(module, open) {
+    const { searchMenu, searchInput } = graphCanvasParts(module);
+    if (!searchMenu) {
+      return;
+    }
+    searchMenu.hidden = !open;
+    searchMenu.classList.toggle('is-open', open);
+    module.classList.toggle('is-search-open', open);
+    if (open && searchInput) {
+      renderGraphSearchResults(module);
+      searchInput.focus({ preventScroll: true });
+      searchInput.select();
+    }
+  }
+
+  function removeGraphNode(module, nodeId) {
+    const state = ensureGraphState(module);
+    state.nodes = state.nodes.filter(node => node.id !== nodeId);
+    state.connections = state.connections.filter(connection =>
+      connection.fromNodeId !== nodeId && connection.toNodeId !== nodeId
+    );
+    if (state.pendingSocket?.nodeId === nodeId) {
+      state.pendingSocket = null;
+      state.pendingPoint = null;
+    }
+    renderGraphModule(module);
+  }
+
+  function connectGraphSockets(module, outputSocket, inputSocket) {
+    if (!outputSocket || !inputSocket) {
+      return;
+    }
+    if (!socketTypeMatches(outputSocket.type, inputSocket.type)) {
+      return;
+    }
+
+    const state = ensureGraphState(module);
+    state.connections = state.connections.filter(connection =>
+      !(connection.toNodeId === inputSocket.nodeId && connection.toSocket === inputSocket.socketKey)
+    );
+
+    if (!graphConnectionExists(
+      state,
+      outputSocket.nodeId,
+      outputSocket.socketKey,
+      inputSocket.nodeId,
+      inputSocket.socketKey
+    )) {
+      state.connections.push({
+        id: nextGraphConnectionId(),
+        fromNodeId: outputSocket.nodeId,
+        fromSocket: outputSocket.socketKey,
+        toNodeId: inputSocket.nodeId,
+        toSocket: inputSocket.socketKey,
+        type: outputSocket.type
+      });
+    }
+
+    state.pendingSocket = null;
+    state.pendingPoint = null;
+    renderGraphModule(module);
+  }
+
+  function graphCanvasPointFromClient(module, clientX, clientY) {
+    const { canvas } = graphCanvasParts(module);
+    const canvasRect = canvas.getBoundingClientRect();
+    return {
+      x: clientX - canvasRect.left + (canvas?.scrollLeft || 0),
+      y: clientY - canvasRect.top + (canvas?.scrollTop || 0)
+    };
+  }
+
+  function graphSocketCenter(module, socket) {
+    const { canvas } = graphCanvasParts(module);
+    const rect = socket.getBoundingClientRect();
+    const canvasRect = canvas.getBoundingClientRect();
+    return {
+      x: rect.left - canvasRect.left + (canvas?.scrollLeft || 0) + rect.width / 2,
+      y: rect.top - canvasRect.top + (canvas?.scrollTop || 0) + rect.height / 2
+    };
+  }
+
+  function renderGraphConnections(module) {
+    const state = ensureGraphState(module);
+    const { wires } = graphCanvasParts(module);
+    if (!wires) {
+      return;
+    }
+
+    wires.innerHTML = '';
+    state.connections.forEach(connection => {
+      const fromSocket = state.socketElements.get(graphSocketKey(connection.fromNodeId, 'output', connection.fromSocket));
+      const toSocket = state.socketElements.get(graphSocketKey(connection.toNodeId, 'input', connection.toSocket));
+      if (!fromSocket || !toSocket) {
+        return;
+      }
+
+      const start = graphSocketCenter(module, fromSocket);
+      const end = graphSocketCenter(module, toSocket);
+      const delta = Math.max(48, Math.abs(end.x - start.x) * 0.5);
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute(
+        'd',
+        `M ${start.x} ${start.y} C ${start.x + delta} ${start.y}, ${end.x - delta} ${end.y}, ${end.x} ${end.y}`
+      );
+      path.setAttribute('class', `mod-graph-wire type-${connection.type}`);
+      wires.appendChild(path);
+    });
+
+    if (state.pendingSocket && state.pendingPoint) {
+      const anchor = state.socketElements.get(
+        graphSocketKey(state.pendingSocket.nodeId, state.pendingSocket.direction, state.pendingSocket.socketKey)
+      );
+      if (anchor) {
+        const anchorPoint = graphSocketCenter(module, anchor);
+        const start = state.pendingSocket.direction === 'output' ? anchorPoint : state.pendingPoint;
+        const end = state.pendingSocket.direction === 'output' ? state.pendingPoint : anchorPoint;
+        const delta = Math.max(48, Math.abs(end.x - start.x) * 0.5);
+
+        const preview = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        preview.setAttribute(
+          'd',
+          `M ${start.x} ${start.y} C ${start.x + delta} ${start.y}, ${end.x - delta} ${end.y}, ${end.x} ${end.y}`
+        );
+        preview.setAttribute('class', `mod-graph-wire is-preview type-${state.pendingSocket.type}`);
+        wires.appendChild(preview);
+      }
+    }
+  }
+
+  function updateGraphNodePosition(module, node) {
+    const state = ensureGraphState(module);
+    const element = state.nodeElements.get(node.id);
+    if (element) {
+      element.style.transform = `translate(${node.x}px, ${node.y}px)`;
+    }
+    renderGraphConnections(module);
+  }
+
+  function bindGraphNodeDrag(module, node, nodeElement, handle) {
+    handle.addEventListener('pointerdown', event => {
+      if (event.target.closest('[data-graph-node-delete]')) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      nodeElement.setPointerCapture(event.pointerId);
+      const startX = event.clientX;
+      const startY = event.clientY;
+      const baseX = node.x;
+      const baseY = node.y;
+
+      nodeElement.classList.add('is-dragging');
+
+      function onMove(moveEvent) {
+        node.x = Math.max(12, Math.round(baseX + moveEvent.clientX - startX));
+        node.y = Math.max(12, Math.round(baseY + moveEvent.clientY - startY));
+        updateGraphNodePosition(module, node);
+      }
+
+      function onUp(upEvent) {
+        nodeElement.classList.remove('is-dragging');
+        if (nodeElement.hasPointerCapture(upEvent.pointerId)) {
+          nodeElement.releasePointerCapture(upEvent.pointerId);
+        }
+        nodeElement.removeEventListener('pointermove', onMove);
+        nodeElement.removeEventListener('pointerup', onUp);
+        nodeElement.removeEventListener('pointercancel', onUp);
+      }
+
+      nodeElement.addEventListener('pointermove', onMove);
+      nodeElement.addEventListener('pointerup', onUp);
+      nodeElement.addEventListener('pointercancel', onUp);
+    });
+  }
+
+  function graphSocketDescriptor(socketButton) {
+    if (!socketButton) {
+      return null;
+    }
+    return {
+      nodeId: socketButton.dataset.nodeId || '',
+      socketKey: socketButton.dataset.socketKey || '',
+      direction: socketButton.dataset.socketDirection || '',
+      type: socketButton.dataset.socketType || ''
+    };
+  }
+
+  function graphConnectionForInput(state, inputSocket) {
+    return state.connections.find(connection =>
+      connection.toNodeId === inputSocket.nodeId &&
+      connection.toSocket === inputSocket.socketKey
+    ) || null;
+  }
+
+  function clearGraphSocketDrag(module) {
+    const state = ensureGraphState(module);
+    if (!state.pendingSocket && !state.pendingPoint) {
+      return;
+    }
+    state.pendingSocket = null;
+    state.pendingPoint = null;
+    renderGraphModule(module);
+  }
+
+  function completeGraphSocketDrag(module, dropSocket) {
+    const state = ensureGraphState(module);
+    const next = graphSocketDescriptor(dropSocket);
+    if (!state.pendingSocket || !next) {
+      clearGraphSocketDrag(module);
+      return;
+    }
+
+    if (
+      state.pendingSocket.nodeId === next.nodeId &&
+      state.pendingSocket.socketKey === next.socketKey &&
+      state.pendingSocket.direction === next.direction
+    ) {
+      clearGraphSocketDrag(module);
+      return;
+    }
+
+    let outputSocket = null;
+    let inputSocket = null;
+    if (state.pendingSocket.direction === 'output' && next.direction === 'input') {
+      outputSocket = state.pendingSocket;
+      inputSocket = next;
+    } else if (state.pendingSocket.direction === 'input' && next.direction === 'output') {
+      outputSocket = next;
+      inputSocket = state.pendingSocket;
+    }
+
+    if (!outputSocket || !inputSocket) {
+      clearGraphSocketDrag(module);
+      return;
+    }
+
+    connectGraphSockets(module, outputSocket, inputSocket);
+  }
+
+  function beginGraphSocketDrag(module, socketButton, event) {
+    const state = ensureGraphState(module);
+    const next = graphSocketDescriptor(socketButton);
+    if (!next || event.button !== 0) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (next.direction === 'input') {
+      const existing = graphConnectionForInput(state, next);
+      if (existing) {
+        state.connections = state.connections.filter(connection => connection.id !== existing.id);
+        state.pendingSocket = {
+          nodeId: existing.fromNodeId,
+          socketKey: existing.fromSocket,
+          direction: 'output',
+          type: existing.type
+        };
+      } else {
+        state.pendingSocket = next;
+      }
+    } else {
+      state.pendingSocket = next;
+    }
+
+    state.pendingPoint = graphCanvasPointFromClient(module, event.clientX, event.clientY);
+    renderGraphModule(module);
+
+    function onMove(moveEvent) {
+      state.pendingPoint = graphCanvasPointFromClient(module, moveEvent.clientX, moveEvent.clientY);
+      renderGraphConnections(module);
+    }
+
+    function onUp(upEvent) {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp, true);
+      window.removeEventListener('pointercancel', onUp, true);
+
+      const dropSocket = document.elementFromPoint(upEvent.clientX, upEvent.clientY)?.closest('.mod-graph-socket');
+      if (dropSocket) {
+        completeGraphSocketDrag(module, dropSocket);
+        return;
+      }
+      clearGraphSocketDrag(module);
+    }
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp, true);
+    window.addEventListener('pointercancel', onUp, true);
+  }
+
+  function renderGraphModule(module) {
+    const state = ensureGraphState(module);
+    const { surface, wires } = graphCanvasParts(module);
+    if (!surface || !wires) {
+      return;
+    }
+
+    surface.innerHTML = '';
+    state.nodeElements = new Map();
+    state.socketElements = new Map();
+
+    state.nodes.forEach(node => {
+      const template = graphTemplate(node.kind);
+      const article = document.createElement('article');
+      article.className = 'mod-graph-node';
+      article.dataset.graphNodeId = node.id;
+      article.dataset.graphNodeKind = node.kind;
+      article.style.transform = `translate(${node.x}px, ${node.y}px)`;
+
+      const header = document.createElement('header');
+      header.className = 'mod-graph-node-head';
+      header.innerHTML = `
+        <div class="mod-graph-node-head-copy">
+          <h3>${template.label}</h3>
+          <p>${template.subtitle}</p>
+        </div>
+        <button class="mod-graph-node-delete" type="button" data-graph-node-delete aria-label="Delete node">x</button>
+      `;
+      article.appendChild(header);
+
+      const body = document.createElement('div');
+      body.className = 'mod-graph-node-body';
+
+      const inputs = document.createElement('div');
+      inputs.className = 'mod-graph-node-column';
+      template.inputs.forEach(socket => {
+        const row = document.createElement('div');
+        row.className = 'mod-graph-socket-row';
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `mod-graph-socket is-input type-${socket.type}`;
+        button.dataset.nodeId = node.id;
+        button.dataset.socketKey = socket.key;
+        button.dataset.socketDirection = 'input';
+        button.dataset.socketType = socket.type;
+        button.title = `${socket.label} (${socket.type})`;
+        if (
+          state.pendingSocket &&
+          state.pendingSocket.nodeId === node.id &&
+          state.pendingSocket.socketKey === socket.key &&
+          state.pendingSocket.direction === 'input'
+        ) {
+          button.classList.add('is-active');
+        }
+
+        const label = document.createElement('span');
+        label.className = 'mod-graph-socket-label';
+        label.textContent = socket.label;
+
+        row.appendChild(button);
+        row.appendChild(label);
+        inputs.appendChild(row);
+        state.socketElements.set(graphSocketKey(node.id, 'input', socket.key), button);
+      });
+
+      const outputs = document.createElement('div');
+      outputs.className = 'mod-graph-node-column mod-graph-node-column-output';
+      template.outputs.forEach(socket => {
+        const row = document.createElement('div');
+        row.className = 'mod-graph-socket-row mod-graph-socket-row-output';
+
+        const label = document.createElement('span');
+        label.className = 'mod-graph-socket-label';
+        label.textContent = socket.label;
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `mod-graph-socket is-output type-${socket.type}`;
+        button.dataset.nodeId = node.id;
+        button.dataset.socketKey = socket.key;
+        button.dataset.socketDirection = 'output';
+        button.dataset.socketType = socket.type;
+        button.title = `${socket.label} (${socket.type})`;
+        if (
+          state.pendingSocket &&
+          state.pendingSocket.nodeId === node.id &&
+          state.pendingSocket.socketKey === socket.key &&
+          state.pendingSocket.direction === 'output'
+        ) {
+          button.classList.add('is-active');
+        }
+
+        row.appendChild(label);
+        row.appendChild(button);
+        outputs.appendChild(row);
+        state.socketElements.set(graphSocketKey(node.id, 'output', socket.key), button);
+      });
+
+      body.appendChild(inputs);
+      body.appendChild(outputs);
+      article.appendChild(body);
+      surface.appendChild(article);
+      state.nodeElements.set(node.id, article);
+
+      bindGraphNodeDrag(module, node, article, header);
+
+      article.querySelectorAll('.mod-graph-socket').forEach(socketButton => {
+        socketButton.addEventListener('pointerdown', event => {
+          beginGraphSocketDrag(module, socketButton, event);
+        });
+      });
+
+      article.querySelector('[data-graph-node-delete]')?.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopPropagation();
+        removeGraphNode(module, node.id);
+      });
+    });
+
+    renderGraphConnections(module);
+  }
+
+  function addGraphNode(module, kind) {
+    const state = ensureGraphState(module);
+    const spawn = graphViewportSpawn(module, state);
+    state.nodes.push(createGraphNode(kind, spawn.x, spawn.y));
+    state.pendingSocket = null;
+    state.pendingPoint = null;
+    setGraphSearchMenuState(module, false);
+    renderGraphModule(module);
+  }
+
+  function bindGraphModule(module) {
+    if (module.dataset.graphBound === 'true') {
+      renderGraphSearchResults(module);
+      renderGraphModule(module);
+      return;
+    }
+
+    module.dataset.graphBound = 'true';
+    const { canvas, searchInput, searchResults } = graphCanvasParts(module);
+    const addButton = module.querySelector('[data-graph-add-node]');
+    const searchToggle = module.querySelector('[data-graph-search-toggle]');
+
+    addButton?.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      const isOpen = !module.querySelector('[data-graph-search-menu]')?.hidden;
+      setGraphSearchMenuState(module, !isOpen);
+    });
+
+    searchToggle?.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      const isOpen = !module.querySelector('[data-graph-search-menu]')?.hidden;
+      setGraphSearchMenuState(module, !isOpen);
+    });
+
+    searchInput?.addEventListener('input', () => {
+      renderGraphSearchResults(module);
+    });
+
+    searchResults?.addEventListener('click', event => {
+      const button = event.target.closest('[data-graph-node-kind]');
+      if (!button) {
+        return;
+      }
+      addGraphNode(module, button.dataset.graphNodeKind || 'number');
+    });
+
+    canvas?.addEventListener('scroll', () => {
+      renderGraphConnections(module);
+    });
+
+    canvas?.addEventListener('click', event => {
+      if (event.target.closest('.mod-graph-node') || event.target.closest('[data-graph-search-menu]')) {
+        return;
+      }
+      clearGraphSocketDrag(module);
+    });
+
+    renderGraphSearchResults(module);
+    renderGraphModule(module);
+  }
+
+  function initGraphModules(root = document) {
+    graphModules(root).forEach(module => {
+      bindGraphModule(module);
+    });
+
+    if (document.body.dataset.graphUiBound === 'true') {
+      return;
+    }
+
+    document.body.dataset.graphUiBound = 'true';
+    document.addEventListener('click', event => {
+      if (!event.target.closest('[data-graph-module]')) {
+        graphModules().forEach(module => {
+          setGraphSearchMenuState(module, false);
+          clearGraphSocketDrag(module);
+        });
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      graphModules().forEach(module => {
+        renderGraphConnections(module);
+      });
+    });
+
+    window.addEventListener('keydown', event => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+      graphModules().forEach(module => {
+        setGraphSearchMenuState(module, false);
+        clearGraphSocketDrag(module);
+      });
     });
   }
 
@@ -1063,6 +3089,8 @@
   }
 
   function cleanupModuleFrame(frame) {
+    closeAllMenuGroupLists();
+    closeStackContextMenu();
     closeOrganizerMenus(frame);
     closeHistoryMenus(frame);
     closeTagMenus(frame);
@@ -1098,7 +3126,12 @@
     shell.appendChild(frame);
     window.HestiaModularMenus.init();
     initOrganizerBoards(document);
+    initGraphModules(document);
     initChatFrame(document);
+    initStackGroups(document);
+    if (frameStackCategory(frame) === 'content') {
+      stackContentFrameIntoPreferredGroup(frame, { activate: true });
+    }
     renderModuleManager();
   }
 
@@ -1112,8 +3145,10 @@
       return;
     }
 
+    unregisterFrameFromStacking(frame);
     cleanupModuleFrame(frame);
     frame.remove();
+    initStackGroups(document);
     renderModuleManager();
   }
 
@@ -1682,5 +3717,8 @@
   window.HestiaModularMenus.init();
   initModuleManager();
   initOrganizerBoards();
+  initGraphModules();
   initChatFrame();
+  bindStackUi();
+  initStackGroups();
 })();

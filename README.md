@@ -52,6 +52,7 @@ modular/
 - `illwillEnhanced`: Illwill enhancement kit with its own `enhance(pathOfConfig)` entrypoint.
 - Kit imports are available as `import webuiEnhanced`, `import owlkettleEnhanced`, and `import illwillEnhanced`.
 - `examples/*Enhanced/*`: runnable app variants that call the relevant enhancer.
+- `examples/owlkettleEnhanced/windowsBackdrop`: Windows 11 DWM backdrop demo (Mica/Acrylic/Tabbed) for GTK/Owlkettle.
 - White theme assets copied from `Maya-Themes` (`assets/themes/theme_white.css`) for GTK/Owlkettle.
 - Every example folder uses `config.md` as the single config source (JSONC in markdown fenced block).
 - WebUI frontend files are in:
@@ -72,6 +73,7 @@ nimble runWebDefault
 nimble runWebCustom
 nimble runOwlDefault
 nimble runOwlCustom
+nimble runOwlBackdrop
 nimble runIllwill
 ```
 

@@ -72,6 +72,11 @@ task runOwlCustom, "Run owlkettle UI (custom titlebar variant)":
 task runOwlCustomDebugBar, "Run owlkettle UI (custom titlebar debug bar only)":
   runWithOwlNixShell(runCmd("examples/owlkettleEnhanced/customTitlebar/app_debug_bar_only.nim", "runOwlCustomDebugBar"))
 
+task runOwlBackdrop, "Run owlkettle UI (Windows backdrop demo)":
+  when defined(windows):
+    putEnv("GTK_CSD", "0")
+  runWithOwlNixShell(runCmd("examples/owlkettleEnhanced/windowsBackdrop/app.nim", "runOwlBackdrop"))
+
 task runIllwill, "Run illwill UI":
   exec runCmd("examples/illwillEnhanced/app.nim", "runIllwill")
 

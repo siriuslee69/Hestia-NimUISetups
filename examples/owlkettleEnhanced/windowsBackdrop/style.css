@@ -1,0 +1,69 @@
+window {
+  background-color: transparent;
+  background-image: none;
+  color: #eef4ff;
+}
+
+box,
+grid,
+scrolledwindow,
+viewport,
+frame,
+windowhandle {
+  background-color: transparent;
+  background-image: none;
+}
+
+frame {
+  background-color: transparent;
+  border-radius: 18px;
+}
+
+frame > border {
+  background-color: rgba(19, 27, 39, 0.48);
+  border-radius: 18px;
+  border: 1px solid rgba(239, 245, 255, 0.14);
+  padding: 0;
+}
+
+scrolledwindow > viewport {
+  background-color: transparent;
+  background-image: none;
+}
+
+label {
+  color: #eef4ff;
+}
+
+button,
+entry,
+menubutton,
+dropdown,
+popover,
+progressbar,
+trough,
+scale {
+  color: #eef4ff;
+}
+
+button,
+entry,
+menubutton,
+dropdown > button,
+scale > trough,
+progressbar > trough {
+  background-color: rgba(245, 248, 255, 0.12);
+  border-radius: 12px;
+  border: 1px solid rgba(245, 248, 255, 0.12);
+}
+
+button:hover,
+entry:focus,
+dropdown > button:hover {
+  background-color: rgba(245, 248, 255, 0.18);
+}
+
+progressbar > progress {
+  background-color: rgba(145, 212, 255, 0.82);
+  border-radius: 12px;
+}
