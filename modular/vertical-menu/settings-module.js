@@ -1,0 +1,1 @@
+(() => { const core = window.HestiaVerticalCore; if (!core) { return; } core.modules.settings = core.modules.settings || { init() {} }; })();

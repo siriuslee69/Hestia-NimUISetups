@@ -694,15 +694,68 @@ body.mod-edit-ui-off .mod-stack-header {
 
 .mod-graph-node-body {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(104px, 1.15fr) minmax(0, 1fr);
   gap: 10px;
   padding: 8px;
+  align-items: start;
 }
 
 .mod-graph-node-column {
   display: grid;
   gap: 6px;
   align-content: start;
+}
+
+.mod-graph-node-controls {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  min-width: 0;
+}
+
+.mod-graph-control-row {
+  display: grid;
+  gap: 4px;
+}
+
+.mod-graph-control-row.type-checkbox {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.mod-graph-control-label,
+.mod-graph-control-note {
+  min-width: 0;
+  font-size: 0.58rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.mod-graph-control-note {
+  color: var(--mod-muted);
+}
+
+.mod-graph-control {
+  width: 100%;
+  min-width: 0;
+  min-height: 24px;
+  padding: 3px 5px;
+  border: 1px solid rgba(31, 46, 78, 0.14);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--mod-text);
+  font: inherit;
+  font-size: 0.68rem;
+  resize: vertical;
+}
+
+.mod-graph-control[type="checkbox"] {
+  width: 16px;
+  min-height: 16px;
+  padding: 0;
+}
+
+.mod-graph-control-file {
+  padding-inline: 0;
 }
 
 .mod-graph-node-column-output {

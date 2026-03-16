@@ -227,6 +227,24 @@ Rule: when a new recurring issue is found and fixed, add it here with the file p
     - `examples/owlkettleEnhanced/customTitlebar/app.nim`
     - `examples/owlkettleEnhanced/customTitlebar/config.md`
 
+12. GTK/Owlkettle taskbar popovers overlap their trigger or detached panels cast a spawn shadow
+- Symptom: start/menu popovers sit partly on top of the taskbar button, or a detached notification/sidebar window briefly appears/shadows in the wrong place before moving.
+- Cause: taskbar-attached `PopoverTop` positioning can feel anchored closer to the trigger midpoint than expected, and extra top-level GTK windows may show a default-position shadow before custom placement hooks run.
+- Fix:
+  - prefer a `Popover` attached to the taskbar button over a second frameless window when possible.
+  - for taskbar popovers, tune vertical offset with roughly `TaskbarHeight div 2 + gap` instead of a tiny fixed gap.
+  - on this Windows/GTK setup, increasing the `y` offset in the positive direction lifted the popover further above the taskbar.
+  - if a detached panel is unavoidable, expect first-show shadow/placement issues and treat that path as higher risk.
+  - reference repo: `Atlas-Taskbar`.
+
+13. Owlkettle `Box` widgets auto-extend more aggressively than expected
+- Symptom: rows/cards/search shells stretch across the full width/height instead of behaving like tighter HTML flex content.
+- Cause: Owlkettle/GTK box sizing and expansion defaults do not match common web flexbox expectations.
+- Fix:
+  - keep the GTK baseline rule `box { border-spacing: 0 0; min-width: 0; }` in the shared theme when building white/Hestia/Maya-derived layouts.
+  - explicitly set content-sized containers to `.expand: false` and reserve `.expand: true` only for the intended fill region.
+  - re-check taskbar/search/card rows after any theme or layout refactor.
+
 ## Upstream Backlog (GTK/Owlkettle/WebUI)
 
 Potential upstream reports to open when we have minimal repros:

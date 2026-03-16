@@ -30,3 +30,12 @@ Current layout set:
 9. `font-gallery`
 
 Open any `index.html` directly in a browser or inside a WebView shell.
+
+## Common GTK/OwlKettle Issues
+
+If you port one of these layouts into an Owlkettle shell:
+
+- Taskbar/menu popovers may overlap their trigger if the offset is tuned like a simple CSS gap.
+  Use roughly `TaskbarHeight div 2 + extraGap`, and note that on the Windows/GTK setup used in `Atlas-Taskbar`, increasing the positive `y` offset for `PopoverTop` lifted the popover further away from the taskbar.
+- Owlkettle `Box` widgets can auto-expand more than expected.
+  Keep `box { border-spacing: 0 0; min-width: 0; }` in the GTK theme and mark only the intended fill container with `.expand: true`.

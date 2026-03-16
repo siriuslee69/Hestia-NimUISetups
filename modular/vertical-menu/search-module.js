@@ -1,0 +1,1 @@
+(() => { const core = window.HestiaVerticalCore; if (!core) { return; } core.modules.search = core.modules.search || { init() {} }; })();

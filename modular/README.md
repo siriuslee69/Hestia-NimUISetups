@@ -33,3 +33,10 @@ Examples:
 Metadata:
 
 - See `METADATA_UI_GUIDE.md` for metadata schema rules and menu mapping behavior.
+
+## Common GTK/OwlKettle Issues
+
+- Popovers used as taskbar/start-menu panels can hover partly over their trigger button if the offset is too small.
+  In `Atlas-Taskbar`, the reliable fix was to offset by about half the taskbar height plus an extra gap, and for `PopoverTop` the upward movement came from increasing the positive `y` offset on that setup.
+- Owlkettle `Box` layout tends to auto-extend more than HTML flexbox.
+  Keep `box { border-spacing: 0 0; min-width: 0; }` in the shared GTK CSS and use `.expand: false` for content-sized rows/cards unless a region is intentionally meant to fill space.
