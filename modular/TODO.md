@@ -6,6 +6,9 @@ Scope: only `Hestia-NimUISetups/modular/`
 - [x] add shared graph widgets for bar, pie, and point-cloud views
 - [x] integrate graph widgets into data cards, organizer cards, and graph nodes
 - [x] add a standalone modular graph-widget module
+- [x] move integrated card graphs into dedicated metadata/tag slots instead of card backgrounds
+- [x] replace split card/graph hovers with one rotating card tooltip that cycles info and graph every 2 seconds
+- [x] add hold-to-pin behavior plus close/outside-click dismissal for larger modular tooltips
 - [x] add per-module `extended` / `hover` / `collapsed` presentation modes with workspace persistence
 - [x] split remaining bundled workspace logic out of `vertical-menu/app.js`
 - [x] introduce a stable modular workspace JSON format
@@ -47,4 +50,5 @@ Scope: only `Hestia-NimUISetups/modular/`
 ## Notes
 - Implemented first milestone: workspace split + JSON save/load.
 - Implemented graph widget pass: preview + tooltip widgets now exist in cards, organizer items, graph nodes, and a standalone module.
+- Implemented tooltip polish pass: cards now use a combined info+graph carousel tooltip, and larger tooltips can pin after a short hold with a visible progress fill.
 - Conversion/export work should build on the JSON schema instead of ad-hoc DOM scraping.

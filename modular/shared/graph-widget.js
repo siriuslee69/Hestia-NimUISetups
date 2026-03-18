@@ -4,6 +4,8 @@
   }
 
   let tooltip = null;
+  let pinnedWidget = null;
+  let tooltipPinTimer = 0;
   const widgetObservers = new WeakMap();
   const widgetBoxSignatures = new WeakMap();
 
@@ -48,6 +50,28 @@
     tooltip.className = 'mod-graph-widget-tooltip';
     tooltip.hidden = true;
     document.body.appendChild(tooltip);
+
+    if (ensureTooltip.bound !== true) {
+      document.addEventListener('click', event => {
+        if (!pinnedWidget) {
+          return;
+        }
+        const node = ensureTooltip();
+        if (node.contains(event.target) || pinnedWidget.contains(event.target)) {
+          return;
+        }
+        hideTooltip(true);
+      });
+
+      window.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && pinnedWidget) {
+          hideTooltip(true);
+        }
+      });
+
+      ensureTooltip.bound = true;
+    }
+
     return tooltip;
   }
 
@@ -426,12 +450,37 @@
 
   function showTooltip(widget) {
     const node = ensureTooltip();
+    if (pinnedWidget === widget && node.hidden !== true) {
+      positionTooltip(widget, node);
+      return;
+    }
     node.innerHTML = '';
-    node.appendChild(renderWidget(widget, {
+    node.classList.remove('is-pinned', 'is-pin-pending');
+
+    const progress = document.createElement('div');
+    progress.className = 'mod-large-tooltip-progress';
+
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'mod-large-tooltip-close';
+    close.setAttribute('aria-label', 'Close tooltip');
+    close.textContent = 'x';
+    close.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      hideTooltip(true);
+    });
+
+    const body = document.createElement('div');
+    body.appendChild(renderWidget(widget, {
       display: 'tooltip',
       height: 160,
       width: 280
     }));
+
+    node.appendChild(progress);
+    node.appendChild(close);
+    node.appendChild(body);
     node.hidden = false;
     positionTooltip(widget, node);
     window.requestAnimationFrame(() => {
@@ -439,10 +488,43 @@
     });
   }
 
-  function hideTooltip() {
+  function clearTooltipPinTimer() {
+    if (tooltipPinTimer) {
+      window.clearTimeout(tooltipPinTimer);
+      tooltipPinTimer = 0;
+    }
+    if (tooltip) {
+      tooltip.classList.remove('is-pin-pending');
+    }
+  }
+
+  function beginTooltipPin(widget) {
+    const node = ensureTooltip();
+    if (pinnedWidget || node.hidden || tooltipPinTimer) {
+      return;
+    }
+
+    node.classList.add('is-pin-pending');
+    tooltipPinTimer = window.setTimeout(() => {
+      tooltipPinTimer = 0;
+      pinnedWidget = widget;
+      node.classList.remove('is-pin-pending');
+      node.classList.add('is-pinned');
+      positionTooltip(widget, node);
+    }, 1000);
+  }
+
+  function hideTooltip(force = false) {
+    if (!force && pinnedWidget) {
+      return;
+    }
+
+    clearTooltipPinTimer();
     const node = ensureTooltip();
     node.hidden = true;
     node.innerHTML = '';
+    node.classList.remove('is-pinned', 'is-pin-pending');
+    pinnedWidget = null;
   }
 
   function bindTooltip(widget) {
@@ -454,16 +536,30 @@
     widget.tabIndex = widget.tabIndex >= 0 ? widget.tabIndex : 0;
 
     widget.addEventListener('mouseenter', () => {
+      if (pinnedWidget && pinnedWidget !== widget) {
+        return;
+      }
       showTooltip(widget);
+      beginTooltipPin(widget);
     });
     widget.addEventListener('mouseleave', () => {
+      clearTooltipPinTimer();
+      if (pinnedWidget === widget) {
+        return;
+      }
       hideTooltip();
     });
     widget.addEventListener('focusin', () => {
+      if (pinnedWidget && pinnedWidget !== widget) {
+        return;
+      }
       showTooltip(widget);
     });
     widget.addEventListener('focusout', () => {
       window.requestAnimationFrame(() => {
+        if (pinnedWidget === widget) {
+          return;
+        }
         if (!widget.matches(':focus-within')) {
           hideTooltip();
         }

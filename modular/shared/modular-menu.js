@@ -15,6 +15,11 @@
   let pinnedCarousel = null;
   let pinnedMetaField = null;
   let activeDataNameCard = null;
+  let pinnedDataNameCard = null;
+  let tagTooltipPinTimer = 0;
+  let metaTooltipPinTimer = 0;
+  let dataNameTooltipPinTimer = 0;
+  let dataNameTooltipRotateTimer = 0;
 
   function getButtons(menu) {
     return [...menu.querySelectorAll('.mod-button')];
@@ -174,6 +179,23 @@
         hideDataNameTooltip(true);
       }, true);
 
+      document.addEventListener('click', event => {
+        if (!pinnedDataNameCard) {
+          return;
+        }
+        const tooltip = ensureDataNameTooltip();
+        if (tooltip.contains(event.target) || pinnedDataNameCard.contains(event.target)) {
+          return;
+        }
+        hideDataNameTooltip(true);
+      });
+
+      window.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && pinnedDataNameCard) {
+          hideDataNameTooltip(true);
+        }
+      });
+
       ensureDataNameTooltip.bound = true;
     }
 
@@ -212,8 +234,7 @@
 
   function positionDataNameTooltip(card) {
     const tooltip = ensureDataNameTooltip();
-    const preview = card.querySelector('.mod-preview') || card;
-    const rect = preview.getBoundingClientRect();
+    const rect = card.getBoundingClientRect();
     const margin = 8;
 
     tooltip.style.left = `${Math.round(rect.right - 1)}px`;
@@ -233,38 +254,361 @@
     tooltip.style.top = `${Math.round(top)}px`;
   }
 
+  function cardIndexInList(card) {
+    const list = card?.closest('.mod-data-list');
+    if (!list) {
+      return 0;
+    }
+    return Math.max(0, [...list.querySelectorAll('.mod-data-card')].indexOf(card));
+  }
+
+  function clearDataNameTooltipTimers() {
+    if (dataNameTooltipPinTimer) {
+      window.clearTimeout(dataNameTooltipPinTimer);
+      dataNameTooltipPinTimer = 0;
+    }
+    if (dataNameTooltipRotateTimer) {
+      window.clearInterval(dataNameTooltipRotateTimer);
+      dataNameTooltipRotateTimer = 0;
+    }
+  }
+
+  function dataNameTooltipSlides() {
+    const tooltip = ensureDataNameTooltip();
+    return [...tooltip.querySelectorAll('[data-card-tooltip-slide]')];
+  }
+
+  function setDataNameTooltipSlide(index) {
+    const tooltip = ensureDataNameTooltip();
+    const slides = dataNameTooltipSlides();
+    const dots = [...tooltip.querySelectorAll('[data-card-tooltip-dot]')];
+    if (slides.length === 0) {
+      return;
+    }
+
+    const next = ((index % slides.length) + slides.length) % slides.length;
+    tooltip.dataset.slideIndex = `${next}`;
+    slides.forEach((slide, slideIndex) => {
+      slide.classList.toggle('is-active', slideIndex === next);
+    });
+    dots.forEach((dot, dotIndex) => {
+      dot.classList.toggle('is-active', dotIndex === next);
+    });
+  }
+
+  function startDataNameTooltipRotation() {
+    clearDataNameTooltipTimers();
+    const slides = dataNameTooltipSlides();
+    if (slides.length <= 1) {
+      return;
+    }
+
+    setDataNameTooltipSlide(0);
+    dataNameTooltipRotateTimer = window.setInterval(() => {
+      const tooltip = ensureDataNameTooltip();
+      const current = parseInt(tooltip.dataset.slideIndex || '0', 10) || 0;
+      setDataNameTooltipSlide(current + 1);
+    }, 2000);
+  }
+
+  function beginDataNameTooltipPin(card) {
+    const tooltip = ensureDataNameTooltip();
+    if (pinnedDataNameCard || !card || tooltip.hidden) {
+      return;
+    }
+
+    if (dataNameTooltipPinTimer) {
+      return;
+    }
+
+    tooltip.classList.add('is-pin-pending');
+    dataNameTooltipPinTimer = window.setTimeout(() => {
+      dataNameTooltipPinTimer = 0;
+      tooltip.classList.remove('is-pin-pending');
+      pinnedDataNameCard = card;
+      activeDataNameCard = card;
+      tooltip.classList.add('is-pinned');
+      positionDataNameTooltip(card);
+    }, 1000);
+  }
+
+  function cancelDataNameTooltipPin() {
+    if (!dataNameTooltip) {
+      clearDataNameTooltipTimers();
+      return;
+    }
+    if (dataNameTooltipPinTimer) {
+      window.clearTimeout(dataNameTooltipPinTimer);
+      dataNameTooltipPinTimer = 0;
+    }
+    dataNameTooltip.classList.remove('is-pin-pending');
+  }
+
+  function parseJsonObject(raw, fallback = {}) {
+    if (typeof raw !== 'string' || raw.trim().length === 0) {
+      return fallback;
+    }
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : fallback;
+    } catch (err) {
+      return fallback;
+    }
+  }
+
+  function normalizeGraphConfig(config, fallbackTitle = 'Graph') {
+    if (!config || typeof config !== 'object') {
+      return null;
+    }
+
+    const kind = `${config.kind || ''}`.trim();
+    const payload = config.payload && typeof config.payload === 'object'
+      ? config.payload
+      : {};
+    if (!kind) {
+      return null;
+    }
+
+    return {
+      kind,
+      payload,
+      title: `${config.title || fallbackTitle}`
+    };
+  }
+
+  function graphConfigFromWidget(widget, fallbackTitle = 'Graph') {
+    if (!(widget instanceof HTMLElement)) {
+      return null;
+    }
+
+    return normalizeGraphConfig({
+      kind: widget.dataset.graphKind || 'bar',
+      payload: parseJsonObject(widget.dataset.graphPayload, {}),
+      title: widget.dataset.graphTitle || fallbackTitle
+    }, fallbackTitle);
+  }
+
+  function fallbackGraphConfig(card, cardIndex, metadata, fallbackTitle) {
+    const graphKinds = ['bar', 'pie', 'pointcloud'];
+    const kind = graphKinds[cardIndex % graphKinds.length];
+    const tags = Array.isArray(metadata?.tags) ? metadata.tags : [];
+    const checkpoints = Array.isArray(metadata?.checkpoints) ? metadata.checkpoints : [];
+    const ownerCount = metadata?.owner && typeof metadata.owner === 'object'
+      ? Object.keys(metadata.owner).length
+      : 1;
+    const statusLength = `${metadata?.status || ''}`.trim().length || 3;
+    const priorityLength = `${metadata?.priority || ''}`.trim().length || 2;
+
+    if (kind === 'pie') {
+      return normalizeGraphConfig({
+        kind,
+        title: `${fallbackTitle} split`,
+        payload: {
+          segments: [
+            { label: 'Status', value: Math.max(1, statusLength), color: '#5fd0ff' },
+            { label: 'Priority', value: Math.max(1, priorityLength), color: '#ffbe56' },
+            { label: 'Owners', value: Math.max(1, ownerCount), color: '#b990ff' }
+          ]
+        }
+      }, fallbackTitle);
+    }
+
+    if (kind === 'pointcloud') {
+      const values = (checkpoints.length > 0 ? checkpoints : tags).slice(0, 5);
+      return normalizeGraphConfig({
+        kind,
+        title: `${fallbackTitle} spread`,
+        payload: {
+          points: values.map((value, index) => ({
+            label: `${value || `Point ${index + 1}`}`,
+            x: 14 + index * 17,
+            y: 20 + ((index * 23) % 58),
+            r: 3 + (index % 3),
+            color: ['#5fd0ff', '#81d97a', '#ffbe56', '#b990ff', '#ff7c6b'][index % 5]
+          }))
+        }
+      }, fallbackTitle);
+    }
+
+    return normalizeGraphConfig({
+      kind: 'bar',
+      title: `${fallbackTitle} load`,
+      payload: {
+        series: [
+          { label: 'Tags', value: Math.max(1, tags.length), color: '#5fd0ff' },
+          { label: 'Flow', value: Math.max(1, checkpoints.length), color: '#81d97a' },
+          { label: 'Owners', value: Math.max(1, ownerCount), color: '#ffbe56' }
+        ]
+      }
+    }, fallbackTitle);
+  }
+
+  function cardGraphConfig(card, cardIndex) {
+    const fallbackTitle = resolveCardName(
+      card,
+      card?.querySelector('.mod-data-main') || document.createElement('div'),
+      parseCardMetadata(card, cardIndex),
+      cardIndex
+    );
+    const explicitConfig = normalizeGraphConfig(parseJsonObject(card?.dataset?.cardGraph, {}), fallbackTitle);
+    const organizerConfig = normalizeGraphConfig(parseJsonObject(card?.dataset?.organizerVisual, {}), fallbackTitle);
+    let config = card?.dataset?.cardGraphExplicit === 'true'
+      ? explicitConfig
+      : organizerConfig || explicitConfig;
+    if (!config) {
+      config = graphConfigFromWidget(
+        card?.querySelector('.mod-card-graph-layer [data-graph-widget], .mod-preview [data-graph-widget]'),
+        fallbackTitle
+      );
+    }
+    if (!config) {
+      config = fallbackGraphConfig(card, cardIndex, parseCardMetadata(card, cardIndex), fallbackTitle);
+    }
+
+    if (!config) {
+      return null;
+    }
+
+    return config;
+  }
+
+  function buildCardTooltipGraph(config) {
+    const host = document.createElement('div');
+    host.className = 'mod-graph-widget mod-card-tooltip-graph';
+    host.dataset.graphKind = config.kind;
+    host.dataset.graphTitle = config.title;
+    host.dataset.graphPayload = JSON.stringify(config.payload || {});
+    const renderer = window.HestiaGraphWidgets?.renderWidget;
+    if (typeof renderer === 'function') {
+      host.appendChild(renderer(host, {
+        display: 'tooltip',
+        width: 280,
+        height: 168
+      }));
+    }
+    return host;
+  }
+
+  function buildDataNameTooltip(card) {
+    const tooltip = ensureDataNameTooltip();
+    const cardIndex = cardIndexInList(card);
+    const main = card.querySelector('.mod-data-main');
+    const config = cardGraphConfig(card, cardIndex);
+    const slides = [];
+
+    tooltip.innerHTML = '';
+    tooltip.classList.remove('is-pinned', 'is-pin-pending');
+    tooltip.dataset.slideIndex = '0';
+
+    const progress = document.createElement('div');
+    progress.className = 'mod-large-tooltip-progress';
+
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'mod-large-tooltip-close';
+    close.setAttribute('aria-label', 'Close tooltip');
+    close.textContent = 'x';
+    close.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      hideDataNameTooltip(true);
+    });
+
+    const stack = document.createElement('div');
+    stack.className = 'mod-card-tooltip-stack';
+
+    const header = document.createElement('div');
+    header.className = 'mod-card-tooltip-header';
+    header.innerHTML = `
+      <div>
+        <div class="mod-card-tooltip-title">${resolveCardName(card, main || document.createElement('div'), parseCardMetadata(card, cardIndex), cardIndex)}</div>
+        <div class="mod-card-tooltip-subtitle">Info and graph carousel</div>
+      </div>
+    `;
+
+    const stage = document.createElement('div');
+    stage.className = 'mod-card-tooltip-stage';
+
+    if (main) {
+      const infoSlide = document.createElement('section');
+      const clone = main.cloneNode(true);
+      infoSlide.className = 'mod-card-tooltip-slide mod-card-tooltip-info';
+      infoSlide.dataset.cardTooltipSlide = 'info';
+      clone.querySelector('.mod-card-graph-slot')?.remove();
+      infoSlide.appendChild(clone);
+      slides.push(infoSlide);
+      stage.appendChild(infoSlide);
+    }
+
+    if (config) {
+      const graphSlide = document.createElement('section');
+      graphSlide.className = 'mod-card-tooltip-slide mod-card-tooltip-graph-wrap';
+      graphSlide.dataset.cardTooltipSlide = 'graph';
+      graphSlide.appendChild(buildCardTooltipGraph(config));
+      slides.push(graphSlide);
+      stage.appendChild(graphSlide);
+    }
+
+    const dots = document.createElement('div');
+    dots.className = 'mod-card-tooltip-dots';
+    slides.forEach((slide, index) => {
+      const dot = document.createElement('span');
+      dot.className = 'mod-card-tooltip-dot';
+      dot.dataset.cardTooltipDot = `${index}`;
+      dots.appendChild(dot);
+    });
+
+    stack.appendChild(header);
+    stack.appendChild(stage);
+    if (slides.length > 1) {
+      stack.appendChild(dots);
+    }
+
+    tooltip.appendChild(progress);
+    tooltip.appendChild(close);
+    tooltip.appendChild(stack);
+    tooltip.hidden = false;
+    activeDataNameCard = card;
+    setDataNameTooltipSlide(0);
+    startDataNameTooltipRotation();
+    positionDataNameTooltip(card);
+  }
+
   function showDataNameTooltip(card) {
     if (card.dataset.dataNameFloat !== 'true') {
       return;
     }
 
-    const main = card.querySelector('.mod-data-main');
-    if (!main) {
+    if (pinnedDataNameCard && pinnedDataNameCard !== card) {
       return;
     }
 
-    const tooltip = ensureDataNameTooltip();
-    tooltip.innerHTML = '';
-    tooltip.appendChild(main.cloneNode(true));
-    tooltip.hidden = false;
-    activeDataNameCard = card;
-    positionDataNameTooltip(card);
+    if (pinnedDataNameCard === card && dataNameTooltip && dataNameTooltip.hidden !== true) {
+      positionDataNameTooltip(card);
+      return;
+    }
+
+    buildDataNameTooltip(card);
   }
 
   function hideDataNameTooltip(force) {
-    if (!force && activeDataNameCard?.matches(':hover, :focus-within')) {
+    if (!force && (activeDataNameCard?.matches(':hover, :focus-within') || pinnedDataNameCard)) {
       return;
     }
 
+    clearDataNameTooltipTimers();
     if (!dataNameTooltip) {
       activeDataNameCard = null;
+      pinnedDataNameCard = null;
       return;
     }
 
     const tooltip = dataNameTooltip;
     tooltip.hidden = true;
     tooltip.innerHTML = '';
+    tooltip.classList.remove('is-pinned', 'is-pin-pending');
     activeDataNameCard = null;
+    pinnedDataNameCard = null;
   }
 
   function fillTagTooltip(carousel, scrollable) {
@@ -272,10 +616,25 @@
     const pills = carouselPillsOf(carousel);
     tooltip.innerHTML = '';
     tooltip.classList.toggle('is-pinned', scrollable);
+    tooltip.classList.remove('is-pin-pending');
+
+    const progress = document.createElement('div');
+    progress.className = 'mod-large-tooltip-progress';
+
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'mod-large-tooltip-close';
+    close.setAttribute('aria-label', 'Close tooltip');
+    close.textContent = 'x';
+    close.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      hideTagTooltip(true);
+    });
+
     const fieldTitle = document.createElement('div');
     fieldTitle.className = 'mod-tag-tooltip-title';
     fieldTitle.textContent = carousel.dataset.metaField || 'metadata';
-    tooltip.appendChild(fieldTitle);
 
     const list = document.createElement('div');
     list.className = 'mod-tag-tooltip-list';
@@ -287,6 +646,9 @@
       list.appendChild(row);
     });
 
+    tooltip.appendChild(progress);
+    tooltip.appendChild(close);
+    tooltip.appendChild(fieldTitle);
     tooltip.appendChild(list);
   }
 
@@ -301,9 +663,13 @@
     if (!force && pinnedCarousel) {
       return;
     }
+    if (tagTooltipPinTimer) {
+      window.clearTimeout(tagTooltipPinTimer);
+      tagTooltipPinTimer = 0;
+    }
     const tooltip = ensureTagTooltip();
     tooltip.hidden = true;
-    tooltip.classList.remove('is-pinned');
+    tooltip.classList.remove('is-pinned', 'is-pin-pending');
     tooltip.innerHTML = '';
     if (force) {
       if (pinnedCarousel) {
@@ -317,6 +683,21 @@
     const tooltip = ensureMetaTooltip();
     tooltip.innerHTML = '';
     tooltip.classList.toggle('is-pinned', scrollable);
+    tooltip.classList.remove('is-pin-pending');
+
+    const progress = document.createElement('div');
+    progress.className = 'mod-large-tooltip-progress';
+
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'mod-large-tooltip-close';
+    close.setAttribute('aria-label', 'Close tooltip');
+    close.textContent = 'x';
+    close.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      hideMetaTooltip(true);
+    });
 
     const name = document.createElement('div');
     name.className = 'mod-meta-tooltip-name';
@@ -326,6 +707,8 @@
     text.className = 'mod-meta-tooltip-value';
     text.textContent = value;
 
+    tooltip.appendChild(progress);
+    tooltip.appendChild(close);
     tooltip.appendChild(name);
     tooltip.appendChild(text);
   }
@@ -343,9 +726,13 @@
     if (!force && pinnedMetaField) {
       return;
     }
+    if (metaTooltipPinTimer) {
+      window.clearTimeout(metaTooltipPinTimer);
+      metaTooltipPinTimer = 0;
+    }
     const tooltip = ensureMetaTooltip();
     tooltip.hidden = true;
-    tooltip.classList.remove('is-pinned');
+    tooltip.classList.remove('is-pinned', 'is-pin-pending');
     tooltip.innerHTML = '';
     if (force) {
       if (pinnedMetaField) {
@@ -366,16 +753,22 @@
         return;
       }
       showMetaTooltip(fieldEl, event, pinnedMetaField === fieldEl);
+      beginMetaTooltipPin(fieldEl, event);
     });
 
     fieldEl.addEventListener('mousemove', event => {
       if (pinnedMetaField && pinnedMetaField !== fieldEl) {
         return;
       }
-      showMetaTooltip(fieldEl, event, pinnedMetaField === fieldEl);
+      if (pinnedMetaField === fieldEl) {
+        showMetaTooltip(fieldEl, event, true);
+        return;
+      }
+      positionMetaTooltip(event.clientX, event.clientY);
     });
 
     fieldEl.addEventListener('mouseleave', () => {
+      cancelMetaTooltipPin();
       if (pinnedMetaField === fieldEl) {
         return;
       }
@@ -494,6 +887,62 @@
       return mode;
     default:
       return 'extended';
+    }
+  }
+
+  function beginTagTooltipPin(carousel, event) {
+    const tooltip = ensureTagTooltip();
+    if (pinnedCarousel || tooltip.hidden || tagTooltipPinTimer) {
+      return;
+    }
+
+    tooltip.classList.add('is-pin-pending');
+    tagTooltipPinTimer = window.setTimeout(() => {
+      tagTooltipPinTimer = 0;
+      if (pinnedCarousel) {
+        return;
+      }
+      pinnedCarousel = carousel;
+      carousel.classList.add('is-meta-active');
+      showTagTooltip(carousel, event, true);
+    }, 1000);
+  }
+
+  function cancelTagTooltipPin() {
+    if (tagTooltipPinTimer) {
+      window.clearTimeout(tagTooltipPinTimer);
+      tagTooltipPinTimer = 0;
+    }
+    if (tagTooltip) {
+      tagTooltip.classList.remove('is-pin-pending');
+    }
+  }
+
+  function beginMetaTooltipPin(fieldEl, event) {
+    const tooltip = ensureMetaTooltip();
+    if (pinnedMetaField || tooltip.hidden || metaTooltipPinTimer) {
+      return;
+    }
+
+    tooltip.classList.add('is-pin-pending');
+    metaTooltipPinTimer = window.setTimeout(() => {
+      metaTooltipPinTimer = 0;
+      if (pinnedMetaField) {
+        return;
+      }
+      pinnedMetaField = fieldEl;
+      fieldEl.classList.add('is-meta-active');
+      showMetaTooltip(fieldEl, event, true);
+    }, 1000);
+  }
+
+  function cancelMetaTooltipPin() {
+    if (metaTooltipPinTimer) {
+      window.clearTimeout(metaTooltipPinTimer);
+      metaTooltipPinTimer = 0;
+    }
+    if (metaTooltip) {
+      metaTooltip.classList.remove('is-pin-pending');
     }
   }
 
@@ -658,9 +1107,14 @@
 
     card.addEventListener('mouseenter', () => {
       showDataNameTooltip(card);
+      beginDataNameTooltipPin(card);
     });
 
     card.addEventListener('mouseleave', () => {
+      cancelDataNameTooltipPin();
+      if (pinnedDataNameCard === card) {
+        return;
+      }
       if (activeDataNameCard === card) {
         hideDataNameTooltip(true);
       }
@@ -672,6 +1126,9 @@
 
     card.addEventListener('focusout', () => {
       window.requestAnimationFrame(() => {
+        if (pinnedDataNameCard === card) {
+          return;
+        }
         if (activeDataNameCard === card && !card.contains(document.activeElement)) {
           hideDataNameTooltip(true);
         }
@@ -714,7 +1171,7 @@
 
       card.classList.toggle('is-name-collapsed', collapsed);
       card.classList.toggle('is-name-extended', !collapsed);
-      card.dataset.dataNameFloat = view === 'details' && mode === 'hover' && collapsed ? 'true' : 'false';
+      card.dataset.dataNameFloat = collapsed && view !== 'list' ? 'true' : 'false';
       bindDataNameHover(card);
     });
 
@@ -1517,16 +1974,22 @@
         return;
       }
       showTagTooltip(carousel, event, pinnedCarousel === carousel);
+      beginTagTooltipPin(carousel, event);
     });
 
     carousel.addEventListener('mousemove', event => {
       if (pinnedCarousel && pinnedCarousel !== carousel) {
         return;
       }
-      showTagTooltip(carousel, event, pinnedCarousel === carousel);
+      if (pinnedCarousel === carousel) {
+        showTagTooltip(carousel, event, true);
+        return;
+      }
+      positionTagTooltip(event.clientX, event.clientY);
     });
 
     carousel.addEventListener('mouseleave', () => {
+      cancelTagTooltipPin();
       if (pinnedCarousel === carousel) {
         return;
       }
@@ -2009,6 +2472,39 @@
     return item;
   }
 
+  function createCardGraphSlot(card, cardIndex) {
+    const config = cardGraphConfig(card, cardIndex);
+    if (!config) {
+      return null;
+    }
+
+    const slot = document.createElement('div');
+    const widget = document.createElement('div');
+    slot.className = 'mod-card-graph-slot';
+    slot.dataset.metaField = 'graph';
+    slot.dataset.metaValue = config.title;
+    slot.setAttribute('aria-label', `${config.title} graph preview`);
+
+    widget.className = 'mod-graph-widget mod-card-graph-widget';
+    widget.dataset.graphWidget = '';
+    widget.dataset.graphDisplay = 'background';
+    widget.dataset.graphTooltip = 'false';
+    widget.dataset.graphKind = config.kind;
+    widget.dataset.graphTitle = config.title;
+    widget.dataset.graphPayload = JSON.stringify(config.payload || {});
+    slot.appendChild(widget);
+    return slot;
+  }
+
+  function captureLegacyCardGraph(card, cardIndex) {
+    const config = cardGraphConfig(card, cardIndex);
+    const layer = card.querySelector('.mod-card-graph-layer');
+    if (layer) {
+      layer.innerHTML = '';
+    }
+    return config;
+  }
+
   function stopOverflowTicker(valueTrack) {
     const cycle = valueTrack._overflowCycle;
     if (cycle) {
@@ -2386,6 +2882,7 @@
         return;
       }
       const metadata = parseCardMetadata(card, i);
+      captureLegacyCardGraph(card, i);
       const { wrap, row } = ensureSelectedMetaContainer(main);
       row.querySelectorAll('.mod-meta-value').forEach(stopOverflowTicker);
       row.innerHTML = '';
@@ -2410,6 +2907,11 @@
       if (showEdited) {
         const edited = metadata.lastEdited || FAKE_META[i % FAKE_META.length].edited;
         row.appendChild(createEditedMetaItem(edited));
+      }
+
+      const graphSlot = createCardGraphSlot(card, i);
+      if (graphSlot) {
+        row.appendChild(graphSlot);
       }
 
       const orderedFields = [...state.schema.entries()].sort(([a], [b]) => {
@@ -2463,6 +2965,7 @@
     });
 
     requestAnimationFrame(() => {
+      window.HestiaGraphWidgets?.init?.(dataList);
       syncDataNameModePresentation(dataList);
       updateMetadataPagers(dataList);
       syncMetadataOverflow(dataList);

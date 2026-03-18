@@ -1001,33 +1001,12 @@ body.mod-edit-ui-off .mod-view-switcher {
 }
 
 .mod-data-list[data-view="cards"][data-name-mode="hover"] .mod-data-card.is-name-collapsed .mod-data-main {
-  display: flex;
-  position: absolute;
-  top: calc(100% - 1px);
-  left: -1px;
-  z-index: 20;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  min-width: calc(100% + 2px);
-  padding: 8px 10px;
-  border: 1px solid var(--mod-line);
-  background: linear-gradient(135deg, rgba(185, 144, 255, 0.14), rgba(255, 255, 255, 0.96));
-  width: max-content;
-  max-width: min(320px, calc(100vw - 24px));
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 180ms ease;
+  display: none;
 }
 
 .mod-data-list[data-view="cards"][data-name-mode="hover"] .mod-data-card.is-name-collapsed:hover,
 .mod-data-list[data-view="cards"][data-name-mode="hover"] .mod-data-card.is-name-collapsed:focus-within {
   z-index: 8;
-}
-
-.mod-data-list[data-view="cards"][data-name-mode="hover"] .mod-data-card.is-name-collapsed:hover .mod-data-main,
-.mod-data-list[data-view="cards"][data-name-mode="hover"] .mod-data-card.is-name-collapsed:focus-within .mod-data-main {
-  opacity: 1;
 }
 
 .mod-data-list[data-view="cards"] .mod-data-main h3 {
@@ -1276,6 +1255,22 @@ body.mod-edit-ui-off .mod-view-switcher {
   padding: 0;
 }
 
+.mod-card-graph-slot {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  border: 1px solid rgba(31, 46, 78, 0.16);
+  background: linear-gradient(135deg, rgba(238, 244, 252, 0.96), rgba(255, 255, 255, 0.98));
+  overflow: hidden;
+}
+
+.mod-card-graph-slot .mod-graph-widget,
+.mod-card-graph-slot .mod-graph-widget-shell {
+  width: 100%;
+  height: 100%;
+}
+
 .mod-selected-meta-row .mod-meta-value {
   display: inline-block;
   min-width: max-content;
@@ -1360,6 +1355,10 @@ body.mod-edit-ui-off .mod-view-switcher {
   overflow: hidden;
   max-height: 92px;
   padding-right: 0;
+}
+
+.mod-data-list[data-view="cards"] .mod-card-graph-slot {
+  min-height: 54px;
 }
 
 .mod-data-list[data-view="cards"] .mod-selected-meta-wrap {
@@ -1479,6 +1478,15 @@ body.mod-edit-ui-off .mod-view-switcher {
   overflow-y: auto;
 }
 
+.mod-tag-tooltip.is-pin-pending .mod-large-tooltip-progress {
+  transform: scaleX(1);
+}
+
+.mod-tag-tooltip.is-pinned .mod-large-tooltip-close {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .mod-tag-tooltip-list {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -1523,6 +1531,15 @@ body.mod-edit-ui-off .mod-view-switcher {
   pointer-events: auto;
 }
 
+.mod-meta-tooltip.is-pin-pending .mod-large-tooltip-progress {
+  transform: scaleX(1);
+}
+
+.mod-meta-tooltip.is-pinned .mod-large-tooltip-close {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .mod-meta-tooltip-name {
   margin: 0 0 4px;
   color: var(--mod-muted);
@@ -1541,27 +1558,149 @@ body.mod-edit-ui-off .mod-view-switcher {
 .mod-data-name-tooltip {
   position: fixed;
   z-index: 2100;
-  min-height: var(--mod-data-preview-size);
+  min-width: min(300px, calc(100vw - 24px));
   max-width: min(360px, calc(100vw - 24px));
-  padding: 0 12px;
+  min-height: 160px;
+  padding: 12px;
   border: 1px solid var(--mod-line);
   background: linear-gradient(135deg, rgba(185, 144, 255, 0.14), rgba(255, 255, 255, 0.96));
   box-shadow: 0 10px 24px rgba(15, 24, 34, 0.18);
   pointer-events: none;
+  overflow: hidden;
+  isolation: isolate;
 }
-.mod-data-name-tooltip .mod-data-main {
+
+.mod-data-name-tooltip.is-pinned {
+  pointer-events: auto;
+}
+
+.mod-large-tooltip-progress {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(90deg, rgba(142, 148, 160, 0.08), rgba(142, 148, 160, 0.26));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 1000ms linear;
+  pointer-events: none;
+}
+
+.mod-data-name-tooltip.is-pin-pending .mod-large-tooltip-progress {
+  transform: scaleX(1);
+}
+
+.mod-large-tooltip-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 3;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid rgba(31, 46, 78, 0.18);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--mod-text);
+  font: inherit;
+  font-size: 0.72rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mod-data-name-tooltip.is-pinned .mod-large-tooltip-close {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mod-card-tooltip-stack {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 10px;
+}
+
+.mod-card-tooltip-header {
   display: flex;
-  align-items: center;
-  min-height: var(--mod-data-preview-size);
-  gap: 12px;
-  white-space: nowrap;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px;
+  padding-right: 16px;
 }
-.mod-data-name-tooltip .mod-data-main h3 {
+
+.mod-card-tooltip-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.mod-card-tooltip-subtitle {
+  color: var(--mod-muted);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mod-card-tooltip-stage {
+  position: relative;
+  min-height: 168px;
+}
+
+.mod-card-tooltip-slide {
+  display: none;
+}
+
+.mod-card-tooltip-slide.is-active {
+  display: grid;
+}
+
+.mod-card-tooltip-info .mod-data-main {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mod-card-tooltip-info .mod-data-main h3 {
   display: block;
   margin: 0;
 }
-.mod-data-name-tooltip .mod-data-main p {
-  display: none;
+
+.mod-card-tooltip-info .mod-data-main p {
+  display: block;
+  margin: 0;
+  white-space: normal;
+}
+
+.mod-card-tooltip-info .mod-selected-meta-wrap {
+  width: 100%;
+}
+
+.mod-card-tooltip-info .mod-selected-meta-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: row;
+  align-items: stretch;
+}
+
+.mod-card-tooltip-info .mod-meta-scroll-toggle {
+  display: none !important;
+}
+
+.mod-card-tooltip-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.mod-card-tooltip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(31, 46, 78, 0.18);
+}
+
+.mod-card-tooltip-dot.is-active {
+  background: rgba(95, 208, 255, 0.72);
 }
 
 /* hide original meta-row when meta view is dates */

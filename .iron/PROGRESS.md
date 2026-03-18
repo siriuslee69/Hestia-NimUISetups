@@ -1,7 +1,7 @@
-Commit Message: add modular graph widgets and frame collapse modes
+Commit Message: refine modular card graph slots and pinned tooltips
 
 0. Current commit message
-- add modular graph widgets and frame collapse modes
+- refine modular card graph slots and pinned tooltips
 
 1. Features to implement (total)
 - [x] repository skeleton and nimble tasks
@@ -22,6 +22,9 @@ Commit Message: add modular graph widgets and frame collapse modes
 - added shared widget helpers plus 8 standalone HTML layout examples in `layouts/`
 - added shared modular adaptive menu helpers plus vertical and horizontal demos in `modular/`
 - added `widgets/gallery/` with a multi-column menu study page and a first floating-stones menu concept
+- moved integrated card graphs into dedicated metadata/tag slots instead of card backgrounds
+- added combined rotating card tooltips that cycle between card info and graph previews
+- added hold-to-pin behavior with progress-fill feedback and outside-click / close-button dismissal for larger modular tooltips
 
 3. Features in progress
 - define follow-up conversion layers for HTML/CSS/JS export and OwlKettle translation
@@ -30,7 +33,7 @@ Commit Message: add modular graph widgets and frame collapse modes
 - connect the standalone graph widget to live cross-module selection rather than preset datasets
 
 Last big change or problem encountered
-- the next widget pass needed to stay reusable across cards, graph nodes, and standalone modules without creating separate rendering code paths.
+- card-level graph previews and card tooltips needed to coexist without fighting hover regions, and the shared graph resolver was keeping stale fallback graph state around for some cards.
 
 Fix attempt and outcome
-- added a shared graph-widget renderer for bar, pie, and point-cloud charts, reused it in cards/nodes/organizer items plus a standalone module, and added shared frame presentation modes that persist through workspace save/load.
+- moved integrated card graphs into their own metadata slot, replaced separate card/graph hover behavior with one rotating tooltip, added hold-to-pin handling for larger tooltips, and removed the stale graph-config persistence path so card previews follow live organizer/data state again.

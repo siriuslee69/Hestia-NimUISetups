@@ -81,26 +81,41 @@ function organizerBoards(root = document) {
     card.dataset.organizerVisual = JSON.stringify(state || {});
   }
 
-  function organizerGraphLayer(card) {
-    let layer = card.querySelector('.mod-card-graph-layer');
-    if (layer) {
-      return layer;
+  function organizerGraphSlot(card) {
+    const main = card.querySelector('.mod-data-main');
+    const fieldRow = card.querySelector('[data-organizer-fields]');
+    if (!main) {
+      return null;
     }
 
-    layer = document.createElement('div');
-    layer.className = 'mod-card-graph-layer';
-    card.prepend(layer);
-    return layer;
+    let slot = main.querySelector('.mod-card-graph-slot');
+    if (slot) {
+      return slot;
+    }
+
+    slot = document.createElement('div');
+    slot.className = 'mod-card-graph-slot mod-organizer-graph-slot';
+    if (fieldRow) {
+      fieldRow.before(slot);
+      return slot;
+    }
+
+    main.appendChild(slot);
+    return slot;
   }
 
-  function renderOrganizerBackground(card) {
-    const layer = organizerGraphLayer(card);
+  function renderOrganizerGraphSlot(card) {
+    const slot = organizerGraphSlot(card);
     const visual = organizerVisualState(card);
-    if (!layer) {
+    const legacyLayer = card.querySelector('.mod-card-graph-layer');
+    if (legacyLayer) {
+      legacyLayer.innerHTML = '';
+    }
+    if (!slot) {
       return;
     }
 
-    layer.innerHTML = '';
+    slot.innerHTML = '';
     if (!visual?.kind) {
       return;
     }
@@ -109,11 +124,11 @@ function organizerBoards(root = document) {
     widget.className = 'mod-graph-widget mod-card-graph-widget';
     widget.dataset.graphWidget = '';
     widget.dataset.graphDisplay = 'background';
-    widget.dataset.graphTooltip = 'true';
+    widget.dataset.graphTooltip = 'false';
     widget.dataset.graphKind = `${visual.kind}`;
     widget.dataset.graphTitle = `${visual.title || 'Organizer graph'}`;
     widget.dataset.graphPayload = JSON.stringify(visual.payload || {});
-    layer.appendChild(widget);
+    slot.appendChild(widget);
   }
 
   function organizerPill(text, active = true) {
@@ -836,7 +851,7 @@ function organizerBoards(root = document) {
         bindOrganizerList(list, board);
       });
       organizerCards(board).forEach(card => {
-        renderOrganizerBackground(card);
+        renderOrganizerGraphSlot(card);
         bindOrganizerCard(card, board);
       });
       updateOrganizerLaneCounts(board);
@@ -940,7 +955,7 @@ function organizerBoards(root = document) {
     article.appendChild(graphLayer);
     article.appendChild(preview);
     article.appendChild(main);
-    renderOrganizerBackground(article);
+    renderOrganizerGraphSlot(article);
     return article;
   }
 
