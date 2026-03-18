@@ -774,6 +774,78 @@
     return controls;
   }
 
+  function numericGraphValues(node) {
+    const values = Object.values(node.values || {})
+      .map(value => Number(value))
+      .filter(value => Number.isFinite(value));
+    return values.length > 0 ? values : [node.x / 10, node.y / 10, values.length + 4];
+  }
+
+  function textPointCloud(text) {
+    return [...`${text || ''}`]
+      .slice(0, 10)
+      .map((char, index) => ({
+        label: char,
+        x: 12 + (index * 9) % 72,
+        y: 18 + (char.charCodeAt(0) % 58),
+        r: 2 + (char.charCodeAt(0) % 4),
+        color: `hsl(${(char.charCodeAt(0) * 7) % 360} 74% 62%)`
+      }));
+  }
+
+  function graphWidgetForNode(node, template) {
+    if (template.kind === 'boolean' || template.kind === 'compare' || template.kind === 'equals') {
+      const enabled = node.values?.value === true;
+      return {
+        kind: 'pie',
+        title: `${template.label} state`,
+        payload: {
+          segments: [
+            { label: 'Active', value: enabled ? 7 : 2, color: '#81d97a' },
+            { label: 'Inactive', value: enabled ? 2 : 7, color: '#ff7c6b' }
+          ]
+        }
+      };
+    }
+
+    if (template.kind === 'string' || template.kind === 'url' || template.kind === 'concat' || template.kind === 'log') {
+      const text = Object.values(node.values || {}).join(' ');
+      return {
+        kind: 'pointcloud',
+        title: `${template.label} signal`,
+        payload: {
+          points: textPointCloud(text)
+        }
+      };
+    }
+
+    const values = numericGraphValues(node);
+    return {
+      kind: 'bar',
+      title: `${template.label} values`,
+      payload: {
+        series: values.slice(0, 4).map((value, index) => ({
+          label: `S${index + 1}`,
+          value,
+          color: ['#5fd0ff', '#81d97a', '#ffbe56', '#b990ff'][index % 4]
+        }))
+      }
+    };
+  }
+
+  function buildGraphNodeWidget(node, template) {
+    const visual = graphWidgetForNode(node, template);
+    const widget = document.createElement('div');
+    widget.className = 'mod-graph-widget mod-graph-node-widget';
+    widget.dataset.graphWidget = '';
+    widget.dataset.graphDisplay = 'background';
+    widget.dataset.graphTooltip = 'true';
+    widget.dataset.graphKind = visual.kind;
+    widget.dataset.graphTitle = visual.title;
+    widget.dataset.graphPayload = JSON.stringify(visual.payload);
+    return widget;
+  }
+
   function renderGraphModule(module) {
     const state = ensureGraphState(module);
     const { surface, wires } = graphCanvasParts(module);
@@ -808,6 +880,7 @@
 
       const body = document.createElement('div');
       body.className = 'mod-graph-node-body';
+      body.appendChild(buildGraphNodeWidget(node, template));
 
       const inputs = document.createElement('div');
       inputs.className = 'mod-graph-node-column';
@@ -900,6 +973,7 @@
     });
 
     renderGraphConnections(module);
+    window.HestiaGraphWidgets?.init?.(surface);
   }
 
   function addGraphNode(module, kind) {
@@ -1001,8 +1075,66 @@
     });
   }
 
+  function cloneGraphData(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function serializeGraphFrame(frame) {
+    const module = frame?.querySelector('[data-graph-module]');
+    if (!module) {
+      return {};
+    }
+
+    const state = ensureGraphState(module);
+    return {
+      searchQuery: module.querySelector('[data-graph-search-input]')?.value || '',
+      searchOpen: module.querySelector('[data-graph-search-menu]')?.hidden === false,
+      graph: {
+        nodes: cloneGraphData(state.nodes || []),
+        connections: cloneGraphData(state.connections || []),
+        spawnCount: Number(state.spawnCount || '0') || 0
+      }
+    };
+  }
+
+  function restoreGraphFrame(frame, state, options = {}) {
+    if (options.phase === 'after-init') {
+      return;
+    }
+
+    const module = frame?.querySelector('[data-graph-module]');
+    if (!module) {
+      return;
+    }
+
+    const searchInput = module.querySelector('[data-graph-search-input]');
+    const searchMenu = module.querySelector('[data-graph-search-menu]');
+    if (searchInput) {
+      searchInput.value = `${state?.searchQuery || ''}`;
+    }
+    if (searchMenu) {
+      searchMenu.hidden = state?.searchOpen !== true;
+    }
+
+    module._graphState = {
+      nodes: cloneGraphData(state?.graph?.nodes || []),
+      connections: cloneGraphData(state?.graph?.connections || []),
+      pendingSocket: null,
+      pendingPoint: null,
+      nodeElements: new Map(),
+      socketElements: new Map(),
+      spawnCount: Number(state?.graph?.spawnCount || '0') || 0
+    };
+  }
+
   core.modules.graph = {
     init: initGraphModules,
+    serializeFrame(frame) {
+      return serializeGraphFrame(frame);
+    },
+    restoreFrame(frame, state, options = {}) {
+      restoreGraphFrame(frame, state, options);
+    },
     cleanupFrame(frame) {
       frame?.querySelectorAll?.('[data-graph-module]').forEach(module => {
         module._graphState = null;

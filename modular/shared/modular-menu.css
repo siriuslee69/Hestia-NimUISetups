@@ -585,6 +585,92 @@ input {
   background: #b990ff;
 }
 
+.mod-frame-mode-toggle {
+  top: 7px;
+  right: 7px;
+  left: auto;
+  bottom: auto;
+  z-index: 1002;
+}
+
+.mod-frame-mode-rail {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 8px;
+  z-index: 1001;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: calc(var(--mod-frame-collapsed-width, 54px) - 16px);
+  border: 1px solid rgba(31, 46, 78, 0.16);
+  background: linear-gradient(180deg, rgba(245, 248, 255, 0.96), rgba(232, 239, 248, 0.92));
+  color: var(--mod-text);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  pointer-events: none;
+}
+
+.mod-frame-mode-symbol {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(31, 46, 78, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+.mod-frame-mode-name {
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+[data-grid-box][data-module-kind] {
+  --mod-frame-collapsed-width: 54px;
+  transition: width 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+[data-grid-box][data-module-kind][data-module-mode="collapsed"],
+[data-grid-box][data-module-kind][data-module-mode="hover"] {
+  width: var(--mod-frame-collapsed-width) !important;
+  min-width: var(--mod-frame-collapsed-width);
+  overflow: hidden;
+}
+
+[data-grid-box][data-module-kind][data-module-mode="collapsed"] > :not(.mod-floating-handle):not(.mod-resize-handle):not(.mod-orientation-handle):not(.mod-frame-mode-toggle):not(.mod-frame-mode-rail),
+[data-grid-box][data-module-kind][data-module-mode="hover"] > :not(.mod-floating-handle):not(.mod-resize-handle):not(.mod-orientation-handle):not(.mod-frame-mode-toggle):not(.mod-frame-mode-rail) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+[data-grid-box][data-module-kind][data-module-mode="collapsed"] .mod-frame-mode-rail,
+[data-grid-box][data-module-kind][data-module-mode="hover"] .mod-frame-mode-rail {
+  display: inline-flex;
+}
+
+[data-grid-box][data-module-kind][data-module-mode="hover"]:hover,
+[data-grid-box][data-module-kind][data-module-mode="hover"]:focus-within {
+  width: var(--mod-frame-expanded-width, 240px) !important;
+  overflow: visible;
+  z-index: 1000;
+}
+
+[data-grid-box][data-module-kind][data-module-mode="hover"]:hover .mod-frame-mode-rail,
+[data-grid-box][data-module-kind][data-module-mode="hover"]:focus-within .mod-frame-mode-rail {
+  display: none;
+}
+
+[data-grid-box][data-module-kind][data-module-mode="hover"]:hover > :not(.mod-floating-handle):not(.mod-resize-handle):not(.mod-orientation-handle):not(.mod-frame-mode-toggle):not(.mod-frame-mode-rail),
+[data-grid-box][data-module-kind][data-module-mode="hover"]:focus-within > :not(.mod-floating-handle):not(.mod-resize-handle):not(.mod-orientation-handle):not(.mod-frame-mode-toggle):not(.mod-frame-mode-rail) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .mod-mini-tooltip {
   position: fixed;
   z-index: 1200;

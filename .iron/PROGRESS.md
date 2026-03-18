@@ -1,7 +1,7 @@
-Commit Message: add modular adaptive menu demos and shared button system
+Commit Message: add modular graph widgets and frame collapse modes
 
 0. Current commit message
-- add modular adaptive menu demos and shared button system
+- add modular graph widgets and frame collapse modes
 
 1. Features to implement (total)
 - [x] repository skeleton and nimble tasks
@@ -24,11 +24,13 @@ Commit Message: add modular adaptive menu demos and shared button system
 - added `widgets/gallery/` with a multi-column menu study page and a first floating-stones menu concept
 
 3. Features in progress
-- expand the widgets gallery with additional menu behaviors beyond the first floating-stones interaction
+- define follow-up conversion layers for HTML/CSS/JS export and OwlKettle translation
+- recreate the modular modules against the saved JSON contract in OwlKettle
+- add the later hit-test/debugger tooling for HTML vs OwlKettle parity checks
+- connect the standalone graph widget to live cross-module selection rather than preset datasets
 
 Last big change or problem encountered
-- user requested a new `widgets/` gallery area with several long columns and a first creative floating-stones menu.
+- the next widget pass needed to stay reusable across cards, graph nodes, and standalone modules without creating separate rendering code paths.
 
 Fix attempt and outcome
-- added a new top-level `modular/` folder with shared adaptive menu CSS/JS plus vertical and horizontal demos using Art Of Creation symbols and drag-reordering.
-- added a new top-level `widgets/` folder with a gallery page that reuses the modular menu styling baseline and introduces a selectable floating-stones menu.
+- added a shared graph-widget renderer for bar, pie, and point-cloud charts, reused it in cards/nodes/organizer items plus a standalone module, and added shared frame presentation modes that persist through workspace save/load.

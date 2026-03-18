@@ -245,6 +245,14 @@ Rule: when a new recurring issue is found and fixed, add it here with the file p
   - explicitly set content-sized containers to `.expand: false` and reserve `.expand: true` only for the intended fill region.
   - re-check taskbar/search/card rows after any theme or layout refactor.
 
+14. Parked `GtkRevealer` windows open but do not seem to close
+- Symptom: a start menu or sidebar using a persistent top-level window animates open once, but after that it appears stuck or keeps blocking space even when the revealer child is collapsed.
+- Cause: `GtkRevealer` only hides its child; it does not unmap the native top-level window hosting that child.
+- Fix:
+  - if you keep a parked auxiliary window alive, bind the same open-state to both the revealer child and the top-level visibility.
+  - keep hidden parked windows on an empty GDK input region or equivalent click-through mode so they do not intercept clicks while still alive.
+  - reference repo: `Atlas-Taskbar`, where the working combination was `GtkRevealer` + parked window visibility + empty hidden input region.
+
 ## Upstream Backlog (GTK/Owlkettle/WebUI)
 
 Potential upstream reports to open when we have minimal repros:

@@ -487,6 +487,121 @@
     refreshLabel();
   }
 
+  function normalizeFrameMode(mode) {
+    switch (mode) {
+    case 'hover':
+    case 'collapsed':
+      return mode;
+    default:
+      return 'extended';
+    }
+  }
+
+  function nextFrameMode(mode) {
+    switch (normalizeFrameMode(mode)) {
+    case 'extended':
+      return 'hover';
+    case 'hover':
+      return 'collapsed';
+    default:
+      return 'extended';
+    }
+  }
+
+  function moduleFrameLabel(frame) {
+    const kind = frame.dataset.moduleKind || 'module';
+    const fromCore = window.HestiaVerticalCore?.workspace?.moduleLabel?.(kind);
+    if (fromCore) {
+      return fromCore;
+    }
+
+    return kind
+      .replace(/[-_]+/g, ' ')
+      .replace(/\b\w/g, char => char.toUpperCase());
+  }
+
+  function rememberFrameExpandedWidth(frame) {
+    const current = parseFloat(frame.style.width || '0') || frame.getBoundingClientRect().width || 0;
+    if (current > 72) {
+      frame.dataset.moduleExpandedWidth = `${Math.round(current)}px`;
+    }
+  }
+
+  function ensureFrameModeRail(frame) {
+    let rail = frame.querySelector(':scope > .mod-frame-mode-rail');
+    if (rail) {
+      return rail;
+    }
+
+    rail = document.createElement('div');
+    rail.className = 'mod-frame-mode-rail';
+    rail.innerHTML = `
+      <span class="mod-frame-mode-symbol"></span>
+      <span class="mod-frame-mode-name"></span>
+    `;
+    frame.appendChild(rail);
+    return rail;
+  }
+
+  function syncFrameModeRail(frame) {
+    const rail = ensureFrameModeRail(frame);
+    const name = moduleFrameLabel(frame);
+    rail.querySelector('.mod-frame-mode-symbol').textContent = name.charAt(0) || '+';
+    rail.querySelector('.mod-frame-mode-name').textContent = name;
+  }
+
+  function syncFrameMode(frame) {
+    if (!(frame instanceof HTMLElement) || !frame.matches('[data-grid-box][data-module-kind]')) {
+      return;
+    }
+
+    const mode = normalizeFrameMode(frame.dataset.moduleMode || 'extended');
+    if (!frame.dataset.moduleExpandedWidth) {
+      frame.dataset.moduleExpandedWidth = frame.style.width || `${Math.round(frame.getBoundingClientRect().width || 240)}px`;
+    }
+    if (mode === 'extended') {
+      rememberFrameExpandedWidth(frame);
+    }
+
+    frame.dataset.moduleMode = mode;
+    frame.style.setProperty('--mod-frame-expanded-width', frame.dataset.moduleExpandedWidth || frame.style.width || '240px');
+    syncFrameModeRail(frame);
+
+    const toggle = ensureFrameModeToggle(frame);
+    toggle.dataset.mode = mode;
+    toggle.title = modeText(mode);
+    toggle.setAttribute('aria-label', modeText(mode));
+  }
+
+  function ensureFrameModeToggle(frame) {
+    let toggle = frame.querySelector(':scope > .mod-frame-mode-toggle');
+    if (toggle) {
+      return toggle;
+    }
+
+    toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'mod-frame-mode-toggle mod-mode-toggle';
+    toggle.draggable = false;
+    frame.appendChild(toggle);
+
+    toggle.addEventListener('pointerdown', event => {
+      event.stopPropagation();
+    });
+
+    toggle.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      rememberFrameExpandedWidth(frame);
+      const mode = nextFrameMode(frame.dataset.moduleMode || 'extended');
+      frame.dataset.moduleMode = mode;
+      syncFrameMode(frame);
+      showModeTooltip(toggle, modeText(mode));
+    });
+
+    return toggle;
+  }
+
   function nextMode(mode) {
     switch (mode) {
     case 'collapsed':
@@ -2544,6 +2659,19 @@
       { id: 'cards', icon: '▦', label: 'Cards' }
     ];
 
+    function syncSwitcher(switcher, targetList, dataList, settingsGrid) {
+      const activeView = targetList.dataset.view || 'details';
+      switcher.querySelectorAll('.mod-view-btn').forEach(button => {
+        button.classList.toggle('is-active', button.dataset.view === activeView);
+      });
+
+      if (dataList) {
+        applyMetaView(dataList, dataList.dataset.metaView || 'hybrid');
+      } else if (settingsGrid) {
+        syncSettingsCardTitles(settingsGrid);
+      }
+    }
+
     root.querySelectorAll('.mod-content-frame').forEach(frame => {
       if (frame.dataset.skipViewSwitcher === 'true') {
         return;
@@ -2559,7 +2687,9 @@
       if (dataList) {
         ensureDemoData(dataList);
       }
-      if (frame.querySelector('.mod-view-switcher')) {
+      const existingSwitcher = frame.querySelector('.mod-view-switcher');
+      if (existingSwitcher) {
+        syncSwitcher(existingSwitcher, targetList, dataList, settingsGrid);
         return;
       }
 
@@ -2598,12 +2728,11 @@
         switcher.style.position = 'relative';
       }
 
-      targetList.dataset.view = 'details';
+      targetList.dataset.view = targetList.dataset.view || 'details';
       if (dataList) {
-        applyMetaView(dataList, 'hybrid');
-      } else if (settingsGrid) {
-        syncSettingsCardTitles(settingsGrid);
+        dataList.dataset.metaView = dataList.dataset.metaView || 'hybrid';
       }
+      syncSwitcher(switcher, targetList, dataList, settingsGrid);
       frame.appendChild(switcher);
     });
   }
@@ -2612,6 +2741,7 @@
     syncGridCssVars();
     root.querySelectorAll('[data-grid-box]').forEach(target => {
       setGridBoxDefaults(target);
+      syncFrameMode(target);
     });
     root.querySelectorAll('[data-mod-edit-toggle]').forEach(button => {
       bindEditToggle(button);
@@ -2637,6 +2767,9 @@
     if (init.resizeBound !== true) {
       window.addEventListener('resize', () => {
         syncGridCssVars();
+        document.querySelectorAll('[data-grid-box][data-module-kind]').forEach(frame => {
+          syncFrameMode(frame);
+        });
         document.querySelectorAll('.mod-data-list').forEach(dataList => {
           syncDataNameModePresentation(dataList);
           updateMetadataPagers(dataList);
@@ -2644,6 +2777,21 @@
         });
       });
       init.resizeBound = true;
+    }
+
+    if (init.frameModeBound !== true) {
+      const syncFrameFromEvent = event => {
+        const target = event.detail?.target;
+        if (!(target instanceof HTMLElement)) {
+          return;
+        }
+        rememberFrameExpandedWidth(target);
+        syncFrameMode(target);
+      };
+
+      window.addEventListener('hestia:grid-resize-end', syncFrameFromEvent);
+      window.addEventListener('hestia:grid-drag-end', syncFrameFromEvent);
+      init.frameModeBound = true;
     }
   }
 

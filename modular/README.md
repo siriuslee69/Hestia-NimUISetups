@@ -40,3 +40,5 @@ Metadata:
   In `Atlas-Taskbar`, the reliable fix was to offset by about half the taskbar height plus an extra gap, and for `PopoverTop` the upward movement came from increasing the positive `y` offset on that setup.
 - Owlkettle `Box` layout tends to auto-extend more than HTML flexbox.
   Keep `box { border-spacing: 0 0; min-width: 0; }` in the shared GTK CSS and use `.expand: false` for content-sized rows/cards unless a region is intentionally meant to fill space.
+- Parked `GtkRevealer` windows can look stuck open if only the animated child is toggled.
+  For always-alive helper windows, bind the same state to both the revealer child and the host top-level visibility, and switch hidden parked windows into click-through mode with an empty input region or equivalent.

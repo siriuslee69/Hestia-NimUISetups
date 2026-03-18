@@ -51,6 +51,178 @@ body {
   min-height: 0;
 }
 
+.mod-workspace-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.mod-workspace-btn {
+  min-height: 24px;
+  border: 1px solid rgba(31, 46, 78, 0.18);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--mod-text);
+  font: inherit;
+  font-size: 0.74rem;
+  cursor: pointer;
+}
+
+.mod-workspace-btn:hover {
+  background: rgba(95, 208, 255, 0.16);
+}
+
+.mod-workspace-status {
+  margin: 0;
+  color: var(--mod-muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.mod-workspace-status[data-state="error"] {
+  color: #a93f46;
+}
+
+.mod-preview {
+  overflow: hidden;
+}
+
+.mod-graph-widget {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.mod-graph-widget-shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  background:
+    radial-gradient(circle at top left, rgba(95, 208, 255, 0.18), transparent 42%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(240, 246, 254, 0.88));
+}
+
+.mod-graph-widget-shell[data-graph-display="background"] {
+  grid-template-rows: minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+  background: none;
+}
+
+.mod-graph-widget-shell[data-graph-display="background"] .mod-graph-widget-chart {
+  opacity: 0.72;
+  filter: saturate(0.92);
+}
+
+.mod-preview .mod-graph-widget-shell {
+  padding: 6px;
+}
+
+.mod-preview .mod-graph-widget-title,
+.mod-preview .mod-graph-widget-legend {
+  display: none;
+}
+
+.mod-graph-widget-title {
+  color: var(--mod-muted);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.mod-graph-widget-chart,
+.mod-graph-widget-chart svg {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: block;
+}
+
+.mod-graph-widget-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+}
+
+.mod-graph-widget-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--mod-muted);
+  font-size: 0.58rem;
+}
+
+.mod-graph-widget-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+
+.mod-graph-widget-tooltip {
+  position: fixed;
+  z-index: 1300;
+  width: min(320px, calc(100vw - 20px));
+  min-height: 200px;
+  border: 1px solid rgba(31, 46, 78, 0.18);
+  box-shadow: 0 14px 28px rgba(15, 24, 34, 0.18);
+  background: rgba(255, 255, 255, 0.98);
+  pointer-events: none;
+}
+
+.mod-graph-widget-tooltip .mod-graph-widget-shell {
+  min-height: 200px;
+}
+
+.mod-data-card,
+.mod-organizer-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.mod-data-card > :not(.mod-card-graph-layer),
+.mod-organizer-card > :not(.mod-card-graph-layer) {
+  position: relative;
+  z-index: 1;
+}
+
+.mod-card-graph-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.mod-card-graph-widget,
+.mod-card-graph-layer .mod-graph-widget-shell {
+  width: 100%;
+  height: 100%;
+}
+
+.mod-card-graph-layer .mod-graph-widget-chart {
+  width: 100%;
+  height: 100%;
+}
+
+.mod-data-card .mod-data-main,
+.mod-organizer-card .mod-data-main {
+  position: relative;
+  z-index: 1;
+}
+
+.mod-data-card .mod-preview,
+.mod-organizer-card .mod-preview {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.66), rgba(245, 249, 255, 0.84)),
+    linear-gradient(135deg, rgba(95, 208, 255, 0.2), rgba(129, 217, 122, 0.16));
+  box-shadow: inset 0 0 0 1px rgba(31, 46, 78, 0.08);
+}
+
 .mod-module-manager-head {
   display: flex;
   align-items: center;
@@ -642,6 +814,7 @@ body.mod-edit-ui-off .mod-stack-header {
   background: rgba(255, 255, 255, 0.94);
   box-shadow: 0 10px 24px rgba(15, 24, 34, 0.12);
   user-select: none;
+  overflow: hidden;
 }
 
 .mod-graph-node.is-dragging {
@@ -693,11 +866,37 @@ body.mod-edit-ui-off .mod-stack-header {
 }
 
 .mod-graph-node-body {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(104px, 1.15fr) minmax(0, 1fr);
   gap: 10px;
   padding: 8px;
   align-items: start;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.mod-graph-node-body > :not(.mod-graph-node-widget) {
+  position: relative;
+  z-index: 1;
+}
+
+.mod-graph-node-widget {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border: 0;
+  background: none;
+}
+
+.mod-graph-node-widget .mod-graph-widget-shell {
+  height: 100%;
+  background: none;
+}
+
+.mod-graph-node-widget .mod-graph-widget-title,
+.mod-graph-node-widget .mod-graph-widget-legend {
+  display: none;
 }
 
 .mod-graph-node-column {
@@ -1486,10 +1685,6 @@ body.mod-edit-ui-off .mod-chat-history-menu {
   transform: scale(0.98);
 }
 
-.mod-organizer-card .mod-preview {
-  background: linear-gradient(135deg, rgba(95, 208, 255, 0.22), rgba(255, 190, 86, 0.18));
-}
-
 .mod-organizer-shell[data-view="details"] .mod-organizer-card {
   gap: 8px;
   padding: 6px;
@@ -1643,6 +1838,50 @@ body.mod-edit-ui-off .mod-chat-history-menu {
 
 .mod-organizer-shell[data-view="details"] .mod-organizer-card.is-selected .mod-preview {
   border-color: rgba(95, 208, 255, 0.4);
+}
+
+.mod-graph-widget-module {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  height: 100%;
+  min-height: 0;
+  padding: 8px;
+  background:
+    radial-gradient(circle at top right, rgba(185, 144, 255, 0.14), transparent 30%),
+    linear-gradient(180deg, rgba(245, 248, 255, 0.98), rgba(236, 242, 250, 0.96));
+}
+
+.mod-graph-widget-module-toolbar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.mod-graph-widget-module-select {
+  min-width: 0;
+  min-height: 26px;
+  border: 1px solid rgba(31, 46, 78, 0.16);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--mod-text);
+  font: inherit;
+  font-size: 0.72rem;
+}
+
+.mod-graph-widget-module-stage {
+  min-height: 0;
+  border: 1px solid rgba(31, 46, 78, 0.14);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.mod-graph-widget-module-stage .mod-graph-widget-shell {
+  min-height: 100%;
+}
+
+.mod-graph-widget-module-copy {
+  color: var(--mod-muted);
+  font-size: 0.68rem;
+  line-height: 1.4;
 }
 
 .mod-organizer-shell[data-view="details"] .mod-organizer-card:focus-visible {

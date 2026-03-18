@@ -295,26 +295,204 @@
   }
 
   function setComposerQuote(frame, entry) {
+    const textarea = frame.querySelector('.mod-chat-textarea');
+    applyComposerQuote(frame, chatQuoteData(entry));
+    if (textarea) {
+      textarea.focus();
+    }
+  }
+
+  function applyComposerQuote(frame, quote) {
     const panel = frame.querySelector('.mod-chat-composer-panel');
     const preview = frame.querySelector('[data-chat-quote-preview]');
     const source = frame.querySelector('[data-chat-quote-preview-source]');
     const text = frame.querySelector('[data-chat-quote-preview-text]');
-    const textarea = frame.querySelector('.mod-chat-textarea');
-    if (!panel || !preview || !source || !text) {
+    if (!panel || !preview || !source || !text || !quote) {
       return;
     }
 
-    const quote = chatQuoteData(entry);
-    panel.dataset.chatQuoteEntryId = quote.entryId;
-    panel.dataset.chatQuoteAuthor = quote.author;
-    panel.dataset.chatQuoteStamp = quote.stamp;
-    panel.dataset.chatQuoteText = quote.text;
+    panel.dataset.chatQuoteEntryId = quote.entryId || '';
+    panel.dataset.chatQuoteAuthor = quote.author || '';
+    panel.dataset.chatQuoteStamp = quote.stamp || '';
+    panel.dataset.chatQuoteText = quote.text || '';
     source.textContent = quote.stamp ? `${quote.author} ${quote.stamp}` : quote.author;
-    text.textContent = quote.text;
+    text.textContent = quote.text || '';
     preview.hidden = false;
+  }
 
-    if (textarea) {
-      textarea.focus();
+  function serializeChatEntry(entry) {
+    const quoteLink = entry.querySelector('.mod-chat-quote-link');
+    return {
+      entryId: ensureChatEntryId(entry),
+      participant: entry.classList.contains('is-participant-a') ? 'a' : 'b',
+      author: (entry.querySelector('.mod-chat-author')?.textContent || '').trim(),
+      stamp: (entry.querySelector('.mod-chat-stamp')?.textContent || '').trim(),
+      text: historyEntryText(entry),
+      tags: [...entry.querySelectorAll('.mod-chat-meta-row .mod-meta-pill')]
+        .map(pill => (pill.textContent || '').trim())
+        .filter(Boolean),
+      quote: quoteLink ? {
+        entryId: entry.dataset.chatQuoteRef || '',
+        source: (quoteLink.querySelector('.mod-chat-quote-source')?.textContent || '').trim(),
+        text: (quoteLink.querySelector('.mod-chat-quote-text')?.textContent || '').trim()
+      } : null,
+      listTagIndex: Number(entry.dataset.chatListTagIndex || '0') || 0
+    };
+  }
+
+  function buildChatEntry(snapshot) {
+    const article = document.createElement('article');
+    const head = document.createElement('div');
+    const author = document.createElement('span');
+    const stamp = document.createElement('span');
+    const bubble = document.createElement('div');
+    const bubbleText = document.createElement('div');
+    const meta = document.createElement('div');
+
+    article.className = `mod-chat-entry ${snapshot?.participant === 'a' ? 'is-participant-a' : 'is-participant-b'}`;
+    article.dataset.chatEntryId = `${snapshot?.entryId || nextChatEntryId()}`;
+    article.dataset.chatListTagIndex = `${Number(snapshot?.listTagIndex || '0') || 0}`;
+    head.className = 'mod-chat-entry-head';
+    author.className = 'mod-chat-author';
+    stamp.className = 'mod-chat-stamp';
+    bubble.className = 'mod-chat-bubble';
+    bubbleText.className = 'mod-chat-bubble-text';
+    meta.className = 'mod-chat-meta-row';
+
+    author.textContent = `${snapshot?.author || ''}`;
+    stamp.textContent = `${snapshot?.stamp || ''}`;
+    bubbleText.textContent = `${snapshot?.text || ''}`;
+
+    if (snapshot?.quote?.entryId) {
+      const quoteLink = document.createElement('button');
+      const quoteLabel = document.createElement('span');
+      const quoteSource = document.createElement('span');
+      const quoteText = document.createElement('span');
+
+      article.dataset.chatQuoteRef = `${snapshot.quote.entryId}`;
+      quoteLink.type = 'button';
+      quoteLink.className = 'mod-chat-quote-link';
+      quoteLink.dataset.chatQuoteJump = `${snapshot.quote.entryId}`;
+      quoteLabel.className = 'mod-chat-quote-label';
+      quoteLabel.textContent = 'Quoted message';
+      quoteSource.className = 'mod-chat-quote-source';
+      quoteSource.textContent = `${snapshot.quote.source || ''}`;
+      quoteText.className = 'mod-chat-quote-text';
+      quoteText.textContent = `${snapshot.quote.text || ''}`;
+      quoteLink.appendChild(quoteLabel);
+      quoteLink.appendChild(quoteSource);
+      quoteLink.appendChild(quoteText);
+      bubble.appendChild(quoteLink);
+    }
+
+    bubble.appendChild(bubbleText);
+    (Array.isArray(snapshot?.tags) ? snapshot.tags : []).forEach(value => {
+      const pill = document.createElement('span');
+      pill.className = 'mod-meta-pill';
+      pill.textContent = `${value}`;
+      meta.appendChild(pill);
+    });
+
+    head.appendChild(author);
+    head.appendChild(stamp);
+    article.appendChild(head);
+    article.appendChild(bubble);
+    article.appendChild(meta);
+    return article;
+  }
+
+  function serializeChatHistoryFrame(frame) {
+    const history = getChatHistory(frame);
+    if (!history) {
+      return {};
+    }
+
+    return {
+      view: history.dataset.chatView || 'details',
+      settings: {
+        meta: history.dataset.chatMeta || 'full',
+        flow: history.dataset.chatFlow || 'ltr',
+        density: history.dataset.chatDensity || 'comfortable',
+        width: history.dataset.chatWidth || 'wide'
+      },
+      entries: [...history.querySelectorAll('.mod-chat-entry')].map(entry => serializeChatEntry(entry))
+    };
+  }
+
+  function serializeComposerFrame(frame) {
+    const panel = frame.querySelector('.mod-chat-composer-panel');
+    return {
+      text: frame.querySelector('.mod-chat-textarea')?.value || '',
+      settings: {
+        model: panel?.querySelector('[data-chat-compose-setting="model"]')?.value || 'Atlas Fast',
+        lines: panel?.querySelector('[data-chat-compose-setting="lines"]')?.value || '2',
+        channel: panel?.querySelector('[data-chat-compose-setting="channel"]')?.value || 'Ops',
+        enterSend: panel?.querySelector('[data-chat-compose-setting="enter-send"]')?.checked === true
+      },
+      activeTags: selectedTags(panel || frame),
+      quote: currentComposerQuote(frame)
+    };
+  }
+
+  function restoreChatHistoryFrame(frame, state, options = {}) {
+    if (options.phase === 'after-init') {
+      return;
+    }
+
+    const history = getChatHistory(frame);
+    if (!history) {
+      return;
+    }
+
+    history.dataset.chatView = `${state?.view || 'details'}`;
+    history.dataset.chatMeta = `${state?.settings?.meta || 'full'}`;
+    history.dataset.chatFlow = `${state?.settings?.flow || 'ltr'}`;
+    history.dataset.chatDensity = `${state?.settings?.density || 'comfortable'}`;
+    history.dataset.chatWidth = `${state?.settings?.width || 'wide'}`;
+    history.innerHTML = '';
+
+    (Array.isArray(state?.entries) ? state.entries : []).forEach(entrySnapshot => {
+      history.appendChild(buildChatEntry(entrySnapshot));
+    });
+  }
+
+  function restoreComposerFrame(frame, state, options = {}) {
+    if (options.phase === 'after-init') {
+      return;
+    }
+
+    const panel = frame.querySelector('.mod-chat-composer-panel');
+    const textarea = frame.querySelector('.mod-chat-textarea');
+    if (!panel || !textarea) {
+      return;
+    }
+
+    textarea.value = `${state?.text || ''}`;
+    const model = panel.querySelector('[data-chat-compose-setting="model"]');
+    const lines = panel.querySelector('[data-chat-compose-setting="lines"]');
+    const channel = panel.querySelector('[data-chat-compose-setting="channel"]');
+    const enterSend = panel.querySelector('[data-chat-compose-setting="enter-send"]');
+
+    if (model) {
+      model.value = `${state?.settings?.model || model.value}`;
+    }
+    if (lines) {
+      lines.value = `${state?.settings?.lines || lines.value}`;
+    }
+    if (channel) {
+      channel.value = `${state?.settings?.channel || channel.value}`;
+    }
+    if (enterSend) {
+      enterSend.checked = state?.settings?.enterSend !== false;
+    }
+
+    frame.querySelectorAll('[data-chat-tag]').forEach(button => {
+      button.classList.toggle('is-active', (state?.activeTags || []).includes(button.dataset.chatTag));
+    });
+
+    clearComposerQuote(frame);
+    if (state?.quote) {
+      applyComposerQuote(frame, state.quote);
     }
   }
 
@@ -621,6 +799,23 @@
     init: initChatFrame,
     closeHistoryMenus,
     closeTagMenus,
+    serializeFrame(frame) {
+      if (frame?.dataset?.moduleKind === 'chat-history') {
+        return serializeChatHistoryFrame(frame);
+      }
+      if (frame?.dataset?.moduleKind === 'chat-compose') {
+        return serializeComposerFrame(frame);
+      }
+      return {};
+    },
+    restoreFrame(frame, state, options = {}) {
+      if (frame?.dataset?.moduleKind === 'chat-history') {
+        restoreChatHistoryFrame(frame, state, options);
+      }
+      if (frame?.dataset?.moduleKind === 'chat-compose') {
+        restoreComposerFrame(frame, state, options);
+      }
+    },
     cleanupFrame(frame) {
       closeHistoryMenus(frame);
       closeTagMenus(frame);

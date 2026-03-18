@@ -73,6 +73,49 @@ function organizerBoards(root = document) {
     card.dataset.organizerOptions = JSON.stringify(state);
   }
 
+  function organizerVisualState(card) {
+    return parseJsonObject(card.dataset.organizerVisual);
+  }
+
+  function writeOrganizerVisualState(card, state) {
+    card.dataset.organizerVisual = JSON.stringify(state || {});
+  }
+
+  function organizerGraphLayer(card) {
+    let layer = card.querySelector('.mod-card-graph-layer');
+    if (layer) {
+      return layer;
+    }
+
+    layer = document.createElement('div');
+    layer.className = 'mod-card-graph-layer';
+    card.prepend(layer);
+    return layer;
+  }
+
+  function renderOrganizerBackground(card) {
+    const layer = organizerGraphLayer(card);
+    const visual = organizerVisualState(card);
+    if (!layer) {
+      return;
+    }
+
+    layer.innerHTML = '';
+    if (!visual?.kind) {
+      return;
+    }
+
+    const widget = document.createElement('div');
+    widget.className = 'mod-graph-widget mod-card-graph-widget';
+    widget.dataset.graphWidget = '';
+    widget.dataset.graphDisplay = 'background';
+    widget.dataset.graphTooltip = 'true';
+    widget.dataset.graphKind = `${visual.kind}`;
+    widget.dataset.graphTitle = `${visual.title || 'Organizer graph'}`;
+    widget.dataset.graphPayload = JSON.stringify(visual.payload || {});
+    layer.appendChild(widget);
+  }
+
   function organizerPill(text, active = true) {
     const pill = document.createElement('span');
     pill.className = 'mod-meta-pill mod-organizer-pill';
@@ -282,6 +325,7 @@ function organizerBoards(root = document) {
     });
 
     renderOrganizerDetailPanel(board);
+    window.HestiaGraphWidgets?.init?.(board);
   }
 
   function setOrganizerSelectedCard(board, card) {
@@ -792,6 +836,7 @@ function organizerBoards(root = document) {
         bindOrganizerList(list, board);
       });
       organizerCards(board).forEach(card => {
+        renderOrganizerBackground(card);
         bindOrganizerCard(card, board);
       });
       updateOrganizerLaneCounts(board);
@@ -816,9 +861,149 @@ function organizerBoards(root = document) {
     });
   }
 
+  function serializeOrganizerCard(card) {
+    return {
+      id: ensureOrganizerCardId(card),
+      title: (card.querySelector('h3')?.textContent || '').trim(),
+      text: (card.querySelector('p')?.textContent || '').trim(),
+      metadata: parseJsonObject(card.dataset.metadata),
+      options: organizerOptionState(card),
+      visual: organizerVisualState(card),
+      fieldsExpanded: card.dataset.organizerFieldsExpanded === 'true',
+      summaryExpanded: card.dataset.organizerSummaryExpanded === 'true'
+    };
+  }
+
+  function serializeOrganizerFrame(frame) {
+    const board = frame?.querySelector('[data-organizer-board]');
+    if (!board) {
+      return {};
+    }
+
+    return {
+      view: board.dataset.view || 'cards',
+      selectedCardId: board.dataset.organizerSelectedCardId || '',
+      lanes: [...board.querySelectorAll('[data-organizer-lane]')].map(lane => ({
+        name: lane.dataset.organizerLane || (lane.querySelector('h3')?.textContent || '').trim(),
+        cards: [...lane.querySelectorAll('[data-organizer-item]')].map(card => serializeOrganizerCard(card))
+      }))
+    };
+  }
+
+  function buildOrganizerCard(snapshot) {
+    const article = document.createElement('article');
+    const graphLayer = document.createElement('div');
+    const preview = document.createElement('div');
+    const main = document.createElement('div');
+    const head = document.createElement('div');
+    const title = document.createElement('h3');
+    const optionsToggle = document.createElement('button');
+    const body = document.createElement('p');
+    const fieldRow = document.createElement('div');
+    const summaryRow = document.createElement('div');
+    const menu = document.createElement('div');
+
+    article.className = 'mod-data-card mod-organizer-card';
+    article.dataset.organizerItem = '';
+    article.dataset.metadata = JSON.stringify(snapshot?.metadata || {});
+    article.dataset.organizerOptions = JSON.stringify(snapshot?.options || {});
+    article.dataset.organizerCardId = `${snapshot?.id || ''}`;
+    writeOrganizerVisualState(article, snapshot?.visual || {});
+    article.dataset.organizerFieldsExpanded = snapshot?.fieldsExpanded === true ? 'true' : 'false';
+    article.dataset.organizerSummaryExpanded = snapshot?.summaryExpanded === true ? 'true' : 'false';
+
+    graphLayer.className = 'mod-card-graph-layer';
+    preview.className = 'mod-preview';
+    main.className = 'mod-data-main';
+    head.className = 'mod-organizer-card-head';
+    title.textContent = `${snapshot?.title || 'Organizer Item'}`;
+    optionsToggle.className = 'mod-organizer-options-toggle';
+    optionsToggle.dataset.organizerOptionsToggle = '';
+    optionsToggle.type = 'button';
+    optionsToggle.textContent = 'Assign';
+    body.textContent = `${snapshot?.text || ''}`;
+    fieldRow.className = 'mod-organizer-field-row';
+    fieldRow.dataset.organizerFields = '';
+    summaryRow.className = 'mod-organizer-option-row';
+    summaryRow.dataset.organizerSummary = '';
+    menu.className = 'mod-organizer-options-menu';
+    menu.dataset.organizerMenu = '';
+    menu.hidden = true;
+
+    head.appendChild(title);
+    head.appendChild(optionsToggle);
+    main.appendChild(head);
+    main.appendChild(body);
+    main.appendChild(fieldRow);
+    main.appendChild(summaryRow);
+    main.appendChild(menu);
+    article.appendChild(graphLayer);
+    article.appendChild(preview);
+    article.appendChild(main);
+    renderOrganizerBackground(article);
+    return article;
+  }
+
+  function buildOrganizerLane(snapshot) {
+    const section = document.createElement('section');
+    const header = document.createElement('header');
+    const title = document.createElement('h3');
+    const count = document.createElement('span');
+    const list = document.createElement('div');
+
+    section.className = 'mod-organizer-lane';
+    section.dataset.organizerLane = `${snapshot?.name || 'Lane'}`;
+    header.className = 'mod-organizer-lane-head';
+    title.textContent = `${snapshot?.name || 'Lane'}`;
+    count.className = 'mod-organizer-lane-count';
+    count.dataset.organizerCount = '';
+    count.textContent = '0';
+    list.className = 'mod-organizer-list';
+    list.dataset.organizerList = '';
+
+    (Array.isArray(snapshot?.cards) ? snapshot.cards : []).forEach(cardSnapshot => {
+      list.appendChild(buildOrganizerCard(cardSnapshot));
+    });
+
+    header.appendChild(title);
+    header.appendChild(count);
+    section.appendChild(header);
+    section.appendChild(list);
+    return section;
+  }
+
+  function restoreOrganizerFrame(frame, state, options = {}) {
+    if (options.phase === 'after-init') {
+      return;
+    }
+
+    const board = frame?.querySelector('[data-organizer-board]');
+    if (!board) {
+      return;
+    }
+
+    board.dataset.view = `${state?.view || 'cards'}`;
+    if (state?.selectedCardId) {
+      board.dataset.organizerSelectedCardId = `${state.selectedCardId}`;
+    } else {
+      delete board.dataset.organizerSelectedCardId;
+    }
+
+    board.innerHTML = '';
+    (Array.isArray(state?.lanes) ? state.lanes : []).forEach(laneSnapshot => {
+      board.appendChild(buildOrganizerLane(laneSnapshot));
+    });
+  }
+
   core.modules.organizer = {
     init: initOrganizerBoards,
     closeMenus: closeOrganizerMenus,
+    serializeFrame(frame) {
+      return serializeOrganizerFrame(frame);
+    },
+    restoreFrame(frame, state, options = {}) {
+      restoreOrganizerFrame(frame, state, options);
+    },
     cleanupFrame(frame) {
       closeOrganizerMenus(frame);
       frame?.querySelectorAll?.('[data-organizer-item]').forEach(card => {

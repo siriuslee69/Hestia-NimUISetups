@@ -19,3 +19,5 @@ Open `gallery/index.html` directly in a browser or inside a WebView shell.
   Reuse the `Atlas-Taskbar` rule of thumb: start from about half the taskbar height plus a visual gap, then tune the `PopoverTop` `y` offset from there.
 - Owlkettle boxes are prone to stretching unexpectedly.
   Keep `box { border-spacing: 0 0; min-width: 0; }` in the theme baseline and be explicit about `.expand: false` versus `.expand: true`.
+- Persistent helper windows that host a `GtkRevealer` can stay mapped even after the child collapses.
+  If you use that pattern for a start menu or sidebar, couple the open-state to both the revealer and the top-level window visibility, and keep hidden parked windows click-through with an empty input region or equivalent.
